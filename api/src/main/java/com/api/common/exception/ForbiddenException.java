@@ -3,4 +3,4 @@ package com.api.common.exception;
 import lombok.Getter;
 
 @Getter
-public class UnAuthorizedException extends RuntimeException {}
+public class ForbiddenException extends RuntimeException {}
