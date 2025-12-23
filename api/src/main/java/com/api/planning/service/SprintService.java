@@ -5,6 +5,8 @@ import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
 import com.api.planning.dto.response.SprintResponse;
 import com.api.planning.dto.response.SprintResponseWrapper;
+import com.api.planning.dto.response.UserStoryResponse;
+import com.api.planning.dto.response.UserStoryResponseWrapper;
 import com.api.planning.entity.Participant;
 import com.api.planning.entity.Sprint;
 import com.api.planning.repository.ParticipantRepository;
@@ -27,6 +29,8 @@ public class SprintService {
   private final SprintRepository sprintRepository;
   private final ParticipantRepository participantRepository;
   private final SprintResponseWrapper sprintResponseWrapper;
+  private final UserStoryService  userStoryService;
+
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -59,7 +63,6 @@ public class SprintService {
 
 
   public SuccessResponse join(Long sprintId, Long memberId) {
-
     sprintRepository.findById(sprintId)
       .orElseThrow(EntityNotFoundException::new);
 
@@ -70,6 +73,13 @@ public class SprintService {
     joinInternal(sprintId, memberId);
 
     return new SuccessResponse("success");
+  }
+
+  // start new voting - create a new user story for this sprint
+  public UserStoryResponse startNewVoting(Long sprintId, Long userId) {
+    getSprint(sprintId, userId); // make sure sprint is existing and the user is a member
+
+    return userStoryService.createUserStory(sprintId);
   }
 
   /* ================= HELPERS ================= */

@@ -3,6 +3,7 @@ package com.api.planning.controller;
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.CreateSprintRequest;
 import com.api.planning.dto.response.SprintResponse;
+import com.api.planning.dto.response.UserStoryResponse;
 import com.api.planning.service.SprintService;
 import com.api.user.service.CustomUserDetails;
 import jakarta.validation.Valid;
@@ -31,6 +32,11 @@ public class SprintController {
   @PostMapping("/{id}/join")
   public ResponseEntity<SuccessResponse> join(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(sprintService.join(id,  userDetails.getUserId()));
+  }
+
+  @PostMapping("/{id}/start-new-voting")
+  public ResponseEntity<UserStoryResponse> startNewVoting(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(sprintService.startNewVoting(id,  userDetails.getUserId()));
   }
 
 }
