@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstimationRepository extends JpaRepository<Estimation, Long> {
+  void deleteByUser_IdAndUserStory_Id(Long userId, Long userStoryId);
+
+  boolean existsByUser_IdAndUserStory_Id(Long userId, Long userStoryId);
 }

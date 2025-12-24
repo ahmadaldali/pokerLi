@@ -1,5 +1,6 @@
 package com.api.planning.service;
 
+import com.api.common.exception.ValidationException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,6 +15,7 @@ import javax.script.ScriptEngineManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 
 @Slf4j
@@ -25,6 +27,15 @@ public class CardDeckService {
   public static final List<Integer> DEFAULT_DECK = List.of(1, 2, 3, 5, 8, 13, 21);
   private final ObjectMapper objectMapper;
 
+  // check a value
+  public boolean has(String cardDeckJson, Integer estimation) {
+    JsonNode cardDeckSequence = this.getCardDeckSequence(cardDeckJson);
+    JsonNode sequence = cardDeckSequence.get("sequence");
+
+    return StreamSupport.stream(sequence.spliterator(), false).anyMatch(n -> n.asInt() == estimation);
+  }
+
+  // return the sequence
   public JsonNode getCardDeckSequence(String cardDeckJson) {
     JsonNode defaultSequence = createDefaultSequence();
 

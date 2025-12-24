@@ -19,10 +19,13 @@ public class UserStoryController {
 
   private final UserStoryService userStoryService;
 
-
   @PostMapping("/{id}/vote")
   public ResponseEntity<SuccessResponse> vote(@Valid @RequestBody EstimateUserStoryRequest request, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.vote(id,  userDetails.getUserId(), request.getEstimation()));
   }
 
+  @PostMapping("/{id}/un-vote")
+  public ResponseEntity<SuccessResponse> unVote(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.unVote(id,  userDetails.getUserId()));
+  }
 }
