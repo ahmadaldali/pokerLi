@@ -1,6 +1,5 @@
 package com.api.planning.entity;
 
-import com.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,19 +9,19 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "sprints")
-public class Sprint {
+@Table(name = "user_stories")
+public class UserStory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(unique = true)
   private String name;
 
-  @Column(name = "card_deck")
-  private String cardDeck;
-
   @ManyToOne
-  @JoinColumn(name = "creator_id")
-  private User creator;
+  @JoinColumn(name = "sprint_id")
+  private Sprint sprint;
+
+
+  @Column(name = "is_voting_over")
+  private Boolean isVotingOver;
 }

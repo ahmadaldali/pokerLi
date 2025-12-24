@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class LoginRequest {
   @NotBlank(message = "{error.email.required}")
-  @Email(message = "Email should be valid")
+  @Email(message = "{error.email.invalid}")
   private String email;
 
   @NotBlank(message = "{error.password.required}")

@@ -1,0 +1,8 @@
+1- register // admin
+2- login
+3- admin create a sprint
+4- admin create a user story
+5- admin invite member
+6- member see all sprints/user stories.
+7- voting
+

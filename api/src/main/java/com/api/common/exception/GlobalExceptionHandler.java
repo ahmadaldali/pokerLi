@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -60,9 +61,9 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
   }
 
-  @ExceptionHandler(UnAuthorizedException.class)
-  public ResponseEntity<Map<String, String>> handleUnauthorizedException(UnAuthorizedException ex) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HashMap<>());
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<Map<String, String>> handleForbiddenException(ForbiddenException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new HashMap<>());
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
@@ -73,6 +74,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<Map<String, String>> handleNotFoundException(NoResourceFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>());
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<Map<String, String>> handleDataIntegrityException(DataIntegrityViolationException ex) {
+    Map<String, String> error = new HashMap<>();
+    error.put("error", ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
   }
 
   @ExceptionHandler(Exception.class)
