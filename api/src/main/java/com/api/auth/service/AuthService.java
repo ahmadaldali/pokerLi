@@ -47,4 +47,22 @@ public class AuthService {
 
     return new AuthResponse(token);
   }
+
+  public AuthResponse createGuest(String name, String guestId) {
+    if (userRepository.existsByGuestId(guestId)) {
+      throw new ValidationException("error.id.exist");
+    }
+
+    User user = User.builder()
+      .name(name)
+      .role(UserRole.GUEST)
+      .guestId(guestId)
+      .build();
+    userRepository.save(user);
+
+    // generate the token based on the guestId instead of email
+    String token = jwtService.generateToken(user.getGuestId(), user.getId());
+
+    return new AuthResponse(token);
+  }
 }
