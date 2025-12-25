@@ -1,6 +1,5 @@
 package com.api.planning.service;
 
-
 import com.api.common.dto.SuccessResponse;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
@@ -9,15 +8,12 @@ import com.api.planning.dto.response.UserStoryResponseWrapper;
 import com.api.planning.entity.Sprint;
 import com.api.planning.entity.UserStory;
 import com.api.planning.repository.UserStoryRepository;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.StreamSupport;
 
 
 @Service
@@ -47,7 +43,7 @@ public class UserStoryService {
 
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
 
-    UserStory userStory = userStoryRepository.findById(userStoryId).orElseThrow(() -> new EntityNotFoundException(""));
+    UserStory userStory = userStoryRepository.findById(userStoryId).orElseThrow(EntityNotFoundException::new);
 
     Sprint sprint = userStory.getSprint();
 
@@ -62,7 +58,8 @@ public class UserStoryService {
   }
 
   public SuccessResponse unVote(Long userStoryId, Long userId) {
-    userStoryRepository.findById(userStoryId).orElseThrow(() -> new EntityNotFoundException(""));
+
+    userStoryRepository.findById(userStoryId).orElseThrow(EntityNotFoundException::new);
 
     return estimationService.deleteEstimation(userStoryId, userId);
   }

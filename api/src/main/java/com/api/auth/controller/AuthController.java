@@ -23,4 +23,9 @@ public class AuthController {
   public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
     return ResponseEntity.ok(authService.login(request.getEmail(), request.getPassword()));
   }
+
+  @PostMapping("/guest")
+  public ResponseEntity<AuthResponse> createGuest(@Valid @RequestBody CreateGuestRequest request) {
+    return ResponseEntity.ok(authService.createGuest(request.getName(), request.getGuestId()));
+  }
 }
