@@ -1,8 +1,11 @@
 package com.api.auth.jwt;
 
+import com.api.common.exception.UnAuthorizedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
+
 import java.security.Key;
 import java.util.Date;
 
@@ -26,15 +29,24 @@ public class JwtService {
   }
 
   public boolean isTokenValid(String token, String email) {
-    return email.equals(extractEmail(token)) && !isTokenExpired(token);
+    try {
+      return email.equals(extractEmail(token)) && !isTokenExpired(token);
+    } catch (Exception e) {
+      throw new UnAuthorizedException();
+    }
+
   }
 
   public String extractEmail(String token) {
-    return Jwts.parser()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseSignedClaims(token)
-      .getPayload().getSubject();
+    try {
+      return Jwts.parser()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload().getSubject();
+    } catch (Exception e) {
+      throw new UnAuthorizedException();
+    }
   }
 
   private boolean isTokenExpired(String token) {
@@ -42,11 +54,15 @@ public class JwtService {
   }
 
   private Date extractExpiration(String token) {
-    return Jwts.parser()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseSignedClaims(token)
-      .getPayload().getExpiration();
+    try {
+      return Jwts.parser()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload().getExpiration();
+    } catch (Exception e) {
+      throw new UnAuthorizedException();
+    }
   }
 
   public Long extractUserId(String token) {

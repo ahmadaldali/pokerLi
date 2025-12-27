@@ -3,9 +3,12 @@ package com.api.auth.service;
 import com.api.auth.dto.AuthResponse;
 import com.api.auth.jwt.JwtService;
 import com.api.common.enums.UserRole;
+import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
+import com.api.user.entity.Invitation;
 import com.api.user.entity.User;
-import com.api.user.repository.UserRepository;
+import com.api.user.service.InvitationService;
+import com.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,22 +16,31 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
+  private final UserService userService;
+  private final InvitationService invitationService;
 
-  public AuthResponse register(String email, String name, String password) {
-    if (userRepository.existsByEmail(email)) {
-      throw new ValidationException("error.email.exist");
+
+  public AuthResponse register(String email, String name, String password, String refCode) {
+    userService.ensureNotExistingEmail(email);
+
+    User user;
+    if (refCode != null) {
+      Invitation invitation = invitationService.getInvitationByCode(refCode);
+
+      if (!invitation.getEmail().equals(email)) {
+        throw new ForbiddenException();
+      }
+
+      invitationService.ensureActive(invitation);
+
+      user = userService.createUser(name, UserRole.MEMBER, email, passwordEncoder.encode(password), null, invitationService.getInvitationByCode(refCode).getInviter());
+
+      invitationService.deactivateInvitation(invitation.getRefCode());
+    } else {
+      user = userService.createUser(name, UserRole.ADMIN, email, passwordEncoder.encode(password), null, null);
     }
-
-    User user = User.builder()
-      .name(name)
-      .email(email)
-      .password(passwordEncoder.encode(password))
-      .role(UserRole.ADMIN)
-      .build();
-    userRepository.save(user);
 
     String token = jwtService.generateToken(user.getEmail(), user.getId());
 
@@ -36,8 +48,7 @@ public class AuthService {
   }
 
   public AuthResponse login(String email, String password) {
-    User user = userRepository.findByEmail(email)
-      .orElseThrow(() -> new ValidationException("error.login.user_notfound"));
+    User user = userService.getUserByEmail(email);
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new ValidationException("error.login.invalid_credentials");
@@ -49,16 +60,9 @@ public class AuthService {
   }
 
   public AuthResponse createGuest(String name, String guestId) {
-    if (userRepository.existsByGuestId(guestId)) {
-      throw new ValidationException("error.id.exist");
-    }
+    userService.ensureNotExistingGuestId(guestId);
 
-    User user = User.builder()
-      .name(name)
-      .role(UserRole.GUEST)
-      .guestId(guestId)
-      .build();
-    userRepository.save(user);
+    User user = userService.createUser(name, UserRole.GUEST, null, null, guestId, null);
 
     // generate the token based on the guestId instead of email
     String token = jwtService.generateToken(user.getGuestId(), user.getId());

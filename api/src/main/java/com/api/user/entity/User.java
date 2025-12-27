@@ -30,4 +30,8 @@ public class User {
 
   @Column(name = "guest_id", unique = true)
   private String guestId;
+
+  @ManyToOne
+  @JoinColumn(name = "inviter_id")
+  private User inviter;
 }
