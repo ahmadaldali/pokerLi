@@ -66,6 +66,11 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new HashMap<>());
   }
 
+  @ExceptionHandler(UnAuthorizedException.class)
+  public ResponseEntity<Map<String, String>> handleUnAuthorizedException(UnAuthorizedException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HashMap<>());
+  }
+
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleNotFoundException(EntityNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>());

@@ -3,6 +3,7 @@ package com.api.config;
 
 import com.api.auth.jwt.JwtAuthenticationEntryPoint;
 import com.api.auth.jwt.JwtAuthenticationFilter;
+import com.api.common.exception.UnAuthorizedException;
 import com.api.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,19 +33,23 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
-    http
-      .csrf(csrf -> csrf.disable())
-      .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/auth/**", "/error", "/public").permitAll()
-        .anyRequest().authenticated())
-      .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .exceptionHandling(exception ->
-        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-      )
-      .authenticationProvider(authenticationProvider())
-      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    try {
+      http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+          .requestMatchers("/auth/**", "/error", "/public").permitAll()
+          .anyRequest().authenticated())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(exception ->
+          exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        )
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
+      return http.build();
+    } catch (Exception e) {
+      throw new UnAuthorizedException();
+    }
   }
 
   @Bean

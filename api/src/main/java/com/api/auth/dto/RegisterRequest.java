@@ -21,4 +21,6 @@ public class RegisterRequest {
   @NotBlank(message = "{error.password.required}")
   @Size(min = 6, max = 50, message = "{error.password.length_6_50}")
   private String password;
+
+  private String refCode;  // Optional referral code
 }
