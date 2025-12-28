@@ -1,6 +1,6 @@
 package com.api.planning.service;
 
-import com.api.common.exception.ValidationException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

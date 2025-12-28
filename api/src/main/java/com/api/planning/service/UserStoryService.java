@@ -31,12 +31,10 @@ public class UserStoryService {
   private EntityManager entityManager;
 
   public UserStoryResponse createUserStory(Long sprintId, String name, String description, String link) {
-
     // name, desc, and link could be null for the generic user story
     // generic story is a story just for voting. (no info)
     // can be used for the start new voting feature - or when you delete all sprint's stories, a new generic will be created auto
     UserStory entity = UserStory.builder().sprint(entityManager.getReference(Sprint.class, sprintId))
-      .isVotingOver(false) // voting ongoing for this user-story
       .name(name)
       .description(description)
       .link(link)
@@ -47,26 +45,49 @@ public class UserStoryService {
     return userStoryResponseWrapper.toResponse(entity);
   }
 
-
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
-
-    UserStory userStory = userStoryRepository.findById(userStoryId).orElseThrow(EntityNotFoundException::new);
-
-    Sprint sprint = userStory.getSprint();
-
-    participantService.ensureMember(userId, sprint.getId());
+    Sprint sprint = validateUserStoryAccess(userStoryId, userId).sprint();
 
     // check the estimation is a valid value
-    if (!cardDeckService.has(sprint.getCardDeck(), estimation)) throw new ValidationException("error.estimation.invalid");
+    if (!cardDeckService.has(sprint.getCardDeck(), estimation))
+      throw new ValidationException("error.estimation.invalid");
 
-    return estimationService.createOrUpdateEstimation(userStoryId, userId,  estimation);
+    return estimationService.createOrUpdateEstimation(userStoryId, userId, estimation);
   }
 
   public SuccessResponse unVote(Long userStoryId, Long userId) {
-
-    userStoryRepository.findById(userStoryId).orElseThrow(EntityNotFoundException::new);
+    validateUserStoryAccess(userStoryId, userId);
 
     return estimationService.deleteEstimation(userStoryId, userId);
+  }
+
+  public SuccessResponse reveal(Long userStoryId, Long userId) {
+    UserStory userStory = validateUserStoryAccess(userStoryId, userId).userStory();
+
+    double estimation = estimationService.reveal(userStoryId);
+    userStory.setIsVotingOver(true);
+    userStory.setEstimation(estimation);
+    userStoryRepository.save(userStory);
+
+    return new SuccessResponse("");
+  }
+
+  // ======== HELPERS ====================
+  private UserStoryAndSprint validateUserStoryAccess(Long userStoryId, Long userId) {
+    UserStory userStory = userStoryRepository.findById(userStoryId)
+      .orElseThrow(EntityNotFoundException::new);
+
+    if (userStory.getIsVotingOver()) {
+      throw new ValidationException("error.userStory.already_revealed");
+    }
+
+    Sprint sprint = userStory.getSprint();
+    participantService.ensureMember(userId, sprint.getId());
+
+    return new UserStoryAndSprint(userStory, sprint);
+  }
+
+  public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
   }
 
 }

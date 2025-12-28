@@ -27,4 +27,9 @@ public class UserStoryController {
   public ResponseEntity<SuccessResponse> unVote(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.unVote(id,  userDetails.getUserId()));
   }
+
+  @PostMapping("/{id}/reveal")
+  public ResponseEntity<SuccessResponse> reveal(@Valid @RequestBody EstimateUserStoryRequest request, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.reveal(id,  userDetails.getUserId()));
+  }
 }

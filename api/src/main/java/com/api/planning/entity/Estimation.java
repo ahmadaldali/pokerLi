@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -29,9 +30,16 @@ public class Estimation {
   @Column(name = "date")
   private LocalDateTime date;
 
-  @Column(name = "is_over")
+  @Column(name = "is_over" , nullable = false)
   private Boolean isOver;
 
   @Column(name = "estimation", nullable = false)
-  private Integer estimation;
+  private double estimation;
+
+  @PrePersist
+  private void prePersist() {
+    if (isOver == null) {
+      isOver = Boolean.FALSE;
+    }
+  }
 }

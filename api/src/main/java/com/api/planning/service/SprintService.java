@@ -37,7 +37,6 @@ public class SprintService {
   private EntityManager entityManager;
 
   public SuccessResponse createSprint(String name, String cardDeck, Long userId) {
-
     userService.ensureAdmin(userId);
 
     Sprint sprint = Sprint.builder().name(name).cardDeck(cardDeck).creator(entityManager.getReference(User.class, userId)).build();
@@ -55,7 +54,6 @@ public class SprintService {
   }
 
   public SprintResponse getSprint(Long sprintId, Long userId) {
-
     Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
 
     participantService.ensureMember(userId, sprintId);
@@ -82,7 +80,6 @@ public class SprintService {
           throw new ForbiddenException(); // admin can join only their rooms
         }
       }
-
       // guest can join any room.
     }
 
@@ -91,7 +88,7 @@ public class SprintService {
     return new SuccessResponse("success");
   }
 
-  // start new voting - create a new user story for this sprint
+  // sprint user-stories
   public UserStoryResponse createUserStory(Long sprintId, Long userId, String name, String description, String link) {
     SprintResponse sprint = getSprint(sprintId, userId); // make sure sprint is existing and the user is a member
 
