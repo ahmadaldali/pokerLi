@@ -6,19 +6,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateSprintRequest {
+public class CreateUserStoryRequest {
   @NotBlank(message = "{error.name.required}")
   @Size(min = 3, max = 50, message = "{error.name.length_3_50}")
   private String name;
 
-  @NotBlank(message = "{error.card_deck.required}")
-  @jakarta.validation.constraints.Pattern(regexp = "^\\{.*\\}$|^\\[.*\\]$", message = "{error.card_deck_should_be_json}")
-  private String card_deck;
+  @Size(max = 1000, message = "{error.description.max_1000}")
+  private String description;
+
+  @URL(message = "{error.link.invalid_url}")
+  @Size(max = 500, message = "{error.link.max_500}")
+  private String link;
 }
 
 

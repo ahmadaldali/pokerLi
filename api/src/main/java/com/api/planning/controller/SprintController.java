@@ -2,6 +2,7 @@ package com.api.planning.controller;
 
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.CreateSprintRequest;
+import com.api.planning.dto.request.CreateUserStoryRequest;
 import com.api.planning.dto.response.SprintResponse;
 import com.api.planning.dto.response.UserStoryResponse;
 import com.api.planning.service.SprintService;
@@ -34,9 +35,16 @@ public class SprintController {
     return ResponseEntity.ok(sprintService.join(id,  userDetails.getUserId()));
   }
 
+  // user stories
   @PostMapping("/{id}/start-new-voting")
   public ResponseEntity<UserStoryResponse> startNewVoting(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(sprintService.startNewVoting(id,  userDetails.getUserId()));
+    // create the generic user story for the sprint (no info just voting)
+    return ResponseEntity.ok(sprintService.createUserStory(id,  userDetails.getUserId(), null, null, null));
+  }
+
+  @PostMapping("{id}/user-stories")
+  public ResponseEntity<UserStoryResponse> createUserStory(@PathVariable Long id, @Valid @RequestBody CreateUserStoryRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(sprintService.createUserStory(id, userDetails.getUserId(), request.getName(), request.getDescription(), request.getLink()));
   }
 
 }

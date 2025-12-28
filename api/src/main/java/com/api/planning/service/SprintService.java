@@ -42,6 +42,10 @@ public class SprintService {
 
     Sprint sprint = Sprint.builder().name(name).cardDeck(cardDeck).creator(entityManager.getReference(User.class, userId)).build();
 
+    if (sprintRepository.existsByName(name)) {
+      throw new ValidationException("error.name.exist");
+    }
+
     sprintRepository.save(sprint);
 
     // auto-join creator
@@ -52,9 +56,9 @@ public class SprintService {
 
   public SprintResponse getSprint(Long sprintId, Long userId) {
 
-    participantService.ensureMember(userId, sprintId);
-
     Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
+
+    participantService.ensureMember(userId, sprintId);
 
     return sprintResponseWrapper.toResponse(sprint);
   }
@@ -67,18 +71,19 @@ public class SprintService {
       throw new ValidationException("error.sprint.already_member");
     }
 
-    User user = userService.getUser(memberId);
-
-    if (user.getRole() == UserRole.MEMBER) {
-      // make sure invitedId = creator id
-      // sprint.getCreator().getId() == user.getInvitedBy
-      // TODO
+    User member = userService.getUser(memberId);
+    if (member.getRole() == UserRole.MEMBER) {
+      if (!sprint.getCreator().getId().equals(member.getInviter().getId())) {
+        throw new ForbiddenException(); // members can join rooms only were created by the inviter
+      }
     } else {
-      if (user.getRole() == UserRole.ADMIN) {
-        if (!Objects.equals(user.getId(), sprint.getCreator().getId())) {
-          throw new ForbiddenException();
+      if (member.getRole() == UserRole.ADMIN) {
+        if (!Objects.equals(member.getId(), sprint.getCreator().getId())) {
+          throw new ForbiddenException(); // admin can join only their rooms
         }
       }
+
+      // guest can join any room.
     }
 
     participantService.createParticipant(sprintId, memberId);
@@ -87,10 +92,10 @@ public class SprintService {
   }
 
   // start new voting - create a new user story for this sprint
-  public UserStoryResponse startNewVoting(Long sprintId, Long userId) {
+  public UserStoryResponse createUserStory(Long sprintId, Long userId, String name, String description, String link) {
     SprintResponse sprint = getSprint(sprintId, userId); // make sure sprint is existing and the user is a member
 
-    return userStoryService.createUserStory(sprint.getId());
+    return userStoryService.createUserStory(sprint.getId(), name, description, link);
   }
 
 }

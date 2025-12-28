@@ -63,7 +63,7 @@ public class UserService implements UserDetailsService {
   }
 
   public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow(() -> new ValidationException("error.login.user_notfound"));
+    return userRepository.findByEmail(email).orElseThrow(() -> new ValidationException("error.login.user_notFound"));
   }
 
   public User createUser(String name, UserRole role, String email, String password, String guestId, User inviter) {

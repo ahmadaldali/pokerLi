@@ -3,7 +3,6 @@ package com.api.planning.controller;
 
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.EstimateUserStoryRequest;
-import com.api.planning.dto.response.UserStoryResponse;
 import com.api.planning.service.UserStoryService;
 import com.api.user.service.CustomUserDetails;
 import jakarta.validation.Valid;

@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RegisterRequest {
-
   @NotBlank(message = "{error.name.required}")
+  @Size(min = 3, max = 50, message = "{error.name.length_3_50}")
   private String name;
 
   @NotBlank(message = "{error.email.required}")

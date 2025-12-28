@@ -27,10 +27,6 @@ public class EstimationService {
   private EntityManager entityManager;
 
   public SuccessResponse createEstimation(Long userStoryId, Long userId, Integer estimation) {
-    if (this.userHasEstimation(userId, userStoryId)) {
-      throw new ValidationException("error.estimation.alreadyExists");
-    }
-
     Estimation entity = Estimation.builder().user(entityManager.getReference(User.class, userId)).userStory(entityManager.getReference(UserStory.class, userStoryId)).estimation(estimation).date(LocalDateTime.now()).build();
 
     estimationRepository.save(entity);
@@ -38,8 +34,19 @@ public class EstimationService {
     return new SuccessResponse("");
   }
 
-  public SuccessResponse deleteEstimation(Long userStoryId, Long userId) {
+  public SuccessResponse updateEstimation(Long userStoryId, Long userId, Integer estimation) {
+    Estimation entity = estimationRepository.findByUser_IdAndUserStory_Id(userId, userStoryId)
+      .orElseThrow(() -> new ValidationException("error.estimation.notFound"));
 
+    entity.setEstimation(estimation);
+    entity.setDate(LocalDateTime.now());
+
+    estimationRepository.save(entity);
+
+    return new SuccessResponse("");
+  }
+
+  public SuccessResponse deleteEstimation(Long userStoryId, Long userId) {
     if (!this.userHasEstimation(userId, userStoryId)) {
       throw new ForbiddenException();
     }
@@ -53,6 +60,14 @@ public class EstimationService {
 
   public boolean userHasEstimation(Long userStoryId, Long userId) {
     return estimationRepository.existsByUser_IdAndUserStory_Id(userStoryId, userId);
+  }
+
+  public SuccessResponse createOrUpdateEstimation(Long userStoryId, Long userId, Integer estimation) {
+    if (this.userHasEstimation(userId, userStoryId)) {
+      return this.updateEstimation(userStoryId, userId, estimation);
+    } else {
+      return this.createEstimation(userStoryId, userId, estimation);
+    }
   }
 
 }
