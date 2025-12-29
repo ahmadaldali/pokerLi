@@ -1,6 +1,9 @@
 package com.api.planning.dto.request;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +19,8 @@ public class CreateSprintRequest {
   @Size(min = 3, max = 50, message = "{error.name.length_3_50}")
   private String name;
 
-  @NotBlank(message = "{error.card_deck.required}")
-  private String cardDeck;
+  @NotNull(message = "{error.card_deck.required}")
+  private JsonNode cardDeck;
 }
 
 

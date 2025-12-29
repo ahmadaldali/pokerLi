@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +27,7 @@ public class CardDeckService {
   private final ObjectMapper objectMapper;
 
   // check a value
-  public boolean has(String cardDeckJson, Integer estimation) {
+  public boolean has(JsonNode cardDeckJson, Integer estimation) {
     JsonNode cardDeckSequence = this.getCardDeckSequence(cardDeckJson);
     JsonNode sequence = cardDeckSequence.get("sequence");
 
@@ -37,15 +35,17 @@ public class CardDeckService {
   }
 
   // return the sequence
-  public JsonNode getCardDeckSequence(String cardDeckJson) {
+  public JsonNode getCardDeckSequence(JsonNode cardDeckJson) {
     JsonNode defaultSequence = createDefaultSequence();
 
     try {
-      if (cardDeckJson == null || cardDeckJson.trim().isEmpty()) {
+      if (cardDeckJson == null) {
         return defaultSequence;
       }
 
-      JsonNode cardDeckObject = objectMapper.readTree(cardDeckJson);
+      JsonNode cardDeckObject;
+      cardDeckObject = cardDeckJson;
+
       JsonNode sequenceWithFormat = generateSequence(cardDeckObject);
 
       ((ObjectNode) cardDeckObject).set("sequence", sequenceWithFormat.get("sequence"));
@@ -76,9 +76,7 @@ public class CardDeckService {
       // Generate sequence
       List<Double> sequence = new ArrayList<>();
       sequence.add(start);
-      System.out.println(start);
       for (int i = 1; i <= length; i++) {
-        System.out.println(formatValue);
         sequence.add(sequence.get(i - 1) + formatValue);
       }
 
@@ -107,6 +105,7 @@ public class CardDeckService {
   }
 
 
+  //TODO: find a better way
   private double safelyEvaluateFormat(String expression) {
     try {
       expression = expression.replaceAll("[^0-9+\\-*/(). ]", "");

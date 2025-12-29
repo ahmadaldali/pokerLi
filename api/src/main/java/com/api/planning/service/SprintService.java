@@ -4,7 +4,6 @@ import com.api.common.dto.SuccessResponse;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
-import com.api.planning.dto.request.CardDeckDto;
 import com.api.planning.dto.response.SprintResponse;
 import com.api.planning.dto.response.SprintResponseWrapper;
 import com.api.planning.dto.response.UserStoryResponse;
@@ -12,6 +11,7 @@ import com.api.planning.entity.Sprint;
 import com.api.planning.repository.SprintRepository;
 import com.api.user.entity.User;
 import com.api.user.service.UserService;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -37,7 +37,7 @@ public class SprintService {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public SuccessResponse createSprint(String name, String cardDeck, Long userId) {
+  public SuccessResponse createSprint(String name, JsonNode cardDeck, Long userId) {
     userService.ensureAdmin(userId);
 
     Sprint sprint = Sprint.builder().name(name).cardDeck(cardDeck).creator(entityManager.getReference(User.class, userId)).build();

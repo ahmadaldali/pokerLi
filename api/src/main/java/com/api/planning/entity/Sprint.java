@@ -1,9 +1,12 @@
 package com.api.planning.entity;
 
-import com.api.planning.dto.request.CardDeckDto;
+
 import com.api.user.entity.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Getter
@@ -20,8 +23,9 @@ public class Sprint {
   @Column(unique = true)
   private String name;
 
+  @Type(JsonType.class)
   @Column(name = "card_deck", columnDefinition = "jsonb")
-  private String cardDeck;
+  private JsonNode cardDeck;
 
   @ManyToOne
   @JoinColumn(name = "creator_id")
