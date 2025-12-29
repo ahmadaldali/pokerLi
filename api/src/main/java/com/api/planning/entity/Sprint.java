@@ -1,5 +1,6 @@
 package com.api.planning.entity;
 
+import com.api.planning.dto.request.CardDeckDto;
 import com.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,7 @@ public class Sprint {
   @Column(unique = true)
   private String name;
 
-  @Column(name = "card_deck")
+  @Column(name = "card_deck", columnDefinition = "jsonb")
   private String cardDeck;
 
   @ManyToOne

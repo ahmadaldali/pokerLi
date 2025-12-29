@@ -17,8 +17,8 @@ public class CreateSprintRequest {
   private String name;
 
   @NotBlank(message = "{error.card_deck.required}")
-  @jakarta.validation.constraints.Pattern(regexp = "^\\{.*\\}$|^\\[.*\\]$", message = "{error.card_deck_should_be_json}")
-  private String card_deck;
+  private String cardDeck;
 }
+
 
 

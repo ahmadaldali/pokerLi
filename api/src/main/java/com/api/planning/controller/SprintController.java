@@ -22,7 +22,7 @@ public class SprintController {
 
   @PostMapping("")
   public ResponseEntity<SuccessResponse> create(@Valid @RequestBody CreateSprintRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(sprintService.createSprint(request.getName(), request.getCard_deck(), userDetails.getUserId()));
+    return ResponseEntity.ok(sprintService.createSprint(request.getName(), request.getCardDeck(), userDetails.getUserId()));
   }
 
   @GetMapping("/{id}")
@@ -39,12 +39,12 @@ public class SprintController {
   @PostMapping("/{id}/start-new-voting")
   public ResponseEntity<UserStoryResponse> startNewVoting(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     // create the generic user story for the sprint (no info just voting)
-    return ResponseEntity.ok(sprintService.createUserStory(id,  userDetails.getUserId(), null, null, null));
+    return ResponseEntity.ok(sprintService.createUserStory(true, id,  userDetails.getUserId(), null, null, null));
   }
 
   @PostMapping("{id}/user-stories")
   public ResponseEntity<UserStoryResponse> createUserStory(@PathVariable Long id, @Valid @RequestBody CreateUserStoryRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(sprintService.createUserStory(id, userDetails.getUserId(), request.getName(), request.getDescription(), request.getLink()));
+    return ResponseEntity.ok(sprintService.createUserStory(false, id, userDetails.getUserId(), request.getName(), request.getDescription(), request.getLink()));
   }
 
 }

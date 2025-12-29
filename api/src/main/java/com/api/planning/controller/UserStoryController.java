@@ -29,7 +29,7 @@ public class UserStoryController {
   }
 
   @PostMapping("/{id}/reveal")
-  public ResponseEntity<SuccessResponse> reveal(@Valid @RequestBody EstimateUserStoryRequest request, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+  public ResponseEntity<SuccessResponse> reveal(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.reveal(id,  userDetails.getUserId()));
   }
 }

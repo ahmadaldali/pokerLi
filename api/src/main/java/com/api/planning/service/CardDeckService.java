@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @Service
 public class CardDeckService {
 
-  public static final List<Integer> DEFAULT_DECK = List.of(1, 2, 3, 5, 8, 13, 21);
+  public static final List<Integer> DEFAULT_DECK = List.of(1, 2, 3, 5, 8);
   private final ObjectMapper objectMapper;
 
   // check a value
@@ -75,8 +76,9 @@ public class CardDeckService {
       // Generate sequence
       List<Double> sequence = new ArrayList<>();
       sequence.add(start);
-
+      System.out.println(start);
       for (int i = 1; i <= length; i++) {
+        System.out.println(formatValue);
         sequence.add(sequence.get(i - 1) + formatValue);
       }
 
@@ -104,18 +106,18 @@ public class CardDeckService {
     return format;
   }
 
+
   private double safelyEvaluateFormat(String expression) {
-    // Simple safe math expression evaluator
     try {
       expression = expression.replaceAll("[^0-9+\\-*/(). ]", "");
-      ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-      Object result = engine.eval(expression);
-      return result instanceof Number ? ((Number) result).doubleValue() : 0;
+      return new java.util.Scanner(expression).nextDouble();
     } catch (Exception e) {
       log.warn("Failed to evaluate format expression: {}", expression, e);
       return 0;
     }
   }
+
+
 
   private JsonNode createDefaultSequence() {
     ObjectNode defaultNode = objectMapper.createObjectNode();

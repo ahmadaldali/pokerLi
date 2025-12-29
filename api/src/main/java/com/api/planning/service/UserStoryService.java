@@ -30,19 +30,39 @@ public class UserStoryService {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public UserStoryResponse createUserStory(Long sprintId, String name, String description, String link) {
-    // name, desc, and link could be null for the generic user story
-    // generic story is a story just for voting. (no info)
-    // can be used for the start new voting feature - or when you delete all sprint's stories, a new generic will be created auto
-    UserStory entity = UserStory.builder().sprint(entityManager.getReference(Sprint.class, sprintId))
+  /**
+   * Creates a user story for a sprint.
+   * Notes:
+   * - {@code name}, {@code description}, and {@code link} may be {@code null} for a generic user story.
+   * - A generic user story is used only for voting and contains no descriptive information.
+   * - Generic user stories is created automatically when starting a new voting
+   *   or when all sprint user stories are deleted.
+   */
+  public UserStoryResponse createUserStory(
+    Long sprintId,
+    String name,
+    String description,
+    String link
+  ) {
+    UserStory userStory = UserStory.builder()
+      .sprint(entityManager.getReference(Sprint.class, sprintId))
       .name(name)
       .description(description)
       .link(link)
       .build();
 
-    userStoryRepository.save(entity);
+    userStoryRepository.save(userStory);
 
-    return userStoryResponseWrapper.toResponse(entity);
+    return userStoryResponseWrapper.toResponse(userStory);
+  }
+
+
+  public UserStoryResponse updateGenericUserStory(Long sprintId, String name, String description, String link) {
+    // find the active (not revealed) user story for the sprint
+    UserStory userStory = userStoryRepository
+      .findBySprint_IdAndNameAndIsVotingOver(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
+
+    return updateUserStoryFields(userStory, name, description, link);
   }
 
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
@@ -88,6 +108,24 @@ public class UserStoryService {
   }
 
   public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
+  }
+
+  public boolean hasActiveGenericUserStory(Long sprintId) {
+    return userStoryRepository.existsBySprint_IdAndNameAndIsVotingOver(sprintId, null, false);
+  }
+
+  public boolean hasActiveUserStory(Long sprintId) {
+    return userStoryRepository.existsBySprint_IdAndIsVotingOver(sprintId, false);
+  }
+
+  public UserStoryResponse updateUserStoryFields(UserStory userStory, String name, String description, String link) {
+    userStory.setName(name);
+    userStory.setDescription(description);
+    userStory.setLink(link);
+
+    userStoryRepository.save(userStory);
+
+    return userStoryResponseWrapper.toResponse(userStory);
   }
 
 }

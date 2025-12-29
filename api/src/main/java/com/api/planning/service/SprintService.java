@@ -4,6 +4,7 @@ import com.api.common.dto.SuccessResponse;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
+import com.api.planning.dto.request.CardDeckDto;
 import com.api.planning.dto.response.SprintResponse;
 import com.api.planning.dto.response.SprintResponseWrapper;
 import com.api.planning.dto.response.UserStoryResponse;
@@ -89,10 +90,47 @@ public class SprintService {
   }
 
   // sprint user-stories
-  public UserStoryResponse createUserStory(Long sprintId, Long userId, String name, String description, String link) {
-    SprintResponse sprint = getSprint(sprintId, userId); // make sure sprint is existing and the user is a member
+  /**
+   * Creates or updates a user story for a sprint.
+   * A sprint can have only one active generic user story at a time.
+   * Starting a new voting session is allowed only when no other active stories exist.
+   */
+  public UserStoryResponse createUserStory(
+    Boolean isGenericUS,
+    Long sprintId,
+    Long userId,
+    String name,
+    String description,
+    String link
+  ) {
+    // ensure sprint exists and user is a member
+    SprintResponse sprint = getSprint(sprintId, userId);
 
-    return userStoryService.createUserStory(sprint.getId(), name, description, link);
+    boolean hasActiveGenericUS = userStoryService.hasActiveGenericUserStory(sprintId);
+    boolean hasActiveUS = userStoryService.hasActiveUserStory(sprintId);
+
+    // case 1: active generic user story already exists
+    if (hasActiveGenericUS) {
+      if (isGenericUS) {
+        // cannot start a new voting while one is ongoing
+        throw new ValidationException("error.userStory.newVoting.ongoing");
+      }
+      // update the existing generic user story
+      return userStoryService.updateGenericUserStory(
+        sprint.getId(), name, description, link
+      );
+    }
+
+    // case 2: no generic user story exists yet
+    if (isGenericUS && hasActiveUS) {
+      // cannot start new voting if other user stories already exist
+      throw new ForbiddenException();
+    }
+
+    return userStoryService.createUserStory(
+      sprint.getId(), name, description, link
+    );
   }
+
 
 }
