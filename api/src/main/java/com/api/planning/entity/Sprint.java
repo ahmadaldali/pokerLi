@@ -8,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -30,4 +33,11 @@ public class Sprint {
   @ManyToOne
   @JoinColumn(name = "creator_id")
   private User creator;
+
+  @OneToMany(
+    mappedBy = "sprint",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private List<UserStory> userStories = new ArrayList<>();
 }

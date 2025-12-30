@@ -4,9 +4,10 @@ import com.api.common.dto.SuccessResponse;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
-import com.api.planning.dto.response.SprintResponse;
-import com.api.planning.dto.response.SprintResponseWrapper;
-import com.api.planning.dto.response.UserStoryResponse;
+import com.api.planning.dto.response.sprint.SprintResponseWithUserStories;
+import com.api.planning.dto.response.sprint.SprintResponseWithUserStoriesWrapper;
+import com.api.planning.dto.response.sprint.SprintResponseWrapper;
+import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.entity.Sprint;
 import com.api.planning.repository.SprintRepository;
 import com.api.user.entity.User;
@@ -26,18 +27,23 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional
 public class SprintService {
-
+  // repo
   private final SprintRepository sprintRepository;
-  private final SprintResponseWrapper sprintResponseWrapper;
+
+  // services
   private final UserStoryService userStoryService;
   private final ParticipantService participantService;
   private final UserService  userService;
+
+  // response
+  private final SprintResponseWrapper sprintResponseWrapper;
+  private final SprintResponseWithUserStoriesWrapper sprintResponseWithUserStoriesWrapper;
 
 
   @PersistenceContext
   private EntityManager entityManager;
 
-  public SuccessResponse createSprint(String name, JsonNode cardDeck, Long userId) {
+  public SuccessResponse create(String name, JsonNode cardDeck, Long userId) {
     userService.ensureAdmin(userId);
 
     Sprint sprint = Sprint.builder().name(name).cardDeck(cardDeck).creator(entityManager.getReference(User.class, userId)).build();
@@ -54,12 +60,12 @@ public class SprintService {
     return new SuccessResponse("success");
   }
 
-  public SprintResponse getSprint(Long sprintId, Long userId) {
+  public SprintResponseWithUserStories get(Long sprintId, Long userId) {
     Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
 
     participantService.ensureMember(userId, sprintId);
 
-    return sprintResponseWrapper.toResponse(sprint);
+    return sprintResponseWithUserStoriesWrapper.toResponse(sprint);
   }
 
 
@@ -104,7 +110,7 @@ public class SprintService {
     String link
   ) {
     // ensure sprint exists and user is a member
-    SprintResponse sprint = getSprint(sprintId, userId);
+    Sprint sprint = getSprint(sprintId, userId);
 
     boolean hasActiveGenericUS = userStoryService.hasActiveGenericUserStory(sprintId);
     boolean hasActiveUS = userStoryService.hasActiveUserStory(sprintId);
@@ -127,10 +133,18 @@ public class SprintService {
       throw new ForbiddenException();
     }
 
-    return userStoryService.createUserStory(
+    return userStoryService.create(
       sprint.getId(), name, description, link
     );
   }
 
+  // get the entity
+  public Sprint getSprint(Long sprintId, Long userId) {
+    Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
+
+    participantService.ensureMember(userId, sprintId);
+
+    return sprint;
+  }
 
 }

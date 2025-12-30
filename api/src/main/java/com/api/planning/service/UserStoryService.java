@@ -4,8 +4,8 @@ import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
 import com.api.common.exception.ValidationException;
 import com.api.planning.dto.response.EstimationResultResponse;
-import com.api.planning.dto.response.UserStoryResponse;
-import com.api.planning.dto.response.UserStoryResponseWrapper;
+import com.api.planning.dto.response.userstory.UserStoryResponse;
+import com.api.planning.dto.response.userstory.UserStoryResponseWrapper;
 import com.api.planning.entity.Sprint;
 import com.api.planning.entity.UserStory;
 import com.api.planning.repository.UserStoryRepository;
@@ -41,7 +41,7 @@ public class UserStoryService {
    * - Generic user stories is created automatically when starting a new voting
    *   or when all sprint user stories are deleted.
    */
-  public UserStoryResponse createUserStory(
+  public UserStoryResponse create(
     Long sprintId,
     String name,
     String description,
@@ -59,13 +59,24 @@ public class UserStoryService {
     return userStoryResponseWrapper.toResponse(userStory);
   }
 
-
   public UserStoryResponse updateGenericUserStory(Long sprintId, String name, String description, String link) {
     // find the active (not revealed) user story for the sprint
     UserStory userStory = userStoryRepository
       .findBySprint_IdAndNameAndIsVotingOver(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
 
-    return updateUserStoryFields(userStory, name, description, link);
+    updateUserStoryFields(userStory, name, description, link);
+
+    return userStoryResponseWrapper.toResponse(userStory);
+  }
+
+  @Transactional
+  public SuccessResponse delete(Long userStoryId, Long userId) {
+    UserStory userStory = getUserStoryWithSprint(userStoryId, userId).userStory();
+
+    // Cascades deletion for Estimations and EstimationResults
+    userStoryRepository.deleteById(userStory.getId());
+
+    return new SuccessResponse("");
   }
 
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
@@ -122,7 +133,7 @@ public class UserStoryService {
   public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
   }
 
-  private UserStoryAndSprint validateUserStoryAccess(Long userStoryId, Long userId) {
+  private UserStoryAndSprint getUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStory userStory = userStoryRepository.findById(userStoryId)
       .orElseThrow(EntityNotFoundException::new);
 
@@ -133,7 +144,7 @@ public class UserStoryService {
   }
 
   public UserStoryAndSprint getActiveUserStoryWithSprint(Long userStoryId, Long userId) {
-    UserStoryAndSprint userStoryWithSprint = this.validateUserStoryAccess(userStoryId, userId);
+    UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
     if (userStoryWithSprint.userStory().getIsVotingOver()) {
       throw new ValidationException("error.userStory.already_revealed");
@@ -143,7 +154,7 @@ public class UserStoryService {
   }
 
   public UserStoryAndSprint getVotedUserStoryWithSprint(Long userStoryId, Long userId) {
-    UserStoryAndSprint userStoryWithSprint = this.validateUserStoryAccess(userStoryId, userId);
+    UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
     if (!userStoryWithSprint.userStory().getIsVotingOver()) {
       throw new ValidationException("error.userStory.not_revealed");
@@ -160,14 +171,12 @@ public class UserStoryService {
     return userStoryRepository.existsBySprint_IdAndIsVotingOver(sprintId, false);
   }
 
-  public UserStoryResponse updateUserStoryFields(UserStory userStory, String name, String description, String link) {
+  public void updateUserStoryFields(UserStory userStory, String name, String description, String link) {
     userStory.setName(name);
     userStory.setDescription(description);
     userStory.setLink(link);
 
     userStoryRepository.save(userStory);
-
-    return userStoryResponseWrapper.toResponse(userStory);
   }
 
 }

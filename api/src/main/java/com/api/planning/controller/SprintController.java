@@ -3,8 +3,8 @@ package com.api.planning.controller;
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.CreateSprintRequest;
 import com.api.planning.dto.request.CreateUserStoryRequest;
-import com.api.planning.dto.response.SprintResponse;
-import com.api.planning.dto.response.UserStoryResponse;
+import com.api.planning.dto.response.userstory.UserStoryResponse;
+import com.api.planning.dto.response.sprint.SprintResponseWithUserStories;
 import com.api.planning.service.SprintService;
 import com.api.user.service.CustomUserDetails;
 import jakarta.validation.Valid;
@@ -22,12 +22,12 @@ public class SprintController {
 
   @PostMapping("")
   public ResponseEntity<SuccessResponse> create(@Valid @RequestBody CreateSprintRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(sprintService.createSprint(request.getName(), request.getCardDeck(), userDetails.getUserId()));
+    return ResponseEntity.ok(sprintService.create(request.getName(), request.getCardDeck(), userDetails.getUserId()));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<SprintResponse> get(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(sprintService.getSprint(id, userDetails.getUserId()));
+  public ResponseEntity<SprintResponseWithUserStories> get(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(sprintService.get(id, userDetails.getUserId()));
   }
 
   @PostMapping("/{id}/join")

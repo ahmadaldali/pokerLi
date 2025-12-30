@@ -37,4 +37,9 @@ public class UserStoryController {
   public ResponseEntity<SuccessResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.voteAgain(id,  userDetails.getUserId()));
   }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<SuccessResponse> delete(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.delete(id,  userDetails.getUserId()));
+  }
 }

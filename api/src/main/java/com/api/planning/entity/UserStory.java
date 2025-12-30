@@ -3,6 +3,9 @@ package com.api.planning.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -38,4 +41,20 @@ public class UserStory {
       isVotingOver = Boolean.FALSE;
     }
   }
+
+  /* Estimations (ongoing + historical) */
+  @OneToMany(
+    mappedBy = "userStory",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private List<Estimation> estimations = new ArrayList<>();
+
+  /* Estimation history */
+  @OneToMany(
+    mappedBy = "userStory",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+  )
+  private List<EstimationResult> estimationResults = new ArrayList<>();
 }
