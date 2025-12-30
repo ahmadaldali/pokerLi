@@ -1,6 +1,7 @@
 package com.api.planning.service;
 
 
+import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 @Service
@@ -40,8 +42,8 @@ public class EstimationService {
   }
 
   public SuccessResponse updateEstimation(Long userStoryId, Long userId, Integer estimation) {
-    // get the ongoing estimation only to update it (don't get from the history)
-    Estimation entity = estimationRepository.findByUser_IdAndUserStory_IdAndIsOver(userId, userStoryId, false)
+    // get the ongoing estimation (estimationResult is null) only to update it
+    Estimation entity = estimationRepository.findByUser_IdAndUserStory_IdAndEstimationResult_Id(userId, userStoryId, null)
       .orElseThrow(() -> new ValidationException("error.estimation.notFound"));
 
     entity.setEstimation(estimation);
@@ -58,15 +60,15 @@ public class EstimationService {
     }
 
     // un-vote the ongoing estimation
-    estimationRepository.deleteByUser_IdAndUserStory_IdAndIsOver(userId, userStoryId, false);
+    estimationRepository.deleteByUser_IdAndUserStory_IdAndEstimationResult_Id(userId, userStoryId, null);
 
     return new SuccessResponse("");
   }
 
   // ======== HELPERS ====================
   public boolean userHasOngoingEstimation(Long userStoryId, Long userId) {
-    // check only the ongoing estimations - don't look at everything (history)
-    return estimationRepository.existsByUser_IdAndUserStory_IdAndIsOver(userStoryId, userId, false);
+    // check only the ongoing estimations (estimationResultId is NULL)
+    return estimationRepository.existsByUser_IdAndUserStory_IdAndEstimationResult_Id(userStoryId, userId, null);
   }
 
   public SuccessResponse createOrUpdateEstimation(Long userStoryId, Long userId, Integer estimation) {
@@ -77,22 +79,29 @@ public class EstimationService {
     }
   }
 
-  @Transactional
-  public double reveal(Long userStoryId) {
-    List<Estimation> estimations = estimationRepository.findByUserStory_Id(userStoryId);
+  public EstimationStats getEstimationStatsForStory(Long userStoryId) {
+
+    List<Estimation> estimations =
+      estimationRepository.findByUserStory_IdAndEstimationResult_Id(userStoryId, null);
 
     if (estimations.isEmpty()) {
-      return 0.0;
+      return new EstimationStats(0.0, 0.0, 0);
     }
 
-    estimationRepository.markAllAsOver(userStoryId);
-
-    double average = estimations.stream()
+    DoubleSummaryStatistics stats = estimations.stream()
       .mapToDouble(Estimation::getEstimation)
-      .average()
-      .orElse(0.0);
+      .summaryStatistics();
 
-    return Math.round(average * 100.0) / 100.0;
+    double total = stats.getSum();
+    long count = stats.getCount();
+    double average = Math.round(stats.getAverage() * 100.0) / 100.0;
+
+    return new EstimationStats(total, average, count);
+  }
+
+
+  public void reveal(Long userStoryId, Long estimationResultId) {
+    estimationRepository.attachResultToOngoingEstimations(userStoryId, estimationResultId);
   }
 
 }

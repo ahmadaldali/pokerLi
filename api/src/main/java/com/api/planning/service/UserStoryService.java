@@ -1,7 +1,9 @@
 package com.api.planning.service;
 
+import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
 import com.api.common.exception.ValidationException;
+import com.api.planning.dto.response.EstimationResultResponse;
 import com.api.planning.dto.response.UserStoryResponse;
 import com.api.planning.dto.response.UserStoryResponseWrapper;
 import com.api.planning.entity.Sprint;
@@ -24,6 +26,7 @@ public class UserStoryService {
   private final UserStoryRepository userStoryRepository;
   private final UserStoryResponseWrapper userStoryResponseWrapper;
   private final EstimationService estimationService;
+  private final EstimationResultService estimationResultService;
   private final CardDeckService cardDeckService;
   private final ParticipantService participantService;
 
@@ -66,7 +69,7 @@ public class UserStoryService {
   }
 
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
-    Sprint sprint = validateUserStoryAccess(userStoryId, userId).sprint();
+    Sprint sprint = getActiveUserStoryWithSprint(userStoryId, userId).sprint();
 
     // check the estimation is a valid value
     if (!cardDeckService.has(sprint.getCardDeck(), estimation))
@@ -76,30 +79,52 @@ public class UserStoryService {
   }
 
   public SuccessResponse unVote(Long userStoryId, Long userId) {
-    validateUserStoryAccess(userStoryId, userId);
+    getActiveUserStoryWithSprint(userStoryId, userId);
 
     return estimationService.deleteEstimation(userStoryId, userId);
   }
 
+  @Transactional
   public SuccessResponse reveal(Long userStoryId, Long userId) {
-    UserStory userStory = validateUserStoryAccess(userStoryId, userId).userStory();
+    UserStory userStory = getActiveUserStoryWithSprint(userStoryId, userId).userStory();
 
-    double estimation = estimationService.reveal(userStoryId);
+    EstimationStats estimationStats = estimationService.getEstimationStatsForStory(userStoryId);
+
+    // save the estimations result
+    EstimationResultResponse estResultResponse = estimationResultService.createEstimation(userStoryId, estimationStats);
+
+    // reveal estimations
+    estimationService.reveal(userStoryId, estResultResponse.getId());
+
+    // end the voting for this US
     userStory.setIsVotingOver(true);
-    userStory.setEstimation(estimation);
+    userStoryRepository.save(userStory);
+
+    return new SuccessResponse("");
+  }
+
+  /**
+   * vote again = start new voting again for a story
+   * start new voting again = is_voting_over = false
+   * So story should be already voted , is_voting_over = true
+   */
+  public SuccessResponse voteAgain(Long userStoryId, Long userId) {
+    UserStory userStory = getVotedUserStoryWithSprint(userStoryId, userId).userStory();
+
+    // open the voting again for this US
+    userStory.setIsVotingOver(false);
     userStoryRepository.save(userStory);
 
     return new SuccessResponse("");
   }
 
   // ======== HELPERS ====================
+  public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
+  }
+
   private UserStoryAndSprint validateUserStoryAccess(Long userStoryId, Long userId) {
     UserStory userStory = userStoryRepository.findById(userStoryId)
       .orElseThrow(EntityNotFoundException::new);
-
-    if (userStory.getIsVotingOver()) {
-      throw new ValidationException("error.userStory.already_revealed");
-    }
 
     Sprint sprint = userStory.getSprint();
     participantService.ensureMember(userId, sprint.getId());
@@ -107,7 +132,24 @@ public class UserStoryService {
     return new UserStoryAndSprint(userStory, sprint);
   }
 
-  public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
+  public UserStoryAndSprint getActiveUserStoryWithSprint(Long userStoryId, Long userId) {
+    UserStoryAndSprint userStoryWithSprint = this.validateUserStoryAccess(userStoryId, userId);
+
+    if (userStoryWithSprint.userStory().getIsVotingOver()) {
+      throw new ValidationException("error.userStory.already_revealed");
+    }
+
+    return userStoryWithSprint;
+  }
+
+  public UserStoryAndSprint getVotedUserStoryWithSprint(Long userStoryId, Long userId) {
+    UserStoryAndSprint userStoryWithSprint = this.validateUserStoryAccess(userStoryId, userId);
+
+    if (!userStoryWithSprint.userStory().getIsVotingOver()) {
+      throw new ValidationException("error.userStory.not_revealed");
+    }
+
+    return userStoryWithSprint;
   }
 
   public boolean hasActiveGenericUserStory(Long sprintId) {

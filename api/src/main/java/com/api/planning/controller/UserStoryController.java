@@ -32,4 +32,9 @@ public class UserStoryController {
   public ResponseEntity<SuccessResponse> reveal(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.reveal(id,  userDetails.getUserId()));
   }
+
+  @PostMapping("/{id}/vote-again")
+  public ResponseEntity<SuccessResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.voteAgain(id,  userDetails.getUserId()));
+  }
 }

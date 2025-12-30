@@ -32,9 +32,6 @@ public class UserStory {
   @Column(name = "link", length = 500)
   private String link;
 
-  @Column(name = "estimation", nullable = false)
-  private double estimation;
-
   @PrePersist
   private void prePersist() {
     if (isVotingOver == null) {

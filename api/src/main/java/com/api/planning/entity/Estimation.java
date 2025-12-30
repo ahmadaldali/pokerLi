@@ -20,26 +20,20 @@ public class Estimation {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_story_id")
+  @JoinColumn(name = "user_story_id", nullable = false, updatable = false)
   private UserStory userStory;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_id", nullable = false, updatable = false)
   private User user;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "estimation_result_id")
+  private EstimationResult estimationResult; // having a value for estimation_result_id means one voting is done for this story
 
   @Column(name = "date")
   private LocalDateTime date;
 
-  @Column(name = "is_over" , nullable = false)
-  private Boolean isOver;
-
   @Column(name = "estimation", nullable = false)
   private double estimation;
-
-  @PrePersist
-  private void prePersist() {
-    if (isOver == null) {
-      isOver = Boolean.FALSE;
-    }
-  }
 }
