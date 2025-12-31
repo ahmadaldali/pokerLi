@@ -1,11 +1,11 @@
 package com.api.planning.service;
 
 import com.api.common.dto.SuccessResponse;
+import com.api.common.enums.SprintInclude;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
-import com.api.planning.dto.response.sprint.SprintResponseWithUserStories;
-import com.api.planning.dto.response.sprint.SprintResponseWithUserStoriesWrapper;
+import com.api.planning.dto.response.sprint.SprintResponse;
 import com.api.planning.dto.response.sprint.SprintResponseWrapper;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.entity.Sprint;
@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -33,12 +35,10 @@ public class SprintService {
   // services
   private final UserStoryService userStoryService;
   private final ParticipantService participantService;
-  private final UserService  userService;
+  private final UserService userService;
 
   // response
   private final SprintResponseWrapper sprintResponseWrapper;
-  private final SprintResponseWithUserStoriesWrapper sprintResponseWithUserStoriesWrapper;
-
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -60,14 +60,13 @@ public class SprintService {
     return new SuccessResponse("success");
   }
 
-  public SprintResponseWithUserStories get(Long sprintId, Long userId) {
-    Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
+  public SprintResponse get(Long sprintId, Long userId, Set<String> include) {
+    Set<SprintInclude> includes = SprintInclude.parse(include);
 
-    participantService.ensureMember(userId, sprintId);
+    Sprint sprint = this.getSprint(sprintId, userId, includes);
 
-    return sprintResponseWithUserStoriesWrapper.toResponse(sprint);
+    return sprintResponseWrapper.toResponse(sprint, includes);
   }
-
 
   public SuccessResponse join(Long sprintId, Long memberId) {
     Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
@@ -95,7 +94,8 @@ public class SprintService {
     return new SuccessResponse("success");
   }
 
-  // sprint user-stories
+  // ========================= sprint user-stories ==========================
+
   /**
    * Creates or updates a user story for a sprint.
    * A sprint can have only one active generic user story at a time.
@@ -110,7 +110,7 @@ public class SprintService {
     String link
   ) {
     // ensure sprint exists and user is a member
-    Sprint sprint = getSprint(sprintId, userId);
+    Sprint sprint = getSprint(sprintId, userId, Set.of());
 
     boolean hasActiveGenericUS = userStoryService.hasActiveGenericUserStory(sprintId);
     boolean hasActiveUS = userStoryService.hasActiveUserStory(sprintId);
@@ -138,13 +138,38 @@ public class SprintService {
     );
   }
 
-  // get the entity
-  public Sprint getSprint(Long sprintId, Long userId) {
-    Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
-
+  // ======== HELPERS ====================
+  public Sprint getSprint(
+    Long sprintId,
+    Long userId,
+    Set<SprintInclude> includes
+  ) {
     participantService.ensureMember(userId, sprintId);
 
-    return sprint;
+    return findSprintByInclude(sprintId, includes);
+  }
+
+  private Sprint findSprintByInclude(
+    Long sprintId,
+    Set<SprintInclude> includes
+  ) {
+    boolean stories = includes.contains(SprintInclude.USER_STORIES);
+    boolean estimationResults = includes.contains(SprintInclude.ESTIMATION_RESULTS);
+    boolean estimations = includes.contains(SprintInclude.ESTIMATIONS);
+
+    Optional<Sprint> sprint = Optional.empty();
+    int flags = (stories ? 4 : 0) | (estimations ? 2 : 0) | (estimationResults ? 1 : 0);
+
+    sprint = switch (flags) {
+      case 7 /* all true */ -> sprintRepository.findFull(sprintId);  // 4+2+1
+      case 6 /* stories + estimations */ -> sprintRepository.findWithStoriesWithEstimations(sprintId);  // 4+2
+      case 5 /* stories + estimationResults */ ->
+        sprintRepository.findWithStoriesWithEstimationResults(sprintId);  // 4+1
+      case 4 /* stories only */ -> sprintRepository.findWithStories(sprintId);
+      default -> sprintRepository.findById(sprintId);  // no flags or other combinations (only the sprint)
+    };
+
+    return sprint.orElseThrow(EntityNotFoundException::new);
   }
 
 }

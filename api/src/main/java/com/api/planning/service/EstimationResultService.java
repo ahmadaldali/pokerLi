@@ -2,8 +2,8 @@ package com.api.planning.service;
 
 
 import com.api.common.dto.EstimationStats;
-import com.api.planning.dto.response.EstimationResultResponse;
-import com.api.planning.dto.response.EstimationResultResponseWrapper;
+import com.api.planning.dto.response.estimation.EstimationResultResponse;
+import com.api.planning.dto.response.estimation.EstimationResultResponseWrapper;
 import com.api.planning.entity.EstimationResult;
 import com.api.planning.entity.UserStory;
 import com.api.planning.repository.EstimationResultRepository;

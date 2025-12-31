@@ -93,7 +93,7 @@ public class EstimationService {
       .summaryStatistics();
 
     double total = stats.getSum();
-    long count = stats.getCount();
+    int count = (int) stats.getCount();
     double average = Math.round(stats.getAverage() * 100.0) / 100.0;
 
     return new EstimationStats(total, average, count);

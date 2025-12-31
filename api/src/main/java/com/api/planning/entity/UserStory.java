@@ -3,8 +3,8 @@ package com.api.planning.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -48,7 +48,7 @@ public class UserStory {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
-  private List<Estimation> estimations = new ArrayList<>();
+  private Set<Estimation> estimations = new HashSet<>();
 
   /* Estimation history */
   @OneToMany(
@@ -56,5 +56,5 @@ public class UserStory {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
-  private List<EstimationResult> estimationResults = new ArrayList<>();
+  private Set<EstimationResult> estimationResults = new HashSet<>();
 }

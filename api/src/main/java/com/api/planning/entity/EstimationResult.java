@@ -29,7 +29,7 @@ public class EstimationResult {
   private double estimation;
 
   @Column(name = "count", nullable = false)
-  private double count;
+  private int count;
 
   @Column(name = "total", nullable = false)
   private double total;

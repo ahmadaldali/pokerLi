@@ -1,4 +1,5 @@
-package com.api.planning.dto.response;
+package com.api.planning.dto.response.estimation;
+
 
 import com.api.planning.entity.EstimationResult;
 import org.springframework.stereotype.Service;
@@ -7,7 +8,10 @@ import org.springframework.stereotype.Service;
 public record EstimationResultResponseWrapper() {
   public EstimationResultResponse toResponse(EstimationResult estimationResult) {
     return new EstimationResultResponse(
-      estimationResult.getId()
+      estimationResult.getId(),
+      estimationResult.getTotal(),
+      estimationResult.getEstimation(),
+      estimationResult.getCount()
     );
   }
 }

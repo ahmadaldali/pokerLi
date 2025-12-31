@@ -30,7 +30,7 @@ public class Sprint {
   @Column(name = "card_deck", columnDefinition = "jsonb")
   private JsonNode cardDeck;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "creator_id")
   private User creator;
 

@@ -3,7 +3,7 @@ package com.api.planning.service;
 import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
 import com.api.common.exception.ValidationException;
-import com.api.planning.dto.response.EstimationResultResponse;
+import com.api.planning.dto.response.estimation.EstimationResultResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponseWrapper;
 import com.api.planning.entity.Sprint;
