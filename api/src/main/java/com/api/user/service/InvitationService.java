@@ -51,7 +51,7 @@ public class InvitationService {
   }
 
   public Invitation getInvitationByCode(String refCode) {
-    return invitationRepository.findByRefCode(refCode).orElseThrow(() -> new ValidationException("error.invitation.not_found"));
+    return invitationRepository.findByRefCode(refCode).orElseThrow(() -> new ValidationException("error.invitation.notFound"));
   }
 
   public void ensureActive(Invitation invitation) {

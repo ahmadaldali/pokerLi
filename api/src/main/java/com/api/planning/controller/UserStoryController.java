@@ -3,7 +3,6 @@ package com.api.planning.controller;
 
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.EstimateUserStoryRequest;
-import com.api.planning.dto.response.UserStoryResponse;
 import com.api.planning.service.UserStoryService;
 import com.api.user.service.CustomUserDetails;
 import jakarta.validation.Valid;
@@ -27,5 +26,20 @@ public class UserStoryController {
   @PostMapping("/{id}/un-vote")
   public ResponseEntity<SuccessResponse> unVote(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.unVote(id,  userDetails.getUserId()));
+  }
+
+  @PostMapping("/{id}/reveal")
+  public ResponseEntity<SuccessResponse> reveal(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.reveal(id,  userDetails.getUserId()));
+  }
+
+  @PostMapping("/{id}/vote-again")
+  public ResponseEntity<SuccessResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.voteAgain(id,  userDetails.getUserId()));
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<SuccessResponse> delete(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    return ResponseEntity.ok(userStoryService.delete(id,  userDetails.getUserId()));
   }
 }

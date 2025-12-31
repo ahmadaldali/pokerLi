@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,6 +51,15 @@ public class GlobalExceptionHandler {
       .forEach(cv -> errors.put(cv.getPropertyPath().toString(), cv.getMessage()));
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<Map<String, String>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", ex.getMessage());
+    errors.put("method", ex.getMethod());
+
+    return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errors);
   }
 
   @ExceptionHandler(ValidationException.class)

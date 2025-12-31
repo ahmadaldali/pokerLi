@@ -9,9 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class InviteUser {
-
   @NotBlank(message = "{error.email.required}")
   @Email(message = "{error.email.invalid}")
   private String email;
-
 }

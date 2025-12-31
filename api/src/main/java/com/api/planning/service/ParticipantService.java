@@ -25,7 +25,6 @@ public class ParticipantService {
 
   // TODO: change the type of the returned value
   public void createParticipant(Long sprintId, Long memberId) {
-
     Participant participant = Participant.builder()
       .member(entityManager.getReference(User.class, memberId))
       .sprint(entityManager.getReference(Sprint.class, sprintId))
@@ -44,5 +43,4 @@ public class ParticipantService {
   public boolean isMember(Long memberId, Long sprintId) {
     return participantRepository.existsByMemberIdAndSprintId(memberId, sprintId);
   }
-
 }

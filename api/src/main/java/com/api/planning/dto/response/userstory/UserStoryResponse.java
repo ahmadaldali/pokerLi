@@ -1,0 +1,26 @@
+package com.api.planning.dto.response.userstory;
+
+
+import com.api.planning.dto.response.estimation.EstimationResponse;
+import com.api.planning.dto.response.estimation.EstimationResultResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+@Builder
+public class UserStoryResponse {
+  private Long id;
+  private String name;
+  private String description;
+  private String link;
+  private Boolean isVotingOver;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private List<EstimationResultResponse> estimationResults;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private List<EstimationResponse> estimations;
+}

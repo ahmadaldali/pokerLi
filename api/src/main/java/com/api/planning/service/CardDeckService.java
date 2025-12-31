@@ -1,6 +1,6 @@
 package com.api.planning.service;
 
-import com.api.common.exception.ValidationException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -9,13 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.StreamSupport;
+
 
 
 @Slf4j
@@ -24,11 +23,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class CardDeckService {
 
-  public static final List<Integer> DEFAULT_DECK = List.of(1, 2, 3, 5, 8, 13, 21);
+  public static final List<Integer> DEFAULT_DECK = List.of(1, 2, 3, 5, 8);
   private final ObjectMapper objectMapper;
 
   // check a value
-  public boolean has(String cardDeckJson, Integer estimation) {
+  public boolean has(JsonNode cardDeckJson, Integer estimation) {
     JsonNode cardDeckSequence = this.getCardDeckSequence(cardDeckJson);
     JsonNode sequence = cardDeckSequence.get("sequence");
 
@@ -36,15 +35,17 @@ public class CardDeckService {
   }
 
   // return the sequence
-  public JsonNode getCardDeckSequence(String cardDeckJson) {
+  public JsonNode getCardDeckSequence(JsonNode cardDeckJson) {
     JsonNode defaultSequence = createDefaultSequence();
 
     try {
-      if (cardDeckJson == null || cardDeckJson.trim().isEmpty()) {
+      if (cardDeckJson == null) {
         return defaultSequence;
       }
 
-      JsonNode cardDeckObject = objectMapper.readTree(cardDeckJson);
+      JsonNode cardDeckObject;
+      cardDeckObject = cardDeckJson;
+
       JsonNode sequenceWithFormat = generateSequence(cardDeckObject);
 
       ((ObjectNode) cardDeckObject).set("sequence", sequenceWithFormat.get("sequence"));
@@ -75,7 +76,6 @@ public class CardDeckService {
       // Generate sequence
       List<Double> sequence = new ArrayList<>();
       sequence.add(start);
-
       for (int i = 1; i <= length; i++) {
         sequence.add(sequence.get(i - 1) + formatValue);
       }
@@ -104,18 +104,19 @@ public class CardDeckService {
     return format;
   }
 
+
+  //TODO: find a better way
   private double safelyEvaluateFormat(String expression) {
-    // Simple safe math expression evaluator
     try {
       expression = expression.replaceAll("[^0-9+\\-*/(). ]", "");
-      ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-      Object result = engine.eval(expression);
-      return result instanceof Number ? ((Number) result).doubleValue() : 0;
+      return new java.util.Scanner(expression).nextDouble();
     } catch (Exception e) {
       log.warn("Failed to evaluate format expression: {}", expression, e);
       return 0;
     }
   }
+
+
 
   private JsonNode createDefaultSequence() {
     ObjectNode defaultNode = objectMapper.createObjectNode();
