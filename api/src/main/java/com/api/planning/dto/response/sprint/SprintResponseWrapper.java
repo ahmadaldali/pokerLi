@@ -35,30 +35,12 @@ public record SprintResponseWrapper(
         .toList());
     }
 
+    if (includes.contains(SprintInclude.MEMBERS)) {
+      base.setMembers(sprint.getMembers());
+    }
+
     return base;
   }
-
-/*
-  public SprintResponseWithUserStoriesDetails toResponseWithUserStoriesAndEstimations(Sprint sprint) {
-    JsonNode safeCopy = objectMapper.valueToTree(sprint.getCardDeck());
-
-    SprintResponse base = SprintResponse.builder()
-      .id(sprint.getId())
-      .name(sprint.getName())
-      .cardDeck(cardDeckService.getCardDeckSequence(safeCopy))
-      .creator(sprint.getCreator().getName())
-      .build();
-
-    return SprintResponseWithUserStoriesDetails.builder()
-      .sprint(base)
-      .userStories(
-        sprint.getUserStories()
-          .stream()
-          .map(userStoryResponseWithEstimationWrapper::toResponse)
-          .toList()
-      )
-      .build();
-  }*/
 }
 
 

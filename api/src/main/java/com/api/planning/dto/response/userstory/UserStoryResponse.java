@@ -23,4 +23,7 @@ public class UserStoryResponse {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<EstimationResponse> estimations;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private List<Long> voters;
 }

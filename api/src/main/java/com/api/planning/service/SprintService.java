@@ -156,18 +156,35 @@ public class SprintService {
     boolean stories = includes.contains(SprintInclude.USER_STORIES);
     boolean estimationResults = includes.contains(SprintInclude.ESTIMATION_RESULTS);
     boolean estimations = includes.contains(SprintInclude.ESTIMATIONS);
+    boolean members = includes.contains(SprintInclude.MEMBERS);
 
     Optional<Sprint> sprint = Optional.empty();
-    int flags = (stories ? 4 : 0) | (estimations ? 2 : 0) | (estimationResults ? 1 : 0);
+    int flags =
+      (members ? 8 : 0) |
+        (stories ? 4 : 0) |
+        (estimations ? 2 : 0) |
+        (estimationResults ? 1 : 0);
 
     sprint = switch (flags) {
-      case 7 /* all true */ -> sprintRepository.findFull(sprintId);  // 4+2+1
-      case 6 /* stories + estimations */ -> sprintRepository.findWithStoriesWithEstimations(sprintId);  // 4+2
-      case 5 /* stories + estimationResults */ ->
-        sprintRepository.findWithStoriesWithEstimationResults(sprintId);  // 4+1
-      case 4 /* stories only */ -> sprintRepository.findWithStories(sprintId);
-      default -> sprintRepository.findById(sprintId);  // no flags or other combinations (only the sprint)
+
+      // STORIES + ESTIMATIONS + RESULTS
+      case 15,7 -> sprintRepository.findFull(sprintId);
+
+      // STORIES + ESTIMATIONS
+      case 14,6 -> sprintRepository.findWithStoriesWithEstimations(sprintId);
+
+      // STORIES + RESULTS
+      case 13,5 -> sprintRepository.findWithStoriesWithEstimationResults(sprintId);
+
+      // STORIES only
+      case 12,4 -> sprintRepository.findWithStories(sprintId);
+
+      // MEMBERS only
+      case 8 -> sprintRepository.findWithMembers(sprintId);
+
+      default -> sprintRepository.findById(sprintId);
     };
+
 
     return sprint.orElseThrow(EntityNotFoundException::new);
   }

@@ -31,18 +31,25 @@ public record UserStoryResponseWrapper(
 
     if (safeIncludes.contains(SprintInclude.ESTIMATION_RESULTS)) {
       response.setEstimationResults(
-        userStory.getEstimationResults()
-          .stream()
+        userStory.getEstimationResults().stream()
           .map(estimationResultResponseWrapper::toResponse)
           .toList()
       );
     }
 
     if (safeIncludes.contains(SprintInclude.ESTIMATIONS)) {
+      var estimations = userStory.getEstimations();
+
       response.setEstimations(
-        userStory.getEstimations()
-          .stream()
+        estimations.stream()
           .map(estimationResponseWrapper::toResponse)
+          .toList()
+      );
+
+      response.setVoters(
+        estimations.stream()
+          .map(estimation -> estimation.getUser().getId())
+          .distinct()
           .toList()
       );
     }
