@@ -1,6 +1,6 @@
 package com.api.event.publisher;
 
-import com.api.event.dto.UserStoryDetailsDTO;
+
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
