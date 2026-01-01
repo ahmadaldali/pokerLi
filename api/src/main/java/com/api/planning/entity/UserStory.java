@@ -22,7 +22,7 @@ public class UserStory {
   @org.hibernate.validator.constraints.Length(min = 3, max = 50)
   private String name;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sprint_id", nullable = false)
   private Sprint sprint;
 

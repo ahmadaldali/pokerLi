@@ -17,7 +17,15 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
 
   @EntityGraph(attributePaths = {
     "creator",
+    "members"
+  })
+  @Query("select s from Sprint s where s.id = :id")
+  Optional<Sprint> findWithMembers(Long id);
+
+  @EntityGraph(attributePaths = {
+    "creator",
     "userStories",
+    "members"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStories(Long id);
@@ -25,7 +33,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
   @EntityGraph(attributePaths = {
     "creator",
     "userStories",
-    "userStories.estimationResults"
+    "userStories.estimationResults",
+    "members"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStoriesWithEstimationResults(Long id);
@@ -33,7 +42,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
   @EntityGraph(attributePaths = {
     "creator",
     "userStories",
-    "userStories.estimations"
+    "userStories.estimations",
+    "members"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStoriesWithEstimations(Long id);
@@ -42,7 +52,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     "creator",
     "userStories",
     "userStories.estimations",
-    "userStories.estimationResults"
+    "userStories.estimationResults",
+    "members"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findFull(Long id);

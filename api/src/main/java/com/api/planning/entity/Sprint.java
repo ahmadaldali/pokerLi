@@ -9,7 +9,9 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -40,4 +42,12 @@ public class Sprint {
     orphanRemoval = true
   )
   private List<UserStory> userStories = new ArrayList<>();
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+    name = "participants",
+    joinColumns = @JoinColumn(name = "sprint_id"),
+    inverseJoinColumns = @JoinColumn(name = "member_id")
+  )
+  private Set<User> members = new HashSet<>();
 }

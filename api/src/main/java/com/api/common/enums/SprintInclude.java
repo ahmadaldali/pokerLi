@@ -10,7 +10,8 @@ public enum SprintInclude {
 
   USER_STORIES("userStories"),
   ESTIMATION_RESULTS("estimationResults"),
-  ESTIMATIONS("estimations");
+  ESTIMATIONS("estimations"),
+  MEMBERS("members");
 
   private final String value;
 

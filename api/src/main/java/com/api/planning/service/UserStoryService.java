@@ -2,7 +2,9 @@ package com.api.planning.service;
 
 import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
+import com.api.common.enums.SprintInclude;
 import com.api.common.exception.ValidationException;
+import com.api.event.publisher.UserStoryEventPublisher;
 import com.api.planning.dto.response.estimation.EstimationResultResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponseWrapper;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +27,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserStoryService {
 
   // don't use sprint service here
+
+  // repo
   private final UserStoryRepository userStoryRepository;
-  private final UserStoryResponseWrapper userStoryResponseWrapper;
+
+  // services
   private final EstimationService estimationService;
   private final EstimationResultService estimationResultService;
   private final CardDeckService cardDeckService;
   private final ParticipantService participantService;
+  private final UserStoryEventPublisher userStoryEventPublisher;
+
+  // response
+  private final UserStoryResponseWrapper userStoryResponseWrapper;
+
 
   @PersistenceContext
   private EntityManager entityManager;
+
+  // ======== US CRUD ====================
 
   /**
    * Creates a user story for a sprint.
@@ -39,7 +53,7 @@ public class UserStoryService {
    * - {@code name}, {@code description}, and {@code link} may be {@code null} for a generic user story.
    * - A generic user story is used only for voting and contains no descriptive information.
    * - Generic user stories is created automatically when starting a new voting
-   *   or when all sprint user stories are deleted.
+   * or when all sprint user stories are deleted.
    */
   public UserStoryResponse create(
     Long sprintId,
@@ -79,6 +93,7 @@ public class UserStoryService {
     return new SuccessResponse("");
   }
 
+  // ======== US actions ====================
   public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
     Sprint sprint = getActiveUserStoryWithSprint(userStoryId, userId).sprint();
 
@@ -86,7 +101,11 @@ public class UserStoryService {
     if (!cardDeckService.has(sprint.getCardDeck(), estimation))
       throw new ValidationException("error.estimation.invalid");
 
-    return estimationService.createOrUpdateEstimation(userStoryId, userId, estimation);
+    SuccessResponse response = estimationService.createOrUpdateEstimation(userStoryId, userId, estimation);
+
+    sendUserStoryUpdatedEvent(userStoryId);
+
+    return response;
   }
 
   public SuccessResponse unVote(Long userStoryId, Long userId) {
@@ -130,10 +149,8 @@ public class UserStoryService {
   }
 
   // ======== HELPERS ====================
-  public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
-  }
 
-  private UserStoryAndSprint getUserStoryWithSprint(Long userStoryId, Long userId) {
+  public UserStoryAndSprint getUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStory userStory = userStoryRepository.findById(userStoryId)
       .orElseThrow(EntityNotFoundException::new);
 
@@ -177,6 +194,21 @@ public class UserStoryService {
     userStory.setLink(link);
 
     userStoryRepository.save(userStory);
+  }
+
+  public void sendUserStoryUpdatedEvent(Long userStoryId) {
+    try {
+      System.out.println("Sending user story updated event");
+      UserStory userStory = userStoryRepository.findWithActiveEstimations(userStoryId)
+        .orElseThrow(EntityNotFoundException::new);
+
+      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseWrapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS)));
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
   }
 
 }
