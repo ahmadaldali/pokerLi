@@ -29,7 +29,7 @@ public class EstimationService {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public SuccessResponse createEstimation(Long userStoryId, Long userId, Integer estimation) {
+  public SuccessResponse createEstimation(Long userStoryId, Long userId, Double estimation) {
     Estimation entity = Estimation.builder().user(entityManager.getReference(User.class, userId))
       .userStory(entityManager.getReference(UserStory.class, userStoryId))
       .estimation(estimation)
@@ -41,7 +41,7 @@ public class EstimationService {
     return new SuccessResponse("");
   }
 
-  public SuccessResponse updateEstimation(Long userStoryId, Long userId, Integer estimation) {
+  public SuccessResponse updateEstimation(Long userStoryId, Long userId, Double estimation) {
     // get the ongoing estimation (estimationResult is null) only to update it
     Estimation entity = estimationRepository.findByUser_IdAndUserStory_IdAndEstimationResult_Id(userId, userStoryId, null)
       .orElseThrow(() -> new ValidationException("error.estimation.notFound"));
@@ -71,7 +71,7 @@ public class EstimationService {
     return estimationRepository.existsByUser_IdAndUserStory_IdAndEstimationResult_Id(userStoryId, userId, null);
   }
 
-  public SuccessResponse createOrUpdateEstimation(Long userStoryId, Long userId, Integer estimation) {
+  public SuccessResponse createOrUpdateEstimation(Long userStoryId, Long userId, Double estimation) {
     if (this.userHasOngoingEstimation(userId, userStoryId)) {
       return this.updateEstimation(userStoryId, userId, estimation);
     } else {
@@ -98,7 +98,6 @@ public class EstimationService {
 
     return new EstimationStats(total, average, count);
   }
-
 
   public void reveal(Long userStoryId, Long estimationResultId) {
     estimationRepository.attachResultToOngoingEstimations(userStoryId, estimationResultId);

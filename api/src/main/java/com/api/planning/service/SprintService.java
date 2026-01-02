@@ -1,18 +1,21 @@
 package com.api.planning.service;
 
-import com.api.common.dto.SuccessResponse;
+
 import com.api.common.enums.SprintInclude;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
+import com.api.common.utils.Utils;
 import com.api.planning.dto.response.sprint.SprintResponse;
-import com.api.planning.dto.response.sprint.SprintResponseWrapper;
+import com.api.planning.dto.response.sprint.SprintResponseMapper;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.entity.Sprint;
 import com.api.planning.repository.SprintRepository;
+import com.api.user.dto.response.UserResponse;
 import com.api.user.entity.User;
 import com.api.user.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -20,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,28 +39,29 @@ public class SprintService {
   private final UserStoryService userStoryService;
   private final ParticipantService participantService;
   private final UserService userService;
+  private final CardDeckService cardDeckService;
 
   // response
-  private final SprintResponseWrapper sprintResponseWrapper;
+  private final SprintResponseMapper sprintResponseMapper;
 
   @PersistenceContext
   private EntityManager entityManager;
+  private ObjectMapper objectMapper;
 
-  public SuccessResponse create(String name, JsonNode cardDeck, Long userId) {
+  public SprintResponse create(String name, JsonNode cardDeck, List<Double> sequence, Long userId) {
     userService.ensureAdmin(userId);
 
-    Sprint sprint = Sprint.builder().name(name).cardDeck(cardDeck).creator(entityManager.getReference(User.class, userId)).build();
+    Sprint sprint = Sprint.builder()
+      .name(name)
+      .cardDeck(Utils.safeCopyJsonNode(cardDeck))
+      .sequence(List.copyOf(cardDeckService.getSequence(cardDeck, sequence)))
+      .creator(entityManager.getReference(User.class, userId))
+      .build();
 
-    if (sprintRepository.existsByName(name)) {
-      throw new ValidationException("error.name.exist");
-    }
-
+    validateSprintName(sprint);
     sprintRepository.save(sprint);
 
-    // auto-join creator
-    participantService.createParticipant(sprint.getId(), userId);
-
-    return new SuccessResponse("success");
+    return this.createSprintMember(sprint.getId(), userId);
   }
 
   public SprintResponse get(Long sprintId, Long userId, Set<String> include) {
@@ -65,33 +69,27 @@ public class SprintService {
 
     Sprint sprint = this.getSprint(sprintId, userId, includes);
 
-    return sprintResponseWrapper.toResponse(sprint, includes);
+    return sprintResponseMapper.toResponse(sprint, includes);
   }
 
-  public SuccessResponse join(Long sprintId, Long memberId) {
+  public SprintResponse join(Long sprintId, Long memberId) {
     Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(EntityNotFoundException::new);
 
     if (participantService.isMember(memberId, sprintId)) {
       throw new ValidationException("error.sprint.already_member");
     }
 
-    User member = userService.getUser(memberId);
-    if (member.getRole() == UserRole.MEMBER) {
-      if (!sprint.getCreator().getId().equals(member.getInviter().getId())) {
-        throw new ForbiddenException(); // members can join rooms only were created by the inviter
-      }
-    } else {
-      if (member.getRole() == UserRole.ADMIN) {
-        if (!Objects.equals(member.getId(), sprint.getCreator().getId())) {
-          throw new ForbiddenException(); // admin can join only their rooms
-        }
-      }
-      // guest can join any room.
+    UserResponse member = userService.getUser(memberId);
+    UserRole role = member.getRole();
+
+    switch (role) {
+      case MEMBER -> validateMemberAccess(member, sprint);
+      case ADMIN -> validateAdminAccess(member, sprint);
+      case GUEST -> { /* Guests join any sprint */ }
+      default -> throw new ForbiddenException();
     }
 
-    participantService.createParticipant(sprintId, memberId);
-
-    return new SuccessResponse("success");
+    return this.createSprintMember(sprintId, memberId);
   }
 
   // ========================= sprint user-stories ==========================
@@ -168,16 +166,16 @@ public class SprintService {
     sprint = switch (flags) {
 
       // STORIES + ESTIMATIONS + RESULTS
-      case 15,7 -> sprintRepository.findFull(sprintId);
+      case 15, 7 -> sprintRepository.findFull(sprintId);
 
       // STORIES + ESTIMATIONS
-      case 14,6 -> sprintRepository.findWithStoriesWithEstimations(sprintId);
+      case 14, 6 -> sprintRepository.findWithStoriesWithEstimations(sprintId);
 
       // STORIES + RESULTS
-      case 13,5 -> sprintRepository.findWithStoriesWithEstimationResults(sprintId);
+      case 13, 5 -> sprintRepository.findWithStoriesWithEstimationResults(sprintId);
 
       // STORIES only
-      case 12,4 -> sprintRepository.findWithStories(sprintId);
+      case 12, 4 -> sprintRepository.findWithStories(sprintId);
 
       // MEMBERS only
       case 8 -> sprintRepository.findWithMembers(sprintId);
@@ -187,6 +185,35 @@ public class SprintService {
 
 
     return sprint.orElseThrow(EntityNotFoundException::new);
+  }
+
+  private void validateSprintName(Sprint sprint) {
+    if (sprintRepository.existsByName(sprint.getName())) {
+      throw new ValidationException("error.name.exist");
+    }
+  }
+
+  private void validateMemberAccess(UserResponse member, Sprint sprint) {
+    // member should be invited by the creator of this sprint
+    if (member.getInviter() == null ||
+      !sprint.getCreator().getId().equals(member.getInviter().getId())) {
+      throw new ForbiddenException();
+    }
+  }
+
+  private void validateAdminAccess(UserResponse admin, Sprint sprint) {
+    // admin should be the creator of sprint to join
+    if (!sprint.getCreator().getId().equals(admin.getId())) {
+      throw new ForbiddenException();
+    }
+  }
+
+  @Transactional
+  public SprintResponse createSprintMember(Long sprintId, Long memberId) {
+    participantService.createParticipant(sprintId, memberId);
+
+    // get a refreshed entity to get the new member in the response
+    return sprintResponseMapper.toResponse(sprintRepository.findById(sprintId).orElseThrow(), Set.of(SprintInclude.MEMBERS));
   }
 
 }

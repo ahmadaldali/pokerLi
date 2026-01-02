@@ -5,12 +5,10 @@ import com.api.common.dto.SuccessResponse;
 import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
-import com.api.user.entity.Invitation;
+import com.api.user.dto.response.UserResponse;
+import com.api.user.dto.response.UserResponseMapper;
 import com.api.user.entity.User;
 import com.api.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,12 +22,18 @@ public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final InvitationService  invitationService;
+  private final UserResponseMapper  userResponseMapper;
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(email).or(() -> userRepository.findByGuestId(email)).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
     return new CustomUserDetails(user);
+  }
+
+  // FUNCTIONALITIES
+  public UserResponse me(Long id) {
+    return this.getUser(id);
   }
 
   public SuccessResponse inviteUser(String email, Long userId) {
@@ -40,7 +44,7 @@ public class UserService implements UserDetailsService {
 
   // HELPERS
   public void ensureAdmin(Long id) {
-    User user = this.getUser(id);
+    UserResponse user = this.getUser(id);
     if (user.getRole() != UserRole.ADMIN) {
       throw new ForbiddenException();
     }
@@ -58,8 +62,8 @@ public class UserService implements UserDetailsService {
     }
   }
 
-  public User getUser(Long id) {
-    return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+  public UserResponse getUser(Long id) {
+    return userResponseMapper.toResponse(userRepository.findById(id).orElseThrow(IllegalArgumentException::new));
   }
 
   public User getUserByEmail(String email) {

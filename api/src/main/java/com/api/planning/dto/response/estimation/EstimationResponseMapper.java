@@ -2,12 +2,12 @@ package com.api.planning.dto.response.estimation;
 
 
 import com.api.planning.entity.Estimation;
-import com.api.user.dto.response.UserResponseWrapper;
+import com.api.user.dto.response.UserResponseMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public record EstimationResponseWrapper(
-  UserResponseWrapper userResponseWrapper
+public record EstimationResponseMapper(
+  UserResponseMapper userResponseMapper
 ) {
 
   public EstimationResponse toResponse(Estimation estimation) {
@@ -16,7 +16,7 @@ public record EstimationResponseWrapper(
       .estimation(estimation.getEstimation())
       .date(estimation.getDate())
       .isOnGoing(estimation.getEstimationResult() == null)
-      .user(userResponseWrapper.toResponse(estimation.getUser()))
+      .user(userResponseMapper.toResponse(estimation.getUser()))
       .build();
   }
 }

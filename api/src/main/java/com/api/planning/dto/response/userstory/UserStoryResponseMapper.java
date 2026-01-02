@@ -1,22 +1,27 @@
 package com.api.planning.dto.response.userstory;
 
+
 import com.api.common.enums.SprintInclude;
-import com.api.planning.dto.response.estimation.EstimationResponseWrapper;
-import com.api.planning.dto.response.estimation.EstimationResultResponseWrapper;
+import com.api.planning.dto.response.estimation.EstimationResponseMapper;
+import com.api.planning.dto.response.estimation.EstimationResultResponseMapper;
 import com.api.planning.entity.UserStory;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 @Service
-public record UserStoryResponseWrapper(
-  EstimationResultResponseWrapper estimationResultResponseWrapper,
-  EstimationResponseWrapper estimationResponseWrapper
+public record UserStoryResponseMapper(
+  EstimationResultResponseMapper estimationResultResponseMapper,
+  EstimationResponseMapper estimationResponseMapper
 ) {
 
   private static final Set<SprintInclude> NO_INCLUDES = Set.of();
 
   public UserStoryResponse toResponse(UserStory userStory) {
+    if (userStory == null) {
+      return null;
+    }
+
     return toResponse(userStory, NO_INCLUDES);
   }
 
@@ -32,7 +37,7 @@ public record UserStoryResponseWrapper(
     if (safeIncludes.contains(SprintInclude.ESTIMATION_RESULTS)) {
       response.setEstimationResults(
         userStory.getEstimationResults().stream()
-          .map(estimationResultResponseWrapper::toResponse)
+          .map(estimationResultResponseMapper::toResponse)
           .toList()
       );
     }
@@ -42,7 +47,7 @@ public record UserStoryResponseWrapper(
 
       response.setEstimations(
         estimations.stream()
-          .map(estimationResponseWrapper::toResponse)
+          .map(estimationResponseMapper::toResponse)
           .toList()
       );
 
