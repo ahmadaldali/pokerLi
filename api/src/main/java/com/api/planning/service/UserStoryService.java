@@ -1,5 +1,6 @@
 package com.api.planning.service;
 
+
 import com.api.common.dto.EstimationStats;
 import com.api.common.dto.SuccessResponse;
 import com.api.common.enums.SprintInclude;
@@ -7,7 +8,7 @@ import com.api.common.exception.ValidationException;
 import com.api.event.publisher.UserStoryEventPublisher;
 import com.api.planning.dto.response.estimation.EstimationResultResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
-import com.api.planning.dto.response.userstory.UserStoryResponseWrapper;
+import com.api.planning.dto.response.userstory.UserStoryResponseMapper;
 import com.api.planning.entity.Sprint;
 import com.api.planning.entity.UserStory;
 import com.api.planning.repository.UserStoryRepository;
@@ -34,12 +35,11 @@ public class UserStoryService {
   // services
   private final EstimationService estimationService;
   private final EstimationResultService estimationResultService;
-  private final CardDeckService cardDeckService;
   private final ParticipantService participantService;
   private final UserStoryEventPublisher userStoryEventPublisher;
 
   // response
-  private final UserStoryResponseWrapper userStoryResponseWrapper;
+  private final UserStoryResponseMapper userStoryResponseMapper;
 
 
   @PersistenceContext
@@ -70,7 +70,7 @@ public class UserStoryService {
 
     userStoryRepository.save(userStory);
 
-    return userStoryResponseWrapper.toResponse(userStory);
+    return userStoryResponseMapper.toResponse(userStory);
   }
 
   public UserStoryResponse updateGenericUserStory(Long sprintId, String name, String description, String link) {
@@ -80,7 +80,7 @@ public class UserStoryService {
 
     updateUserStoryFields(userStory, name, description, link);
 
-    return userStoryResponseWrapper.toResponse(userStory);
+    return userStoryResponseMapper.toResponse(userStory);
   }
 
   @Transactional
@@ -94,11 +94,11 @@ public class UserStoryService {
   }
 
   // ======== US actions ====================
-  public SuccessResponse vote(Long userStoryId, Long userId, Integer estimation) {
+  public SuccessResponse vote(Long userStoryId, Long userId, Double estimation) {
     Sprint sprint = getActiveUserStoryWithSprint(userStoryId, userId).sprint();
 
     // check the estimation is a valid value
-    if (!cardDeckService.has(sprint.getCardDeck(), estimation))
+    if (!sprint.getSequence().contains(estimation))
       throw new ValidationException("error.estimation.invalid");
 
     SuccessResponse response = estimationService.createOrUpdateEstimation(userStoryId, userId, estimation);
@@ -202,7 +202,7 @@ public class UserStoryService {
       UserStory userStory = userStoryRepository.findWithActiveEstimations(userStoryId)
         .orElseThrow(EntityNotFoundException::new);
 
-      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseWrapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS)));
+      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseMapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS)));
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

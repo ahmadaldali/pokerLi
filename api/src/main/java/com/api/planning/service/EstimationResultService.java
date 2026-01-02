@@ -3,7 +3,7 @@ package com.api.planning.service;
 
 import com.api.common.dto.EstimationStats;
 import com.api.planning.dto.response.estimation.EstimationResultResponse;
-import com.api.planning.dto.response.estimation.EstimationResultResponseWrapper;
+import com.api.planning.dto.response.estimation.EstimationResultResponseMapper;
 import com.api.planning.entity.EstimationResult;
 import com.api.planning.entity.UserStory;
 import com.api.planning.repository.EstimationResultRepository;
@@ -35,7 +35,7 @@ public class EstimationResultService {
 
     estimationResultRepository.save(entity);
 
-    return new EstimationResultResponseWrapper().toResponse(entity);
+    return new EstimationResultResponseMapper().toResponse(entity);
   }
 
 }

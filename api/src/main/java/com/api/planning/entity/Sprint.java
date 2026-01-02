@@ -25,15 +25,17 @@ public class Sprint {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   private String name;
 
   @Type(JsonType.class)
   @Column(name = "card_deck", columnDefinition = "jsonb")
   private JsonNode cardDeck;
 
+  private List<Double> sequence;
+
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "creator_id")
+  @JoinColumn(name = "creator_id", nullable = false)
   private User creator;
 
   @OneToMany(

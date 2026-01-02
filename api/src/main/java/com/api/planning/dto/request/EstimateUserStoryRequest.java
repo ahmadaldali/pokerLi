@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class EstimateUserStoryRequest {
   @NotNull(message = "{error.estimation.required}")
   @Positive(message = "{error.estimation.positive}")
-  private Integer estimation;
+  private Double estimation;
 }
 
 
