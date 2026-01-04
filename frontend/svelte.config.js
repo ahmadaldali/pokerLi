@@ -22,7 +22,7 @@ const config = {
 			'$i18n/*': path.resolve('./src/i18n/*'),
 		},
 		env: {
-			dir: '../..'
+			dir: '..'
 		}
 	}
 };

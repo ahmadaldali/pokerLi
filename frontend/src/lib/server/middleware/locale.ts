@@ -5,6 +5,7 @@ import { isAsset } from '$lib/shared/utils/check';
 import { detectLocale, i18n, isLocale } from '$i18n/i18n-util';
 import type { Locales } from '$i18n/i18n-types';
 import { setLocale } from '$i18n/i18n-svelte';
+import { logger } from '$lib/shared/services';
 
 
 export default (({ event, resolve }) => {
@@ -53,13 +54,13 @@ export default (({ event, resolve }) => {
      * {@link getPreferredLocale} methods.
      */
     function localeFromSlug(slug: string): Locales {
-        // logger.info('check language slug is valid locale');
+        logger.info('check language slug is valid locale');
 
         if (isLocale(slug)) {
-            // logger.info('language slug is a valid locale', {slug});
+            logger.info('language slug is a valid locale', {slug});
             return slug as Locales;
         } else {
-            // logger.info('language slug is not a valid locale', {slug});
+            logger.info('language slug is not a valid locale', {slug});
             throw redirect(302, toLocalizedRoute());
         }
     }
@@ -79,7 +80,7 @@ export default (({ event, resolve }) => {
 
         if (event.locals.locale) {
             console.log('Setting locale in i18n-svelte to', event.locals.locale);
-            setLocale(event.locals.locale);
+            setLocale(event.locals.locale); // ONLY server concerns
         } else {
                 console.log('Setting default locale in i18n-svelte to', event.locals.locale);
             setLocale('en');

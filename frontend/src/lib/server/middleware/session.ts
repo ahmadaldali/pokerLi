@@ -20,7 +20,7 @@ export default (({ logger, event, resolve }) => {
       return resolve(event);
     },
     async run() {
-      return await Promise.resolve(hasSession()).then((_) => resolve(event));
+      return await Promise.resolve(hasSession()).then(checkSession).then((_) => resolve(event));
     },
   };
 
@@ -68,6 +68,8 @@ export default (({ logger, event, resolve }) => {
     }
 
     try {
+      // TODO : check if token is still valid
+
       return session;
     } catch (err) {
       logger.info("session expired", { err, event });

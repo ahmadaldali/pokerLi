@@ -5,7 +5,7 @@ import { isAsset, isKeyOfObject, isPublicRoute } from '$lib/shared/utils/check';
 export default (({ logger, event, resolve }) => {
     return {
         canSkip() {
-            return isAsset(event.route.id, event.url);
+            return isAsset(event.route.id, event.url) || event.url.pathname.includes('/.well-known/');
         },
         resolve() {
             return resolve(event);
