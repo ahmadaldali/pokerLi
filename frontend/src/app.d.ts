@@ -17,10 +17,7 @@ declare global {
             t: TranslationFunctions;
             redirectTo: string | null;
             locale: Locales;
-        }
-
-        interface Session {
-            user: LocalSession | null;
+            token: string | null;
         }
     }
 }

@@ -7,7 +7,7 @@ import {
 } from "$lib/shared/utils/check";
 import type { MiddlewareBuilder } from "./utils";
 import { PUBLIC_ENV } from "$env/static/public";
-import type { Session } from "$lib/shared/types/session";
+import type { Session } from "$lib/shared/types/http";
 import { resetData } from "$lib/server/auth";
 
 /** Implements the `session` middleware interface */
@@ -20,7 +20,8 @@ export default (({ logger, event, resolve }) => {
       return resolve(event);
     },
     async run() {
-      return await Promise.resolve(hasSession()).then(checkSession).then((_) => resolve(event));
+      return await Promise.resolve(hasSession())
+        .then((_) => resolve(event));
     },
   };
 
@@ -30,13 +31,7 @@ export default (({ logger, event, resolve }) => {
    * reaching its original requested page. Otherwise it returns the `session`.
    */
   async function hasSession(): Promise<any> {
-    if (!event) {
-      logger.info("Event object is required");
-      throw redirect(303, "/");
-    }
-
     const session = getSession(event.cookies);
-
     if (session) {
       return session;
     } else {
@@ -63,18 +58,19 @@ export default (({ logger, event, resolve }) => {
    * Session hash to validate.
    */
   async function checkSession(session: Session): Promise<any> {
-    if (session === undefined) {
-      return event;
-    }
-
     try {
       // TODO : check if token is still valid
+
+      //me
+
+      console.log("session valid", session.token);
+
+      event.locals.token = session.token;
 
       return session;
     } catch (err) {
       logger.info("session expired", { err, event });
-      await resetData(event);
-      throw redirect(303, await toLogIn(event));
+      return null;
     }
   }
 
@@ -100,11 +96,8 @@ export default (({ logger, event, resolve }) => {
  * @param cookies
  * Request cookies object.
  */
-export function setLocalSession(authResult: Session, cookies: Cookies) {
-  const data = {
-    token: authResult.token,
-  };
-  cookies.set(SESSION_KEY, JSON.stringify(data), {
+export function setSession(authResult: Session, cookies: Cookies) {
+  cookies.set(SESSION_KEY, atob(authResult.token), {
     path: "/",
     ...(PUBLIC_ENV !== "localhost" && { domain: ".yoboo.health" }),
   });
@@ -116,13 +109,17 @@ export function setLocalSession(authResult: Session, cookies: Cookies) {
  * @param cookies
  * Request cookies object.
  */
-export function getSession(cookies: Cookies): Session | null {
+export function getSession(cookies: Cookies | undefined): Session | null {
   try {
-    const encryptedData = cookies.get(SESSION_KEY);
-    if (!encryptedData) return null;
-    return JSON.parse(encryptedData);
+    let token = cookies?.get(SESSION_KEY);
+    if (!token) return null;
+
+    token = btoa(token);
+    // this.checkSession(token);
+    
+    return { token };
   } catch (error) {
-    console.error("Error decrypting session data:", error);
+    console.error("Error getting session data:", error);
     return null;
   }
 }

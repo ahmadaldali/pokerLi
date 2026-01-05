@@ -10,7 +10,7 @@ export function localeRoutes(locale: Locales) {
             logOut: `/${locale}/logout`
         },
         user: {
-            homepage: `/${locale}/`,
+            homepage: `/${locale}/user`,
         }
     };
 }
