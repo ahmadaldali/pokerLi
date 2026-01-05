@@ -3,6 +3,7 @@ import type { MiddlewareBuilder } from "./utils";
 import {
   isAsset,
   isKeyOfObject,
+  isLogoutRoute,
   isProtectedRoute,
   isPublicRoute,
 } from "$lib/shared/utils/check";
@@ -32,8 +33,8 @@ export default (({ logger, event, resolve }) => {
             `${event.url.protocol}//${event.url.host}/${language}/${urlsToRedirect[urlToCheck]}`
           );
         }
-
-        if (getSession(event.cookies)) {
+        
+        if (getSession(event.cookies) && !isLogoutRoute(event.route.id)) {
           // If the user is already logged in redirect to home page
           throw redirect(
             302,

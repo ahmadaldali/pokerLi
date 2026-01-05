@@ -36,7 +36,7 @@ type RootTranslation = {
 		}
 		user: {
 			/**
-			 * /​e​n​/
+			 * /​e​n​/​u​s​e​r
 			 */
 			homepage: string
 		}
@@ -54,6 +54,16 @@ type RootTranslation = {
 		 * l​o​g​o​u​t
 		 */
 		logout: string
+	}
+	errors: {
+		/**
+		 * I​n​v​a​l​i​d​ ​e​m​a​i​l​ ​o​r​ ​p​a​s​s​w​o​r​d​.
+		 */
+		INVALID_CREDENTIALS: string
+		/**
+		 * A​n​ ​i​n​t​e​r​n​a​l​ ​s​e​r​v​e​r​ ​e​r​r​o​r​ ​o​c​c​u​r​r​e​d​.​ ​P​l​e​a​s​e​ ​t​r​y​ ​a​g​a​i​n​ ​l​a​t​e​r​.
+		 */
+		INTERNAL_SERVER_ERROR: string
 	}
 }
 
@@ -79,7 +89,7 @@ export type TranslationFunctions = {
 		}
 		user: {
 			/**
-			 * /en/
+			 * /en/user
 			 */
 			homepage: () => LocalizedString
 		}
@@ -97,6 +107,16 @@ export type TranslationFunctions = {
 		 * logout
 		 */
 		logout: () => LocalizedString
+	}
+	errors: {
+		/**
+		 * Invalid email or password.
+		 */
+		INVALID_CREDENTIALS: () => LocalizedString
+		/**
+		 * An internal server error occurred. Please try again later.
+		 */
+		INTERNAL_SERVER_ERROR: () => LocalizedString
 	}
 }
 

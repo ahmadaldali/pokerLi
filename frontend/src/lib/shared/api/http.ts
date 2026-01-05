@@ -23,8 +23,14 @@ export const api = async (options: ApiOptionsType) => {
         Authorization: `Bearer ${token}`,
       };
     }
-    
- 
+
+    console.log("API CALL:", {
+      url: options.url,
+      method: options.method || "GET",
+      headers: options.headers,
+      data: options.data,
+    });
+
     const response = await fetchMethod(options.url, {
       method: options.method || "GET",
       headers: apiHeaders(options.headers),
@@ -34,10 +40,31 @@ export const api = async (options: ApiOptionsType) => {
           : null,
     });
 
-    const res = await response.json();
+    // 'result' = backend response (errors or data)
 
-    console.log("API RESPONSE", res);
-    return res;
+    if (!response.ok) {
+      const text = await response.text();
+      console.log("HTTP ERROR RESPONSE:", text);
+      return {
+        result: JSON.parse(text),
+        success: false,
+      };
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      const text = await response.text();
+      console.error("NON-JSON RESPONSE:", text);
+      return {
+        result: text,
+        success: false,
+      };
+    }
+
+    return {
+      result: JSON.parse(await response.text()),
+      success: true,
+    };
   } catch (err: unknown) {
     if (err instanceof Error) {
       throw new Error(err.message, { cause: err });
@@ -45,4 +72,10 @@ export const api = async (options: ApiOptionsType) => {
       throw new Error("Unhandled error type", { cause: err });
     }
   }
+};
+
+export const getL18ErrorMessage = (errors: any, code: string) => {
+  code = code.toString().toUpperCase();
+  // return message related to that code, otherwise if that code is not regonized, then return internal error message
+  return errors[code]() ? errors[code]() : errors["INTERNAL_SERVER_ERROR"]();
 };

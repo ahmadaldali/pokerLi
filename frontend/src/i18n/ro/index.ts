@@ -7,6 +7,10 @@ const ro: BaseTranslation = {
    auth: {
       login: 'EN Sclick here to login',
       logout: 'logout'
+   },
+   errors: {
+      INVALID_CREDENTIALS: 'Invalid email or password.',
+            INTERNAL_SERVER_ERROR: 'An internal server error occurred. Please try again later.'
    }
 }
 

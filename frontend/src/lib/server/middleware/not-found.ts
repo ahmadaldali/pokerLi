@@ -14,7 +14,7 @@ export default (({ logger, event, resolve }) => ({
             return new Response(null);
         } else {
             logger.warn('Page not found', { event });
-            throw redirect(302, '/');
+            throw redirect(302, event.locals.t.routes.user.homepage());
         }
     }
 })) satisfies MiddlewareBuilder;

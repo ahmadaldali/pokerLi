@@ -7,7 +7,6 @@ import {
 } from "$lib/shared/utils/check";
 import type { MiddlewareBuilder } from "./utils";
 import { PUBLIC_ENV } from "$env/static/public";
-import type { Session } from "$lib/shared/types/http";
 import { resetData } from "$lib/server/auth";
 
 /** Implements the `session` middleware interface */
@@ -57,17 +56,17 @@ export default (({ logger, event, resolve }) => {
    * @param session
    * Session hash to validate.
    */
-  async function checkSession(session: Session): Promise<any> {
+  async function checkSession(token: string): Promise<any> {
     try {
       // TODO : check if token is still valid
 
       //me
 
-      console.log("session valid", session.token);
+      console.log("session valid", token);
 
-      event.locals.token = session.token;
+      event.locals.token = token;
 
-      return session;
+      return token;
     } catch (err) {
       logger.info("session expired", { err, event });
       return null;
@@ -96,12 +95,17 @@ export default (({ logger, event, resolve }) => {
  * @param cookies
  * Request cookies object.
  */
-export function setSession(authResult: Session, cookies: Cookies) {
-  cookies.set(SESSION_KEY, atob(authResult.token), {
+export function setSession(cookies: Cookies, token: string) {
+  cookies.set(SESSION_KEY, token, {  // ✅ Store RAW JWT token
     path: "/",
-    ...(PUBLIC_ENV !== "localhost" && { domain: ".yoboo.health" }),
+    httpOnly: true,                  // ✅ Client can't access
+    secure: PUBLIC_ENV !== "localhost", // ✅ HTTPS only in prod
+    sameSite: "strict",              // ✅ CSRF protection
+    // ...(PUBLIC_ENV !== "localhost" && { domain: "." }),
+    maxAge: 60 * 60 * 24 * 7         // ✅ 7 days expiry
   });
 }
+
 
 /**
  * Get the session data from the cookies.
@@ -109,15 +113,14 @@ export function setSession(authResult: Session, cookies: Cookies) {
  * @param cookies
  * Request cookies object.
  */
-export function getSession(cookies: Cookies | undefined): Session | null {
+export function getSession(cookies: Cookies | undefined): string | null {
   try {
     let token = cookies?.get(SESSION_KEY);
     if (!token) return null;
-
-    token = btoa(token);
+    
     // this.checkSession(token);
     
-    return { token };
+    return token;
   } catch (error) {
     console.error("Error getting session data:", error);
     return null;

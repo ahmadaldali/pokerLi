@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -48,7 +50,8 @@ public class AuthService {
   }
 
   public AuthResponse login(String email, String password) {
-    User user = userService.getUserByEmail(email);
+    User user = userService.getUserByEmail(email)
+      .orElseThrow(() -> new ValidationException("error.login.invalid_credentials"));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new ValidationException("error.login.invalid_credentials");
@@ -58,6 +61,7 @@ public class AuthService {
 
     return new AuthResponse(token);
   }
+
 
   public AuthResponse createGuest(String name, String guestId) {
     userService.ensureNotExistingGuestId(guestId);

@@ -1,12 +1,8 @@
 import type { RawData } from "./general";
 import type { HttpMethod, RequestEvent } from '@sveltejs/kit';
 
-export type Session = {
-    token: string;
-};
-
 export type ApiOptionsType = {
-    fetch?: any;
+    fetch?: typeof fetch;  // Add this
     url: string;
     method?: HttpMethod;
     headers?: any;

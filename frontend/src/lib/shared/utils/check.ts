@@ -32,6 +32,10 @@ export function isSignUpRoute(routeId: string | null) {
     return routeId !== null && routeId.startsWith('/[lang]/(public)/(auth)/sign-up');
 }
 
+export function isLogoutRoute(routeId: string | null) {
+    return routeId !== null && routeId.startsWith('/[lang]/(public)/(auth)/logout');
+}
+
 export function isPublicRoute(routeId: string | null) {
     return routeId !== null && routeId.startsWith('/[lang]/(public)');
 }
