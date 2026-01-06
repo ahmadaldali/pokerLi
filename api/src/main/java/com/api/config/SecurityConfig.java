@@ -3,7 +3,6 @@ package com.api.config;
 
 import com.api.auth.jwt.JwtAuthenticationEntryPoint;
 import com.api.auth.jwt.JwtAuthenticationFilter;
-import com.api.common.exception.UnAuthorizedException;
 import com.api.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +37,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
-    try {
+
       http
         .cors(org.springframework.security.config.Customizer.withDefaults())
         .csrf(csrf -> csrf.disable())
@@ -53,9 +52,7 @@ public class SecurityConfig {
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
       return http.build();
-    } catch (Exception e) {
-      throw new UnAuthorizedException();
-    }
+
   }
 
   @Bean

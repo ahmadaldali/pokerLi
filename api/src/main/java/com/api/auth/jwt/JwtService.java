@@ -1,9 +1,9 @@
 package com.api.auth.jwt;
 
-import com.api.common.exception.UnAuthorizedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -12,75 +12,96 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-  private static final String SECRET_KEY = "5b9b16c5e6340204852dcfedf1cc6e5e";
+  private static final String SECRET_KEY =
+    "5b9b16c5e6340204852dcfedf1cc6e5e";
 
   private Key getSigningKey() {
     return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
   }
+
+  /* ================= TOKEN GENERATION ================= */
 
   public String generateToken(String email, Long userId) {
     return Jwts.builder()
       .setSubject(email)
       .claim("userId", userId)
       .setIssuedAt(new Date())
-      .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
+      .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
       .signWith(getSigningKey())
       .compact();
   }
 
-  public boolean isTokenValid(String token, String email) {
-    try {
-      return email.equals(extractEmail(token)) && !isTokenExpired(token);
-    } catch (Exception e) {
-      throw new UnAuthorizedException();
+  /* ================= VALIDATION ================= */
+
+  public boolean isTokenValid(String token, String email)
+    throws AuthenticationException {
+
+    final String tokenEmail = extractEmail(token);
+
+    if (!email.equals(tokenEmail)) {
+      throw new BadCredentialsException("JWT subject mismatch");
     }
 
+    if (isTokenExpired(token)) {
+      throw new BadCredentialsException("JWT expired");
+    }
+
+    return true;
   }
 
-  public String extractEmail(String token) {
+  /* ================= EXTRACTION ================= */
+
+  public String extractEmail(String token)
+    throws AuthenticationException {
+
     try {
-      return Jwts.parser()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload().getSubject();
-    } catch (Exception e) {
-      throw new UnAuthorizedException();
+      return parseClaims(token).getSubject();
+    } catch (ExpiredJwtException ex) {
+      throw new BadCredentialsException("JWT expired", ex);
+    } catch (JwtException | IllegalArgumentException ex) {
+      throw new BadCredentialsException("Invalid JWT token", ex);
     }
   }
+
+  public Long extractUserId(String token)
+    throws AuthenticationException {
+
+    Claims claims = parseClaims(token);
+    Object userId = claims.get("userId");
+
+    if (userId instanceof Integer i) {
+      return i.longValue();
+    }
+    if (userId instanceof Long l) {
+      return l;
+    }
+
+    throw new BadCredentialsException("Invalid userId claim");
+  }
+
+  /* ================= INTERNAL ================= */
 
   private boolean isTokenExpired(String token) {
     return extractExpiration(token).before(new Date());
   }
 
   private Date extractExpiration(String token) {
+    return parseClaims(token).getExpiration();
+  }
+
+  private Claims parseClaims(String token)
+    throws AuthenticationException {
+
     try {
       return Jwts.parser()
         .setSigningKey(getSigningKey())
         .build()
         .parseSignedClaims(token)
-        .getPayload().getExpiration();
-    } catch (Exception e) {
-      throw new UnAuthorizedException();
+        .getPayload();
+    } catch (ExpiredJwtException ex) {
+      throw new BadCredentialsException("JWT expired", ex);
+    } catch (JwtException | IllegalArgumentException ex) {
+      throw new BadCredentialsException("Invalid JWT token", ex);
     }
   }
-
-  public Long extractUserId(String token) {
-    Claims claims = Jwts.parser()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseClaimsJws(token)
-      .getBody();
-
-    Object userIdObj = claims.get("userId");
-    // userId might be stored as Integer or Long depending on serialization, so handle accordingly
-    if (userIdObj instanceof Integer) {
-      return ((Integer) userIdObj).longValue();
-    } else if (userIdObj instanceof Long) {
-      return (Long) userIdObj;
-    } else {
-      throw new IllegalArgumentException("Invalid userId claim type");
-    }
-  }
-
 }

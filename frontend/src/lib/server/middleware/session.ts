@@ -32,6 +32,8 @@ export default (({ logger, event, resolve }) => {
   async function hasSession(): Promise<any> {
     const session = getSession(event.cookies);
     if (session) {
+      event.locals.token = session;
+
       return session;
     } else {
       logger.info("session not found", { event });
@@ -45,31 +47,6 @@ export default (({ logger, event, resolve }) => {
 
       // If the accessed route is protected then redirect to login page
       throw redirect(303, await toLogIn(event));
-    }
-  }
-
-  /**
-   * Checks that specified `session` is still valid on the backend side. If
-   * not valid, then deletes the session from the cookies and redirects to
-   * the `/login` page.
-   *
-   * @param session
-   * Session hash to validate.
-   */
-  async function checkSession(token: string): Promise<any> {
-    try {
-      // TODO : check if token is still valid
-
-      //me
-
-      console.log("session valid", token);
-
-      event.locals.token = token;
-
-      return token;
-    } catch (err) {
-      logger.info("session expired", { err, event });
-      return null;
     }
   }
 
