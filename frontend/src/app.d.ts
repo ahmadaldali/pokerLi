@@ -2,6 +2,7 @@
 
 import type { Locales } from '$i18n/i18n-types';
 import type { Session as LocalSession } from '$lib/server/middleware/session';
+import type { ApiResponse } from '$lib/shared/types/http';
 import type { TCurrentLoggedInUser } from '$lib/shared/types/user';
 
 // for information about these interfaces
@@ -19,6 +20,9 @@ declare global {
             locale: Locales;
             token: string | null;
         }
+        namespace Superforms {
+        type Message = ApiResponse;
+    }
     }
 }
 

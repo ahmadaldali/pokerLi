@@ -4,9 +4,10 @@
   import { page, updated } from '$app/stores';
   import favicon from '$lib/assets/favicon.svg';
   import type { Locales } from '$i18n/i18n-types';
+  import '../app.css';
 
   $effect(() => {
-    const lang = ($page.params.lang ?? 'en') as Locales;
+    const lang = ($page?.params?.lang ?? 'en') as Locales;
     if (lang) {
       setLocale(lang);
     }

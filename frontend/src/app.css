@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    height: 100vh !important;
+}
+
+@layer base {
+    @font-face {
+        font-family: 'Nohemi-Regular';
+        src:
+            local('Nohemi'),
+            url('/fonts/Nohemi/Nohemi-Regular.woff2') format('woff2'),
+            url('/fonts/Nohemi/Nohemi-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Nohemi-Medium';
+        src:
+            local('Nohemi'),
+            url('/fonts/Nohemi/Nohemi-Medium.woff2') format('woff2'),
+            url('/fonts/Nohemi/Nohemi-Medium.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Nohemi-SemiBold';
+        src:
+            local('Nohemi'),
+            url('/fonts/Nohemi/Nohemi-SemiBold.woff2') format('woff2'),
+            url('/fonts/Nohemi/Nohemi-SemiBold.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Nohemi-Bold';
+        src:
+            local('Nohemi'),
+            url('/fonts/Nohemi/Nohemi-Bold.woff2') format('woff2'),
+            url('/fonts/Nohemi/Nohemi-Bold.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Geist-light';
+        src:
+            local('Geist'),
+            url('/fonts/Geist/Geist-Light.woff2') format('woff2'),
+            url('/fonts/Geist/Geist-Light.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Geist-regular';
+        src:
+            local('Geist'),
+            url('/fonts/Geist/Geist-Regular.woff2') format('woff2'),
+            url('/fonts/Geist/Geist-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Geist-medium';
+        src:
+            local('Geist'),
+            url('/fonts/Geist/Geist-Medium.woff2') format('woff2'),
+            url('/fonts/Geist/Geist-Medium.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Geist-semibold';
+        src:
+            local('Geist'),
+            url('/fonts/Geist/Geist-SemiBold.woff2') format('woff2'),
+            url('/fonts/Geist/Geist-SemiBold.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Geist-bold';
+        src:
+            local('Geist'),
+            url('/fonts/Geist/Geist-Bold.woff2') format('woff2'),
+            url('/fonts/Geist/Geist-Bold.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+}

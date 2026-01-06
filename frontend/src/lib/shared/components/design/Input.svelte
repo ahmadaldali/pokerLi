@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	export let value = "";
+	export let value: any;
 	export let id;
 	export let label;
 	export let type = "text";
@@ -22,9 +22,9 @@
 	<input
 		use:setType
 		{name}
-		id="{id}"
+		id={id}
 		{required}
-		placeholder="{placeholder}"
+		placeholder={placeholder}
 		bind:value
 		bind:this={inputRef}
 		class="form-control outline-none"
