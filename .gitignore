@@ -1,25 +1,11 @@
-frontend/node_modules
-
-# Output
-frontend/.output
-frontend/.vercel
-frontend/.netlify
-frontend/.wrangler
-frontend/.svelte-kit
-frontend/build
-
-# OS
-api/.DS_Store
-api/Thumbs.db
-api/.idea
-
-# Env
-.env
-.env.*
-!.env.example
-!.env.test
+### IntelliJ IDEA ###
 .idea
+*.iws
+*.iml
+*.ipr
 
-# Vite
-frontend/vite.config.js.timestamp-*
-frontend/vite.config.ts.timestamp-*
+### VS Code ###
+.vscode/
+
+## ENV
+.env
