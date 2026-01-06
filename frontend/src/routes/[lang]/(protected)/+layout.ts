@@ -1,11 +1,12 @@
 import { tokenStore } from "$lib/shared/stores/user";
+import type { TCurrentLoggedInUser } from "$lib/shared/types/user";
 import type { LayoutLoad } from "./$types";
 
 export const load: LayoutLoad = async (event) => {
-  if (event.data) {
-        const { token } = event.data;
-      if (token) tokenStore.set(token);
-  }
-
-  return {};
+  const { token } = event.data;
+  tokenStore.set(token);
+  
+  return {
+    user: event.data.user as TCurrentLoggedInUser,
+  };
 };

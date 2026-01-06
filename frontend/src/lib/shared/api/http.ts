@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import type { ApiOptionsType } from "$lib/shared/types/http";
 import { tokenStore } from "$lib/shared/stores/user";
+import { redirectTo } from "$lib/shared/utils/redirect";
 
 const apiHeaders = (additionalHeaders: Record<string, string>) => {
   const defaultHeaders = {
@@ -41,10 +42,15 @@ export const api = async (options: ApiOptionsType) => {
     });
 
     // 'result' = backend response (errors or data)
+    if (response.status === 401) {  
+      // Unauthorized - token might be expired or invalid
+      console.warn("Unauthorized access - invalid or expired token.");
+      redirectTo('/logout');
+    }
 
     if (!response.ok) {
       const text = await response.text();
-      console.log("HTTP ERROR RESPONSE:", text);
+      console.warn("HTTP ERROR RESPONSE:", text);
       return {
         result: JSON.parse(text),
         success: false,
@@ -54,7 +60,7 @@ export const api = async (options: ApiOptionsType) => {
     const contentType = response.headers.get("content-type");
     if (!contentType?.includes("application/json")) {
       const text = await response.text();
-      console.error("NON-JSON RESPONSE:", text);
+      console.warn("NON-JSON RESPONSE:", text);
       return {
         result: text,
         success: false,
