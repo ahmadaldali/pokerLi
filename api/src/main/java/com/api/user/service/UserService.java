@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -66,8 +68,8 @@ public class UserService implements UserDetailsService {
     return userResponseMapper.toResponse(userRepository.findById(id).orElseThrow(IllegalArgumentException::new));
   }
 
-  public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow(() -> new ValidationException("error.login.user_notFound"));
+  public Optional<User> getUserByEmail(String email) {
+    return userRepository.findByEmail(email);
   }
 
   public User createUser(String name, UserRole role, String email, String password, String guestId, User inviter) {

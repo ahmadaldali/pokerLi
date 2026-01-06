@@ -26,12 +26,14 @@ public class GlobalExceptionHandler {
   private MessageSource messageSource;
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+  public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors()
       .forEach(error -> errors.put(error.getField(),
         error.getDefaultMessage()
       ));
+
+    errors.put("error", "BAD_REQUEST");
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
@@ -50,6 +52,8 @@ public class GlobalExceptionHandler {
     ex.getConstraintViolations()
       .forEach(cv -> errors.put(cv.getPropertyPath().toString(), cv.getMessage()));
 
+    errors.put("error", "BAD_REQUEST");
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
 
@@ -64,31 +68,43 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<Map<String, String>> handleValidationException(ValidationException ex) {
-    Map<String, String> error = new HashMap<>();
+    Map<String, String> errors = new HashMap<>();
     String message = messageSource.getMessage(ex.getCode(), null, Locale.getDefault());
-    error.put("error", message);
+    errors.put("error", message);
 
-    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
   }
 
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<Map<String, String>> handleForbiddenException(ForbiddenException ex) {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new HashMap<>());
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", "ACTION_NOT_ALLOWED");
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errors);
   }
 
   @ExceptionHandler(UnAuthorizedException.class)
   public ResponseEntity<Map<String, String>> handleUnAuthorizedException(UnAuthorizedException ex) {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HashMap<>());
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", "UN_AUTHORIZED");
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleNotFoundException(EntityNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>());
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", "NOT_FOUND");
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<Map<String, String>> handleNotFoundException(NoResourceFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>());
+    Map<String, String> errors = new HashMap<>();
+    errors.put("error", "NOT_FOUND");
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
