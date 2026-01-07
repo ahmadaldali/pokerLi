@@ -30,7 +30,11 @@ const ErrorsTranslation = {
   INVALID_CREDENTIALS: "Invalid email or password",
   INTERNAL_SERVER_ERROR:
     "An internal server error occurred. Please try again later",
-  
+  NOT_FOUND: "The requested resource was not found",
+  UN_AUTHORIZED: "You are not authorized to perform this action",
+  ACTION_NOT_ALLOWED: "This action is not allowed",
+  BAD_REQUEST: "Bad request. Please check your input",
+
   // 
   required: '{field} is required',
   min_length: '{field} must be at least {min} characters long',

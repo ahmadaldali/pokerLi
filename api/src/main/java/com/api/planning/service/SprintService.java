@@ -74,6 +74,14 @@ public class SprintService {
     return sprintResponseMapper.toResponse(sprint, includes);
   }
 
+  public SprintResponse get(Long sprintId, Set<String> include) {
+    Set<SprintInclude> includes = SprintInclude.parse(include);
+
+    Sprint sprint = this.getSprint(sprintId, includes);
+
+    return sprintResponseMapper.toResponse(sprint, includes);
+  }
+
   public UserSprintsResponse getUserSprints(Long memberId, Set<String> membership, Set<String> include) {
     Set<SprintMembership> memberships = SprintMembership.parse(membership);
     Set<SprintInclude> includes = SprintInclude.parse(include);
@@ -154,6 +162,13 @@ public class SprintService {
   ) {
     participantService.ensureMember(userId, sprintId);
 
+    return findSprintByInclude(sprintId, includes);
+  }
+
+  private Sprint getSprint(
+    Long sprintId,
+    Set<SprintInclude> includes
+  ) {
     return findSprintByInclude(sprintId, includes);
   }
 

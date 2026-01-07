@@ -45,8 +45,11 @@ export const api = async (options: ApiOptionsType) => {
     if (response.status === 401) {  
       // Unauthorized - token might be expired or invalid
       console.warn("Unauthorized access - invalid or expired token.");
-      await redirectTo('/logout');
-      return;
+      redirectTo('/logout');
+      return {
+        result: { error: "UN_AUTHORIZED" },
+        success: false,
+      };
     }
 
     if (!response.ok) {

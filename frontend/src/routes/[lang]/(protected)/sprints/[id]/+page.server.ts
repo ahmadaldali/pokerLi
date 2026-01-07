@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types";
-import * as api from "$lib/shared/api/sprint";
+import * as api from "$lib/shared/api/public";
 
 export const load: PageServerLoad = async ({ locals, fetch, params }) => {
  const apiResponse = await api.getSprint(params.id, fetch);

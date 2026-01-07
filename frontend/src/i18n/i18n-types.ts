@@ -130,6 +130,22 @@ type RootTranslation = {
 		 */
 		INTERNAL_SERVER_ERROR: string
 		/**
+		 * T​h​e​ ​r​e​q​u​e​s​t​e​d​ ​r​e​s​o​u​r​c​e​ ​w​a​s​ ​n​o​t​ ​f​o​u​n​d
+		 */
+		NOT_FOUND: string
+		/**
+		 * Y​o​u​ ​a​r​e​ ​n​o​t​ ​a​u​t​h​o​r​i​z​e​d​ ​t​o​ ​p​e​r​f​o​r​m​ ​t​h​i​s​ ​a​c​t​i​o​n
+		 */
+		UN_AUTHORIZED: string
+		/**
+		 * T​h​i​s​ ​a​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​a​l​l​o​w​e​d
+		 */
+		ACTION_NOT_ALLOWED: string
+		/**
+		 * B​a​d​ ​r​e​q​u​e​s​t​.​ ​P​l​e​a​s​e​ ​c​h​e​c​k​ ​y​o​u​r​ ​i​n​p​u​t
+		 */
+		BAD_REQUEST: string
+		/**
 		 * {​f​i​e​l​d​}​ ​i​s​ ​r​e​q​u​i​r​e​d
 		 * @param {unknown} field
 		 */
@@ -341,6 +357,22 @@ export type TranslationFunctions = {
 		 * An internal server error occurred. Please try again later
 		 */
 		INTERNAL_SERVER_ERROR: () => LocalizedString
+		/**
+		 * The requested resource was not found
+		 */
+		NOT_FOUND: () => LocalizedString
+		/**
+		 * You are not authorized to perform this action
+		 */
+		UN_AUTHORIZED: () => LocalizedString
+		/**
+		 * This action is not allowed
+		 */
+		ACTION_NOT_ALLOWED: () => LocalizedString
+		/**
+		 * Bad request. Please check your input
+		 */
+		BAD_REQUEST: () => LocalizedString
 		/**
 		 * {field} is required
 		 */

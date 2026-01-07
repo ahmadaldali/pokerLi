@@ -42,7 +42,7 @@ public class SecurityConfig {
         .cors(org.springframework.security.config.Customizer.withDefaults())
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-          .requestMatchers("/ws/**" , "/auth/**", "/error", "/public").permitAll()
+          .requestMatchers("/ws/**" , "/auth/**", "/error", "/public/**").permitAll()
           .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(exception ->
