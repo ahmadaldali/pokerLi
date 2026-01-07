@@ -1,14 +1,14 @@
 import { fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
-import * as api from "$lib/shared/api/index";
+import * as api from "$lib/shared/api/auth";
 import { setSession } from "$lib/server/middleware/session.js";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { loginSchema } from "$lib/shared/schemas";
 import { redirectTo } from "$lib/shared/utils/redirect";
 
-export const load: PageServerLoad = async () => {
-  const form = await superValidate(zod(loginSchema));
+export const load: PageServerLoad = async ({ locals }) => {
+  const form = await superValidate(zod(loginSchema(locals.t)));
 
   return { form };
 };
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
   default: async ({ request, cookies, fetch, locals }) => {
     const formData = await request.formData();
-    const form = await superValidate(formData, zod(loginSchema));
+    const form = await superValidate(formData, zod(loginSchema(locals.t)));
 
     if (!form.valid) {
       return fail(400, { form });

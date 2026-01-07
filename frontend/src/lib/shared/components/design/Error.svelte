@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colors } from "$lib/shared/utils/color";
+  import { colors } from "$lib/shared/utils/ui/color";
   import SvgIcon from "./SvgIcon.svelte";
 
   export let error: string | null | string[] = null;

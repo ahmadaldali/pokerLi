@@ -1,10 +1,9 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
   import type { PageData } from "./$types";
-  import Error from "$components/design/Error.svelte";
-  import { getL18ErrorMessage } from "$lib/shared/api/http";
   import LL from "$i18n/i18n-svelte";
   import AuthContainer from "$components/form/AuthContainer.svelte";
+  import Input from "$components/design/Input.svelte";
 
   export let data: PageData;
 
@@ -21,87 +20,45 @@
   linkTitle={$LL.pages.auth.signUp.haveAccount()}
 >
   <form method="POST" use:enhance class="space-y-5">
-    <!-- Name -->
-    <div>
-      <label for="name" class="block text-sm font-medium text-slate-300 mb-1">
-        Name
-      </label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        bind:value={$form.name}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="John Doe"
-      />
-      <Error class="mt-2" error={$errors.name} />
-    </div>
+    <Input
+      name="name"
+      type="name"
+      bind:value={$form.name}
+      label={$LL.fields.name.label()}
+      placeholder={$LL.fields.name.placeholder()}
+      required
+      errors={$errors.name}
+    />
 
-    <!-- Email -->
-    <div>
-      <label for="email" class="block text-sm font-medium text-slate-300 mb-1">
-        Email
-      </label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        bind:value={$form.email}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="you@example.com"
-      />
-      <Error class="mt-2" error={$errors.email} />
-    </div>
+    <Input
+      name="email"
+      type="email"
+      bind:value={$form.email}
+      label={$LL.fields.email.label()}
+      placeholder={$LL.fields.email.placeholder()}
+      required
+      errors={$errors.email}
+    />
 
-    <!-- Password -->
-    <div>
-      <label
-        for="password"
-        class="block text-sm font-medium text-slate-300 mb-1"
-      >
-        Password
-      </label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        bind:value={$form.password}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="••••••••"
-      />
-      <Error class="mt-2" error={$errors.password} showIcon={true} />
-    </div>
+    <Input
+      name="password"
+      type="password"
+      bind:value={$form.password}
+      label={$LL.fields.password.label()}
+      placeholder={$LL.fields.password.placeholder()}
+      required
+      errors={$errors.password}
+    />
 
-    <!-- Confirm Password -->
-    <div>
-      <label
-        for="confirmPassword"
-        class="block text-sm font-medium text-slate-300 mb-1"
-      >
-        Confirm password
-      </label>
-      <input
-        id="confirmPassword"
-        name="confirmPassword"
-        type="password"
-        bind:value={$form.confirmPassword}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="••••••••"
-      />
-      <Error class="mt-2" error={$errors.confirmPassword} showIcon={true} />
-    </div>
+    <Input
+      name="confirmPassword"
+      type="confirmPassword"
+      bind:value={$form.confirmPassword}
+      label={$LL.fields.confirmPassword.label()}
+      placeholder={$LL.fields.confirmPassword.placeholder()}
+      required
+      errors={$errors.confirmPassword}
+    />
 
     <!-- Submit -->
     <button

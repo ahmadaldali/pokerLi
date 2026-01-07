@@ -1,9 +1,10 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
   import type { PageData } from "./$types";
-  import Error from "$components/design/Error.svelte";
   import AuthContainer from "$components/form/AuthContainer.svelte";
   import LL from "$i18n/i18n-svelte";
+  import Input from "$components/design/Input.svelte";
+  import Button from "$components/design/Button.svelte";
 
   export let data: PageData;
 
@@ -20,66 +21,29 @@
   linkTitle={$LL.pages.auth.login.noAccount()}
 >
   <form method="POST" use:enhance class="space-y-5">
-    <!-- Email -->
-    <div>
-      <label for="email" class="block text-sm font-medium text-slate-300 mb-1">
-        Email
-      </label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        bind:value={$form.email}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="you@example.com"
-      />
-      <Error class="mt-2" error={$errors.email} />
-    </div>
+    <Input
+      name="email"
+      type="email"
+      bind:value={$form.email}
+      label={$LL.fields.email.label()}
+      placeholder={$LL.fields.email.placeholder()}
+      required
+      errors={$errors.email}
+    />
 
     <!-- Password -->
-    <div>
-      <label
-        for="password"
-        class="block text-sm font-medium text-slate-300 mb-1"
-      >
-        Password
-      </label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        bind:value={$form.password}
-        required
-        class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2.5 text-white placeholder-slate-500
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                 transition"
-        placeholder="••••••••"
-      />
-      <Error class="mt-2" error={$errors.password} showIcon={true} />
-    </div>
+    <Input
+      name="password"
+      type="password"
+      bind:value={$form.password}
+      label={$LL.fields.password.label()}
+      placeholder={$LL.fields.password.placeholder()}
+      required
+      errors={$errors.password}
+    />
 
-    <!-- Submit -->
-    <button
-      type="submit"
-      disabled={$submitting}
-      class="relative w-full rounded-lg bg-emerald-500 hover:bg-emerald-400
-               disabled:bg-emerald-700 disabled:cursor-not-allowed
-               text-slate-950 font-semibold py-2.5
-               transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
-    >
-      {#if $submitting}
-        <span class="flex items-center justify-center gap-2">
-          <span
-            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"
-          ></span>
-          Logging in…
-        </span>
-      {:else}
-        Login
-      {/if}
-    </button>
+    <Button type="submit" disabled={$submitting} loading={$submitting}>
+      {$LL.pages.auth.login.submit()}
+    </Button>
   </form>
 </AuthContainer>

@@ -111,15 +111,102 @@ type RootTranslation = {
 	}
 	errors: {
 		/**
-		 * I​n​v​a​l​i​d​ ​e​m​a​i​l​ ​o​r​ ​p​a​s​s​w​o​r​d​.
+		 * I​n​v​a​l​i​d​ ​e​m​a​i​l​ ​o​r​ ​p​a​s​s​w​o​r​d
 		 */
 		INVALID_CREDENTIALS: string
 		/**
-		 * A​n​ ​i​n​t​e​r​n​a​l​ ​s​e​r​v​e​r​ ​e​r​r​o​r​ ​o​c​c​u​r​r​e​d​.​ ​P​l​e​a​s​e​ ​t​r​y​ ​a​g​a​i​n​ ​l​a​t​e​r​.
+		 * A​n​ ​i​n​t​e​r​n​a​l​ ​s​e​r​v​e​r​ ​e​r​r​o​r​ ​o​c​c​u​r​r​e​d​.​ ​P​l​e​a​s​e​ ​t​r​y​ ​a​g​a​i​n​ ​l​a​t​e​r
 		 */
 		INTERNAL_SERVER_ERROR: string
+		/**
+		 * {​f​i​e​l​d​}​ ​i​s​ ​r​e​q​u​i​r​e​d
+		 * @param {unknown} field
+		 */
+		required: RequiredParams<'field'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​b​e​ ​a​t​ ​l​e​a​s​t​ ​{​m​i​n​}​ ​c​h​a​r​a​c​t​e​r​s​ ​l​o​n​g
+		 * @param {unknown} field
+		 * @param {unknown} min
+		 */
+		min_length: RequiredParams<'field' | 'min'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​b​e​ ​a​t​ ​m​o​s​t​ ​{​m​a​x​}​ ​c​h​a​r​a​c​t​e​r​s​ ​l​o​n​g
+		 * @param {unknown} field
+		 * @param {unknown} max
+		 */
+		max_length: RequiredParams<'field' | 'max'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​c​o​n​t​a​i​n​ ​a​t​ ​l​e​a​s​t​ ​o​n​e​ ​u​p​p​e​r​c​a​s​e​ ​l​e​t​t​e​r
+		 * @param {unknown} field
+		 */
+		one_uppercase: RequiredParams<'field'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​c​o​n​t​a​i​n​ ​a​t​ ​l​e​a​s​t​ ​o​n​e​ ​l​o​w​e​r​c​a​s​e​ ​l​e​t​t​e​r
+		 * @param {unknown} field
+		 */
+		one_lowercase: RequiredParams<'field'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​c​o​n​t​a​i​n​ ​a​t​ ​l​e​a​s​t​ ​o​n​e​ ​n​u​m​b​e​r
+		 * @param {unknown} field
+		 */
+		one_number: RequiredParams<'field'>
+		/**
+		 * {​f​i​e​l​d​}​ ​m​u​s​t​ ​c​o​n​t​a​i​n​ ​a​t​ ​l​e​a​s​t​ ​o​n​e​ ​s​p​e​c​i​a​l​ ​c​h​a​r​a​c​t​e​r
+		 * @param {unknown} field
+		 */
+		one_special: RequiredParams<'field'>
+		/**
+		 * P​a​s​s​w​o​r​d​s​ ​d​o​ ​n​o​t​ ​m​a​t​c​h
+		 */
+		password_mismatch: string
+		/**
+		 * I​n​v​a​l​i​d​ ​e​m​a​i​l​ ​a​d​d​r​e​s​s
+		 */
+		invalid_email: string
 	}
 	blocks: {
+	}
+	fields: {
+		name: {
+			/**
+			 * N​a​m​e
+			 */
+			label: string
+			/**
+			 * A​h​m​a​d​ ​A​l​d​a​l​i
+			 */
+			placeholder: string
+		}
+		email: {
+			/**
+			 * E​m​a​i​l
+			 */
+			label: string
+			/**
+			 * d​e​v​@​a​h​m​a​d​.​m​e
+			 */
+			placeholder: string
+		}
+		password: {
+			/**
+			 * P​a​s​s​w​o​r​d
+			 */
+			label: string
+			/**
+			 * •​•​•​•​•​•​•​•
+			 */
+			placeholder: string
+		}
+		confirmPassword: {
+			/**
+			 * C​o​n​f​i​r​m​ ​P​a​s​s​w​o​r​d
+			 */
+			label: string
+			/**
+			 * •​•​•​•​•​•​•​•
+			 */
+			placeholder: string
+		}
 	}
 }
 
@@ -220,15 +307,93 @@ export type TranslationFunctions = {
 	}
 	errors: {
 		/**
-		 * Invalid email or password.
+		 * Invalid email or password
 		 */
 		INVALID_CREDENTIALS: () => LocalizedString
 		/**
-		 * An internal server error occurred. Please try again later.
+		 * An internal server error occurred. Please try again later
 		 */
 		INTERNAL_SERVER_ERROR: () => LocalizedString
+		/**
+		 * {field} is required
+		 */
+		required: (arg: { field: unknown }) => LocalizedString
+		/**
+		 * {field} must be at least {min} characters long
+		 */
+		min_length: (arg: { field: unknown, min: unknown }) => LocalizedString
+		/**
+		 * {field} must be at most {max} characters long
+		 */
+		max_length: (arg: { field: unknown, max: unknown }) => LocalizedString
+		/**
+		 * {field} must contain at least one uppercase letter
+		 */
+		one_uppercase: (arg: { field: unknown }) => LocalizedString
+		/**
+		 * {field} must contain at least one lowercase letter
+		 */
+		one_lowercase: (arg: { field: unknown }) => LocalizedString
+		/**
+		 * {field} must contain at least one number
+		 */
+		one_number: (arg: { field: unknown }) => LocalizedString
+		/**
+		 * {field} must contain at least one special character
+		 */
+		one_special: (arg: { field: unknown }) => LocalizedString
+		/**
+		 * Passwords do not match
+		 */
+		password_mismatch: () => LocalizedString
+		/**
+		 * Invalid email address
+		 */
+		invalid_email: () => LocalizedString
 	}
 	blocks: {
+	}
+	fields: {
+		name: {
+			/**
+			 * Name
+			 */
+			label: () => LocalizedString
+			/**
+			 * Ahmad Aldali
+			 */
+			placeholder: () => LocalizedString
+		}
+		email: {
+			/**
+			 * Email
+			 */
+			label: () => LocalizedString
+			/**
+			 * dev@ahmad.me
+			 */
+			placeholder: () => LocalizedString
+		}
+		password: {
+			/**
+			 * Password
+			 */
+			label: () => LocalizedString
+			/**
+			 * ••••••••
+			 */
+			placeholder: () => LocalizedString
+		}
+		confirmPassword: {
+			/**
+			 * Confirm Password
+			 */
+			label: () => LocalizedString
+			/**
+			 * ••••••••
+			 */
+			placeholder: () => LocalizedString
+		}
 	}
 }
 

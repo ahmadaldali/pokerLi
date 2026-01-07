@@ -1,6 +1,6 @@
-import { colors } from './src/lib/shared/utils/color';
+import { colors } from './src/lib/shared/utils/ui/color';
 import { boxShadows } from './src/lib/shared/utils/ui/shadow';
-import breakpoints from './src/lib/shared/utils/breakpoint';
+import breakpoints from './src/lib/shared/utils/ui/breakpoint';
 
 /** @type {import('tailwindcss').Config}*/
 const config = {

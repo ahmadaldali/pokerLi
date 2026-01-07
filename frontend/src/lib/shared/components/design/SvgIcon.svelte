@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { icons, type iconName } from "$lib/shared/utils/icon";
+  import { icons, type iconName } from "$lib/shared/utils/ui/icon";
 
   export let name: iconName;
   export let color: string = "";

@@ -1,32 +1,23 @@
-import { z } from 'zod';
+import { z } from "zod";
+import { lengthString, requiredString } from "../utils/validator";
+import type { TranslationFunctions } from "$i18n/i18n-types";
+import { emailField, passwordField } from "./fields";
 
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .email('Invalid email address')
-    .min(1, 'Email is required'),
-  password: z
-    .string()
-    .min(1, 'Password is required')
-});
+export const loginSchema = (t: TranslationFunctions) =>
+  z.object({
+    email: emailField(t),
+    password: requiredString(t, "Password"),
+  });
 
-export type LoginSchema = z.infer<typeof loginSchema>;
-
-export const signupSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z
-    .string()
-    .email('Invalid email address')
-    .min(1, 'Email is required'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters long')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(/[\W_]/, 'Password must contain at least one special character'),
-  confirmPassword: z.string().min(1, 'Please confirm your password')
-})
-
-export type SignupSchema = z.infer<typeof signupSchema>;
-
+export const signupSchema = (t: TranslationFunctions) =>
+  z
+    .object({
+      name: lengthString(t, "Name", 3, 50),
+      email: emailField(t),
+      password: passwordField(t).and(lengthString(t, "Password", 6, 50)),
+      confirmPassword: requiredString(t, "Confirm Password"),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      path: ["confirmPassword"],
+      message: t.errors.password_mismatch(),
+    });

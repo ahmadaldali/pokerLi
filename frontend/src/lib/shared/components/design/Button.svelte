@@ -1,13 +1,37 @@
 <script lang="ts">
-	export let type: string = 'button';
-	export let disabled = false;
+  import type { TButtonSize, TButtonType } from "$lib/shared/types/button";
+  import { generateRandomString } from "$lib/shared/utils/helper";
+  import { getButtonStyle } from "$lib/shared/utils/ui/button";
+
+  // Specify the id of button
+  export let id: string = generateRandomString();
+  export let size: TButtonSize = "md";
+  export let rounded: boolean = false;
+  export let type: TButtonType = "button";
+  export let disabled = false;
+  export let loading: boolean = false;
+  export let tabindex: number = 0;
+  export let ref: HTMLElement | null = null;
+
+  $: buttonProps = {
+    id,
+    type,
+    tabindex,
+    disabled,
+    ...$$restProps,
+    class: [$$restProps.class, getButtonStyle(size, rounded, loading)]
+      .filter(Boolean)
+      .join(" "),
+  };
 </script>
 
-<button {disabled}
-	{type}
-	class="{disabled == true
-	? 'bg-gray-100 hover:bg-grey-700'
-	: 'bg-primary hover:bg-primary-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'} inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white focus:outline-none"
- >
-	<slot />
+<button bind:this={ref} {...buttonProps} on:click>
+  <span class="flex items-center justify-center gap-2">
+    {#if loading}
+      <span
+        class="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"
+      ></span>
+    {/if}
+    <slot />
+  </span>
 </button>
