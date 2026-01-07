@@ -25,5 +25,12 @@
 <svelte:head>
   <link rel="icon" href={favicon} />
 </svelte:head>
-
+<div
+  class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950"
+>
+  <div
+    class="w-full max-w-md rounded-2xl bg-slate-900/80 backdrop-blur border border-white/10 shadow-2xl p-8"
+  >
 {@render children()}
+  </div>
+</div>

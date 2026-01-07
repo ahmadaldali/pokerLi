@@ -1,6 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { Locales } from '$i18n/i18n-types';
+import type { Locales, TranslationFunctions } from '$i18n/i18n-types';
 import type { Session as LocalSession } from '$lib/server/middleware/session';
 import type { ApiResponse } from '$lib/shared/types/http';
 import type { TCurrentLoggedInUser } from '$lib/shared/types/user';

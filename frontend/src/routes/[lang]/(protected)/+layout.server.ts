@@ -10,7 +10,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   if (locals.token) {
     tokenStore.set(locals.token);
   } else {
-    redirectTo(locals.t.routes.auth.logOut());
+    redirectTo(locals.t.routes.auth.logout());
   }
 
   return {

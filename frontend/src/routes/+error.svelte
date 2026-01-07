@@ -18,7 +18,7 @@
         if (page.data.user?.role && status === 404) {
             return $LL.routes.user.homepage();
         } else {
-            return $LL.routes.auth.logOut();
+            return $LL.routes.auth.logout();
         }
     };
 </script>

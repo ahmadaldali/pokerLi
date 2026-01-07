@@ -12,5 +12,5 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
         await resetData(event);
     }
 
-    throw redirect(302, t.routes.auth.logIn());
+    throw redirect(302, t.routes.auth.login());
 };
