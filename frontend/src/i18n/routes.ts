@@ -5,9 +5,9 @@ export function localeRoutes(locale: Locales) {
     return {
         href: `/${locale}/{0}` as RequiredParams<'0'>,
         auth: {
-            logIn: `/${locale}/login`,
+            login: `/${locale}/login`,
             signUp: `/${locale}/sign-up`,
-            logOut: `/${locale}/logout`
+            logout: `/${locale}/logout`
         },
         user: {
             homepage: `/${locale}/user`,

@@ -4,10 +4,11 @@ import { PUBLIC_API_URL } from '$env/static/public';
 
 const MODULE_ROUTE = 'auth';
 
-export const register = (data: RawData) => {
+export const register = (data: RawData, fetchFn?: typeof fetch) => {
 	return Promise.resolve(api({
         url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/register`,
         method: 'POST',
+        fetch: fetchFn,
         data: data
     }));
 };

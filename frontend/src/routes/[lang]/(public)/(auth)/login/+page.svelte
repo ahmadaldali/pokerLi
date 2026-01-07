@@ -1,39 +1,49 @@
-<script>
-  import Button from "$components/design/Button.svelte";
+<script lang="ts">
+  import { superForm } from "sveltekit-superforms";
+  import type { PageData } from "./$types";
+  import AuthContainer from "$components/form/AuthContainer.svelte";
+  import LL from "$i18n/i18n-svelte";
   import Input from "$components/design/Input.svelte";
-  import { LL } from "$i18n/i18n-svelte";
-  import { getL18ErrorMessage } from "$lib/shared/api/http.js";
+  import Button from "$components/design/Button.svelte";
 
-  let email = "";
-  let password = "";
+  export let data: PageData;
 
-  export let form;
+  const { form, errors, enhance, message, submitting } = superForm(data.form, {
+    resetForm: false,
+  });
 </script>
 
-<form method="post" class={$$props.class}>
-  <Input
-    label="Email"
-    id="email"
-    name="email"
-    type="email"
-    bind:value={email}
-    required
-  />
+<AuthContainer
+  title={$LL.pages.auth.login.title()}
+  response={$message}
+  link={$LL.routes.auth.signUp()}
+  linkText={$LL.pages.auth.login.signUp()}
+  linkTitle={$LL.pages.auth.login.noAccount()}
+>
+  <form method="POST" use:enhance class="space-y-5">
+    <Input
+      name="email"
+      type="email"
+      bind:value={$form.email}
+      label={$LL.fields.email.label()}
+      placeholder={$LL.fields.email.placeholder()}
+      required
+      errors={$errors.email}
+    />
 
-  <Input
-    label="Password"
-    id="password"
-    name="password"
-    type="password"
-    bind:value={password}
-    required
-  />
+    <!-- Password -->
+    <Input
+      name="password"
+      type="password"
+      bind:value={$form.password}
+      label={$LL.fields.password.label()}
+      placeholder={$LL.fields.password.placeholder()}
+      required
+      errors={$errors.password}
+    />
 
-  <Button type="submit">Login</Button>
-</form>
-
-{#if form?.response.success === false}
-  <div class="mt-3 text-red-500 text-center font-semibold">
-    {getL18ErrorMessage($LL.errors, form.response.result.error)}
-  </div>
-{/if}
+    <Button type="submit" disabled={$submitting} loading={$submitting}>
+      {$LL.pages.auth.login.submit()}
+    </Button>
+  </form>
+</AuthContainer>

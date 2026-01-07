@@ -80,7 +80,9 @@ export const api = async (options: ApiOptionsType) => {
   }
 };
 
-export const getL18ErrorMessage = (errors: any, code: string) => {
+export const getL18ErrorMessage = (errors: any, code: string | null | undefined) => {
+  if (!code) return null;
+  
   code = code.toString().toUpperCase();
   // return message related to that code, otherwise if that code is not regonized, then return internal error message
   return errors[code]() ? errors[code]() : errors["INTERNAL_SERVER_ERROR"]();

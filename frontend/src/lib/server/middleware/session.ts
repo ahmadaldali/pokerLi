@@ -59,7 +59,7 @@ export default (({ logger, event, resolve }) => {
       setRedirectTo(event.cookies, event.url.pathname + event.url.search);
     }
 
-    return `${t.routes.auth.logIn()}`;
+    return `${t.routes.auth.login()}`;
   }
 }) satisfies MiddlewareBuilder;
 

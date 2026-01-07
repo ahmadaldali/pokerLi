@@ -4,7 +4,6 @@ import {
   isAsset,
   isKeyOfObject,
   isLogoutRoute,
-  isProtectedRoute,
   isPublicRoute,
 } from "$lib/shared/utils/check";
 import { getSession } from "./session";
@@ -47,7 +46,7 @@ export default (({ logger, event, resolve }) => {
         // If the user is not logged in redirect to login page
         throw redirect(
           302,
-          event.locals.t.routes.auth.logIn()
+          event.locals.t.routes.auth.login()
         );
       }
 

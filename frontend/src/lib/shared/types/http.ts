@@ -9,3 +9,11 @@ export type ApiOptionsType = {
     data?:  RawData;
     event?: RequestEvent;
 };
+
+export type ApiResponse = {
+    success: boolean;
+    result: {
+        error: string | null;
+        [key: string]: any;
+    }
+}
