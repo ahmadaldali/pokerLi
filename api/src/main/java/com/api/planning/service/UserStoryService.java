@@ -27,8 +27,6 @@ import java.util.Set;
 @Transactional
 public class UserStoryService {
 
-  // don't use sprint service here
-
   // repo
   private final UserStoryRepository userStoryRepository;
 

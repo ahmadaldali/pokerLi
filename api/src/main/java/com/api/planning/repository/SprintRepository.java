@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -57,4 +58,36 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findFull(Long id);
+
+  @EntityGraph(attributePaths = {
+    "creator",
+    "members"
+  })
+  @Query("""
+  select distinct s
+  from Sprint s
+  join s.members m
+  where m.id = :memberId
+  """)
+  List<Sprint> findAllByMemberId(Long memberId);
+
+  @EntityGraph(attributePaths = {
+    "creator"
+  })
+  @Query("""
+    select s
+    from Sprint s
+    where s.creator.id = (
+        select u.inviter.id
+        from User u
+        where u.id = :userId
+          and u.inviter is not null
+    )
+    and not exists (
+        select 1
+        from s.members m
+        where m.id = :userId
+    )
+""")
+  List<Sprint> findAllJoinableForUser(Long userId);
 }

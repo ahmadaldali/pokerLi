@@ -43,7 +43,11 @@ const ErrorsTranslation = {
   invalid_email: 'Invalid email address',
 };
 
-const BlocksTranslation = {};
+const BlocksTranslation = {
+  header: {
+    sprints: "Sprints",
+  }
+};
 
 const FieldsTranslation = {
   name: {

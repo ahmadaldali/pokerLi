@@ -10,3 +10,11 @@ export const getUser = () => {
         method: 'GET'
     }));
 };
+
+export const getUserSprints = (fetchFn?: typeof fetch) => {
+	return Promise.resolve(api({
+        url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/sprints`,
+        method: 'GET',
+            fetch: fetchFn, 
+    }));
+};

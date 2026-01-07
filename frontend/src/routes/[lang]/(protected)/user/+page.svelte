@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { api } from "$lib/shared/api/http";
   import { getSprint } from "$lib/shared/api/sprint";
-  import { getUser } from "$lib/shared/api/user";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
+  import PokerLiLogo from "$components/design/PokerLiLogo.svelte";
 
   export let data: PageData;
 
   console.log("data in page:", data);
+
+  const user = data.user;
   
 
   onMount(async () => {
@@ -20,7 +21,8 @@
     });
   });
 
+  let userMenuOpen = false;
+
+  let mobileOpen = false;
+
   </script>
-
-
-  <h1 class="text-2xl font-bold mb-4">User Page</h1>

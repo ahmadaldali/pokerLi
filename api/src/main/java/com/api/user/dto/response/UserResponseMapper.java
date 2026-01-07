@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public record UserResponseMapper() {
   public UserResponse toResponse(User entity) {
-    return toResponse(entity, 1);
+    return toResponse(entity, 2);
   }
 
   private UserResponse toResponse(User entity, int depth) {
-    if (entity == null || depth <= 0) {
+    if (entity == null) {
       return null;
     }
 

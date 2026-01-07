@@ -5,6 +5,7 @@ import {
   isKeyOfObject,
   isLogoutRoute,
   isPublicRoute,
+  isSprintRoute,
 } from "$lib/shared/utils/check";
 import { getSession } from "./session";
 
@@ -32,22 +33,18 @@ export default (({ logger, event, resolve }) => {
             `${event.url.protocol}//${event.url.host}/${language}/${urlsToRedirect[urlToCheck]}`
           );
         }
-        
+
         if (getSession(event.cookies) && !isLogoutRoute(event.route.id)) {
           // If the user is already logged in redirect to home page
-          throw redirect(
-            302,
-           event.locals.t.routes.user.homepage()
-          );
+          throw redirect(302, event.locals.t.routes.user.homepage());
         }
       }
 
       if (!isPublicRoute(event.route.id) && !getSession(event.cookies)) {
-        // If the user is not logged in redirect to login page
-        throw redirect(
-          302,
-          event.locals.t.routes.auth.login()
-        );
+        if (!isSprintRoute(event.route.id)) {
+          // If the user is not logged in redirect to login page - except for sprint route
+          throw redirect(302, event.locals.t.routes.auth.login());
+        }
       }
 
       return resolve(event);

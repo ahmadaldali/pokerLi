@@ -7,7 +7,7 @@ import notFound from './not-found';
 
 export const requestHandler = sequence(
     middlewareRunner('locale', locale),
-    middlewareRunner('session', session),
     middlewareRunner('redirect', redirect),
+    middlewareRunner('session', session),
     middlewareRunner('not-found', notFound),
 );

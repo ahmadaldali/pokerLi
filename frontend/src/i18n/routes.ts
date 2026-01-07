@@ -11,6 +11,10 @@ export function localeRoutes(locale: Locales) {
         },
         user: {
             homepage: `/${locale}/user`,
+        },
+        sprints: {
+            index: `/${locale}/sprints`,
+            details: `/${locale}/sprints/{0}` as RequiredParams<'0'>,
         }
     };
 }

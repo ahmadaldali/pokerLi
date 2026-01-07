@@ -4,9 +4,10 @@ import { PUBLIC_API_URL } from '$env/static/public';
 
 const MODULE_ROUTE = 'sprints';
 
-export const getSprint = (id: string) => {
+export const getSprint = (id: string, fetchFn?: typeof fetch) => {
 	return Promise.resolve(api({
         url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${id}`,
-        method: 'GET'
+        method: 'GET',
+        fetch: fetchFn,
     }));
 };

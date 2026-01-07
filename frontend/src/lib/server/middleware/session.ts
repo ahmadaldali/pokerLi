@@ -1,9 +1,9 @@
 import { type RequestEvent, redirect, type Cookies } from "@sveltejs/kit";
 import {
   isAsset,
-  isAuthRoute,
   isProtectedRoute,
   isPublicRoute,
+  isSprintRoute,
 } from "$lib/shared/utils/check";
 import type { MiddlewareBuilder } from "./utils";
 import { PUBLIC_ENV } from "$env/static/public";
@@ -41,7 +41,7 @@ export default (({ logger, event, resolve }) => {
 
       // If the accessed route is public set the session to undefined
       // in order to pass the event to the next method in squence
-      if (isPublicRoute(event.route.id) || isAuthRoute(event.route.id)) {
+      if (isPublicRoute(event.route.id) || isSprintRoute(event.route.id)) {
         return undefined;
       }
 

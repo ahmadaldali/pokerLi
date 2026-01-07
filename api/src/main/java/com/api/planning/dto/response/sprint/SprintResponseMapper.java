@@ -7,6 +7,8 @@ import com.api.planning.entity.Sprint;
 import com.api.user.dto.response.UserResponseMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -46,6 +48,24 @@ public record SprintResponseMapper(
     }
 
     return base;
+  }
+
+  // LIST
+  public List<SprintResponse> toResponseList(Collection<Sprint> sprints) {
+    return toResponseList(sprints, NO_INCLUDES);
+  }
+
+  public List<SprintResponse> toResponseList(
+    Collection<Sprint> sprints,
+    Set<SprintInclude> includes
+  ) {
+    if (sprints == null || sprints.isEmpty()) {
+      return List.of();
+    }
+
+    return sprints.stream()
+      .map(sprint -> toResponse(sprint, includes))
+      .toList();
   }
 }
 

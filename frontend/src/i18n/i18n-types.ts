@@ -40,6 +40,17 @@ type RootTranslation = {
 			 */
 			homepage: string
 		}
+		sprints: {
+			/**
+			 * /​e​n​/​s​p​r​i​n​t​s
+			 */
+			index: string
+			/**
+			 * /​e​n​/​s​p​r​i​n​t​s​/​{​0​}
+			 * @param {unknown} 0
+			 */
+			details: RequiredParams<'0'>
+		}
 	}
 	pages: {
 		auth: {
@@ -165,6 +176,12 @@ type RootTranslation = {
 		invalid_email: string
 	}
 	blocks: {
+		header: {
+			/**
+			 * S​p​r​i​n​t​s
+			 */
+			sprints: string
+		}
 	}
 	fields: {
 		name: {
@@ -235,6 +252,16 @@ export type TranslationFunctions = {
 			 * /en/user
 			 */
 			homepage: () => LocalizedString
+		}
+		sprints: {
+			/**
+			 * /en/sprints
+			 */
+			index: () => LocalizedString
+			/**
+			 * /en/sprints/{0}
+			 */
+			details: (arg0: unknown) => LocalizedString
 		}
 	}
 	pages: {
@@ -352,6 +379,12 @@ export type TranslationFunctions = {
 		invalid_email: () => LocalizedString
 	}
 	blocks: {
+		header: {
+			/**
+			 * Sprints
+			 */
+			sprints: () => LocalizedString
+		}
 	}
 	fields: {
 		name: {

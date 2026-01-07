@@ -1,13 +1,14 @@
 <script lang="ts">
   import { setLocale } from '$i18n/i18n-svelte';
   import { beforeNavigate } from '$app/navigation';
-  import { page, updated } from '$app/stores';
+  import { page, updated } from '$app/state';
   import favicon from '$lib/assets/favicon.svg';
   import type { Locales } from '$i18n/i18n-types';
   import '../app.css';
+  import Header from '$components/layout/Header.svelte';
 
   $effect(() => {
-    const lang = ($page?.params?.lang ?? 'en') as Locales;
+    const lang = (page?.params?.lang ?? 'en') as Locales;
     if (lang) {
       setLocale(lang);
     }
@@ -25,6 +26,9 @@
 <svelte:head>
   <link rel="icon" href={favicon} />
 </svelte:head>
+
+<Header user={page.data.user} />
+
 <div
   class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950"
 >

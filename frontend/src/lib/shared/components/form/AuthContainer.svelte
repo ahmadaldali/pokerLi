@@ -2,8 +2,9 @@
   import Error from "$components/design/Error.svelte";
   import { getL18ErrorMessage } from "$lib/shared/api/http";
   import LL from "$i18n/i18n-svelte";
-  import type { Writable } from "svelte/store";
   import type { ApiResponse } from "$lib/shared/types/http";
+  import Link from "$components/design/Link.svelte";
+  import PokerLiLogo from "$components/design/PokerLiLogo.svelte";
 
   export let title: string;
 
@@ -15,9 +16,7 @@
 
 <!-- Logo / Title -->
 <div class="text-center mb-8">
-  <h1 class="text-3xl font-bold tracking-tight text-white">
-    poker<span class="text-emerald-400">Li</span>
-  </h1>
+ <PokerLiLogo />
   <p class="mt-2 text-sm text-slate-400">{title}</p>
 </div>
 
@@ -33,15 +32,7 @@
 
 <!-- Link -->
 {#if link}
-  <p class="mt-6 text-center text-sm text-slate-400">
-    {linkTitle}
-    <a
-      href={link}
-      class="ml-1 font-medium text-emerald-400 hover:text-emerald-300 underline-offset-4 hover:underline transition"
-    >
-      {linkText}
-    </a>
-  </p>
+  <Link link={link} linkText={linkText} linkTitle={linkTitle} />
 {/if}
 
 <!-- Footer -->
