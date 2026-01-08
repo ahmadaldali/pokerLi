@@ -8,6 +8,7 @@ import {
 import type { MiddlewareBuilder } from "./utils";
 import { PUBLIC_ENV } from "$env/static/public";
 import { resetData } from "$lib/server/auth";
+import { tokenStore } from "$lib/shared/stores/user";
 
 /** Implements the `session` middleware interface */
 export default (({ logger, event, resolve }) => {
@@ -73,6 +74,8 @@ export default (({ logger, event, resolve }) => {
  * Request cookies object.
  */
 export function setSession(cookies: Cookies, token: string) {
+  tokenStore.set(token); // set the store token "server side"
+  
   cookies.set(SESSION_KEY, token, {  // ✅ Store RAW JWT token
     path: "/",
     httpOnly: true,                  // ✅ Client can't access

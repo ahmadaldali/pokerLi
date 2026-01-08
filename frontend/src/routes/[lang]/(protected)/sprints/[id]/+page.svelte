@@ -4,10 +4,12 @@
 
     export let data: PageData
 
-    const { apiResponse } = data;
+    const { apiResponse, user } = data;
 </script>
 
 
+  User: {user?.name} ({user?.email})
+  
 {#if apiResponse.success}
   <h1>Sprint Details</h1>
   <pre>{JSON.stringify(apiResponse.result, null, 2)}</pre>
