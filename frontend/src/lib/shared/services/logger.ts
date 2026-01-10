@@ -67,7 +67,7 @@ export interface Logger {
 
 /** Initializes the logger service. */
 export default function getLogger(): Readonly<Logger> {
-    return createLogger().child({ app: 'yoboo' });
+    return createLogger().child({ app: 'pokerLi' });
 }
 
 /** Creates a new logger instance. */

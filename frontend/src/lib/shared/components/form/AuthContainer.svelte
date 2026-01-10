@@ -2,13 +2,13 @@
   import Error from "$components/design/Error.svelte";
   import { getL18ErrorMessage } from "$lib/shared/api/http";
   import LL from "$i18n/i18n-svelte";
-  import type { ApiResponse } from "$lib/shared/types/http";
+  import type { TApiResponse } from "$lib/shared/types/http";
   import Link from "$components/design/Link.svelte";
   import PokerLiLogo from "$components/design/PokerLiLogo.svelte";
 
   export let title: string;
 
-  export let response: ApiResponse | undefined;
+  export let response: TApiResponse | undefined;
   export let link: string | null = null;
   export let linkText: string = "";
   export let linkTitle: string = "";

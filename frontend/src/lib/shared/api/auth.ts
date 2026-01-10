@@ -1,10 +1,10 @@
-import type { RawData } from '../types/general';
+import type { TRawData } from '../types/general';
 import { api } from './http';
 import { PUBLIC_API_URL } from '$env/static/public';
 
 const MODULE_ROUTE = 'auth';
 
-export const register = (data: RawData, fetchFn?: typeof fetch) => {
+export const register = (data: TRawData, fetchFn?: typeof fetch) => {
 	return Promise.resolve(api({
         url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/register`,
         method: 'POST',
@@ -13,7 +13,7 @@ export const register = (data: RawData, fetchFn?: typeof fetch) => {
     }));
 };
 
-export const login = (data: RawData, fetchFn?: typeof fetch) => {
+export const login = (data: TRawData, fetchFn?: typeof fetch) => {
 		return Promise.resolve(api({
         url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/login`,
         method: 'POST',

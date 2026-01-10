@@ -1,9 +1,9 @@
 import { get } from "svelte/store";
-import type { ApiOptionsType } from "$lib/shared/types/http";
+import type { TApiOptions, TApiResponse } from "$lib/shared/types/http";
 import { tokenStore } from "$lib/shared/stores/user";
-import { redirectTo } from "$lib/shared/utils/redirect";
+import type { TRawData } from "$lib/shared/types/general";
 
-const apiHeaders = (additionalHeaders: Record<string, string>) => {
+const apiHeaders = (additionalHeaders: TRawData) => {
   const defaultHeaders = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -14,7 +14,7 @@ const apiHeaders = (additionalHeaders: Record<string, string>) => {
     : defaultHeaders;
 };
 
-export const api = async (options: ApiOptionsType) => {
+export const api = async (options: TApiOptions): Promise<TApiResponse> => {
   const fetchMethod = options.fetch || fetch;
   try {
     const token = get(tokenStore);

@@ -14,6 +14,8 @@ import type { LayoutServerLoad } from "./$types";
 export const load = (async ({ locals, params }) => {
   let user = null as TCurrentLoggedInUser | null;
 
+  console.log('Layout server load - token:', locals.token);
+
   if (locals.token) {
     const apiResponse = (await getUser());
 

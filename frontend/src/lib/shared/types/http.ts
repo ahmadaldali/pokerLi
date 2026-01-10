@@ -1,19 +1,22 @@
-import type { RawData } from "./general";
+import type { TRawData } from "./general";
 import type { HttpMethod, RequestEvent } from '@sveltejs/kit';
 
-export type ApiOptionsType = {
+export type TApiOptions = {
     fetch?: typeof fetch;  // Add this
     url: string;
     method?: HttpMethod;
     headers?: any;
-    data?:  RawData;
+    data?:  TRawData;
     event?: RequestEvent;
 };
 
-export type ApiResponse = {
+export type TApiResponse<T = any> = {
     success: boolean;
-    result: {
-        error: string | null;
-        [key: string]: any;
-    }
+    result: T & {
+        error?: string | null;
+    };
+}
+
+export type TSuccessResponse = {
+    message: string;
 }

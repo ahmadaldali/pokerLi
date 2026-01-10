@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { TableConfig } from "$lib/shared/types/table";
+  import type { TTableConfig } from "$lib/shared/types/table";
   
-  export let config: TableConfig<any>;
+  export let config: TTableConfig<any>;
   export let rows: any[] = [];
   export let rowClass = "";
   export let emptyText = "No data available";

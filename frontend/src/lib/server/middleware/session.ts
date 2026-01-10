@@ -38,7 +38,6 @@ export default (({ logger, event, resolve }) => {
       return session;
     } else {
       logger.info("session not found", { event });
-      await resetData(event);
 
       // If the accessed route is public set the session to undefined
       // in order to pass the event to the next method in squence
@@ -131,7 +130,7 @@ export function verifySession(expiredTime: number): boolean {
 export function deleteSession(cookies: Cookies) {
   cookies.delete(SESSION_KEY, {
     path: "/",
-    ...(PUBLIC_ENV !== "localhost" && { domain: ".yoboo.health" }),
+    ...(PUBLIC_ENV !== "localhost" && { domain: "." }), // TODO check this
   });
 }
 

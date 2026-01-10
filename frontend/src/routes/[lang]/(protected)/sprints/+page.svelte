@@ -2,7 +2,7 @@
   import Error from "$components/design/Error.svelte";
   import Table from "$components/design/Table.svelte";
   import { getL18ErrorMessage } from "$lib/shared/api/http";
-  import type { TableConfig } from "$lib/shared/types/table";
+  import type { TTableConfig } from "$lib/shared/types/table";
   import { generateRandomString } from "$lib/shared/utils/helper";
   import type { PageData } from "./$types";
   import LL from "$i18n/i18n-svelte";
@@ -11,10 +11,10 @@
 
   console.log(data);
 
-  const tableConfig: TableConfig<any> = {
+  const tableConfig: TTableConfig<any> = {
     columns: [
-      { key: "name", label: "User Story" },
-      { key: "creator", label: "Room" },
+      { key: "name", label: "Room" },
+      { key: "creator", label: "Creator" },
     ],
     actions: [
       {
@@ -25,14 +25,14 @@
   };
 </script>
 
-{#if data.apiResponse.success}
+{#if data.userSprintsFetchedSuccessfully}
   <Table
-    rows={data.apiResponse.result.joinable}
+    rows={data.userSprints.joinable}
     config={tableConfig}
     emptyText="No rooms found"
   />
 {:else}
   <Error
-    error={getL18ErrorMessage($LL.errors, data.apiResponse.result.error)}
+    error={getL18ErrorMessage($LL.errors, data.userSprintsResponse.result.error)}
   />
 {/if}
