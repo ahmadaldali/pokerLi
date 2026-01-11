@@ -47,7 +47,7 @@ public class UserStory {
     }
   }
 
-  /* Estimations (ongoing) */
+  /* Estimations (ongoing only) */
   @OneToMany(
     mappedBy = "userStory",
     cascade = CascadeType.ALL,
@@ -63,4 +63,5 @@ public class UserStory {
     orphanRemoval = true
   )
   private Set<EstimationResult> estimationResults = new HashSet<>();
+
 }

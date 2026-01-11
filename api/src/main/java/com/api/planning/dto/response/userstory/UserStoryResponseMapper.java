@@ -1,12 +1,13 @@
 package com.api.planning.dto.response.userstory;
 
-
 import com.api.common.enums.SprintInclude;
 import com.api.planning.dto.response.estimation.EstimationResponseMapper;
 import com.api.planning.dto.response.estimation.EstimationResultResponseMapper;
 import com.api.planning.entity.UserStory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -21,7 +22,6 @@ public record UserStoryResponseMapper(
     if (userStory == null) {
       return null;
     }
-
     return toResponse(userStory, NO_INCLUDES);
   }
 
@@ -29,6 +29,10 @@ public record UserStoryResponseMapper(
     UserStory userStory,
     Set<SprintInclude> includes
   ) {
+    if (userStory == null) {
+      return null;
+    }
+
     Set<SprintInclude> safeIncludes =
       includes == null ? NO_INCLUDES : includes;
 
@@ -36,14 +40,18 @@ public record UserStoryResponseMapper(
 
     if (safeIncludes.contains(SprintInclude.ESTIMATION_RESULTS)) {
       response.setEstimationResults(
-        userStory.getEstimationResults().stream()
+        Optional.ofNullable(userStory.getEstimationResults())
+          .orElse(Collections.emptySet())
+          .stream()
           .map(estimationResultResponseMapper::toResponse)
           .toList()
       );
     }
 
     if (safeIncludes.contains(SprintInclude.ESTIMATIONS)) {
-      var estimations = userStory.getEstimations();
+      var estimations =
+        Optional.ofNullable(userStory.getEstimations())
+          .orElse(Collections.emptySet());
 
       response.setEstimations(
         estimations.stream()
@@ -53,7 +61,7 @@ public record UserStoryResponseMapper(
 
       response.setVoters(
         estimations.stream()
-          .map(estimation -> estimation.getUser().getId())
+          .map(e -> e.getUser().getId())
           .distinct()
           .toList()
       );

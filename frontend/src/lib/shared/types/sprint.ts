@@ -5,6 +5,13 @@ export interface TUserStoryEstimation {
     user: TUser;
 }
 
+export interface TUserStoryEstimationResult {
+    id: number;
+    total: number;
+    estimation: number;
+    count: number;
+}
+
 export interface TUserStory {
     id: number;
     name: string;
@@ -12,7 +19,9 @@ export interface TUserStory {
     link: string;
     isRevealed: boolean;
     voters?: number[];
-    estimations?: TUserStoryEstimation[];
+    isActive: boolean; // voting ongoing for this us. we keep only one us active at the same moment
+    estimations?: TUserStoryEstimation[]; // estimations given by users for ongoing voting only (not revealed yet).
+    estimationResults?: TUserStoryEstimationResult[];
 }
 
 export interface TSprint {

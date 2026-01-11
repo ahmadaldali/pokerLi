@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import { selectedUserStroyStore } from "$lib/shared/stores/vote";
   import type { TUserStory } from "$lib/shared/types/sprint";
   import CardSelector from "$components/vote/CardSelector.svelte";
   import Members from "$components/vote/Members.svelte";
   import { connect, disconnect } from "$lib/client/websocket/vote";
   import { onDestroy, onMount } from "svelte";
+  import EmptyUserStories from "$components/vote/EmptyUserStories.svelte";
+  import Reveal from "$components/vote/Reveal.svelte";
+  import UserStoryResults from "$components/vote/UserStoryResults.svelte";
 
   export let data: PageData;
 
@@ -13,11 +15,34 @@
 
   function selectUserStory(story: TUserStory) {
     // logic to select a user story for voting
-    selectedUserStroyStore.set(story);
   }
 
   $: userStories = sprint?.userStories || [];
   $: members = sprint?.members || [];
+
+  $: activeVotingUserStroy = userStories.find((story) => story.isActive);
+
+  onMount(() => {
+    connect(
+      (userStory) => {
+        const index = userStories.findIndex((us) => us.id === userStory.id);
+        if (index !== -1) {
+          userStories[index] = userStory;
+          userStories = [...userStories];
+        }
+      },
+      (updatedSprint) => {
+        if (updatedSprint.id === sprint?.id) {
+          userStories = updatedSprint.userStories || [];
+          members = updatedSprint.members || [];
+        }
+      }
+    );
+  });
+
+  onDestroy(() => {
+    disconnect();
+  });
 </script>
 
 <div class="px-6 py-8 md:px-10">
@@ -45,30 +70,7 @@
 
     {#if user}
       {#if userStories.length === 0}
-        <!-- Empty state -->
-        <div
-          class="flex flex-col items-center justify-center rounded-2xl
-               border border-white/10 bg-slate-900/80 backdrop-blur
-               p-10 text-center shadow-xl"
-        >
-          <h2 class="mb-2 text-lg font-semibold text-white">
-            No user stories yet
-          </h2>
-          <p class="mb-6 text-sm text-slate-400">
-            Start a new voting session to estimate your first story.
-          </p>
-
-          <button
-            on:click={startNewVoting}
-            class="rounded-lg bg-emerald-500 px-6 py-2.5
-                 font-semibold text-slate-950
-                 hover:bg-emerald-400 transition
-                 focus:outline-none focus:ring-2 focus:ring-emerald-500
-                 focus:ring-offset-2 focus:ring-offset-slate-900"
-          >
-            Start new voting
-          </button>
-        </div>
+        <EmptyUserStories sprintId={sprint.id} />
       {:else}
         <!-- Voting layout -->
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -113,34 +115,39 @@
               <h2 class="text-lg font-semibold text-white">Active voting</h2>
             </div>
 
-            <div class="px-6 py-8">
-              {#if $selectedUserStroyStore}
-                selected: {$selectedUserStroyStore?.name}
-
-                {#if $selectedUserStroyStore.isRevealed}
-                  vote again
-                {:else}
-                  
-                  <button on:click={() => {
-                    $selectedUserStroyStore.isRevealed = true;
-                    selectedUserStroyStore.set($selectedUserStroyStore);
-                  }}>
-                    reveal
-                  </button>
-                {/if}
+            <div class="px-6 py-8 flex flex-col items-center">
+              {#if activeVotingUserStroy}
+                <p class="text-sm text-slate-400">
+                  {activeVotingUserStroy.name}
+                </p>
 
                 <Members
                   {members}
-                  isRevealed={$selectedUserStroyStore.isRevealed}
+                  isRevealed={activeVotingUserStroy.isRevealed}
                 />
 
-                <CardSelector
-                  sequeceElements={sprint.sequence}
-                  userStoryId={$selectedUserStroyStore.id}
-                  userId={user.id}
-                  bind:estimations={$selectedUserStroyStore.estimations}
-                  isRevealed={$selectedUserStroyStore.isRevealed}
+                <Reveal
+                  sprintId={sprint.id}
+                  userStoryId={activeVotingUserStroy.id}
+                  voters={activeVotingUserStroy.voters || []}
+                  isRevealed={activeVotingUserStroy.isRevealed}
+                  notRevealedCount={userStories.filter((us) => !us.isRevealed)
+                    .length}
                 />
+
+                {#if activeVotingUserStroy.isRevealed}
+                  <UserStoryResults
+                    estimate={activeVotingUserStroy.estimationResults?.[0]?.estimation}
+                    count={activeVotingUserStroy.estimationResults?.[0]?.count}
+                  />
+                {:else}
+                  <CardSelector
+                    sequeceElements={sprint.sequence}
+                    userStoryId={activeVotingUserStroy.id}
+                    userId={user.id}
+                    bind:estimations={activeVotingUserStroy.estimations}
+                  />
+                {/if}
               {:else}
                 <!-- Placeholder for voting UI -->
                 <div
@@ -149,9 +156,6 @@
                 >
                   <p class="mb-2 text-sm">
                     Select a user story to begin voting
-                  </p>
-                  <p class="text-xs">
-                    Voting cards, timer, and participants will appear here.
                   </p>
                 </div>
               {/if}

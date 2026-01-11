@@ -34,3 +34,31 @@ export const unVote = (
     })
   );
 };
+
+export const voteAgain = (
+  userStoryId: number,
+  fetchFn?: typeof fetch
+): Promise<TApiResponse<TSuccessResponse>> => {
+  return Promise.resolve(
+    api({
+      url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/vote-again`,
+      method: "POST",
+      fetch: fetchFn,
+      data: {},
+    })
+  );
+};
+
+export const reveal = (
+  userStoryId: number,
+  fetchFn?: typeof fetch
+): Promise<TApiResponse<TSuccessResponse>> => {
+  return Promise.resolve(
+    api({
+      url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/reveal`,
+      method: "POST",
+      fetch: fetchFn,
+      data: {},
+    })
+  );
+};

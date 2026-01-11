@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params, parent }) =>
 
 const userSprints = (await parent()).userSprints;
 
- const sprintResponse = await api.getSprint(params.id, ['userStories', 'estimations' , 'members'], fetch);
+ const sprintResponse = await api.getSprint(params.id, ['userStories', 'estimations' , 'members' , 'estimationResults'], fetch);
 
  const sprint = sprintResponse.success ? sprintResponse.result : null;
 

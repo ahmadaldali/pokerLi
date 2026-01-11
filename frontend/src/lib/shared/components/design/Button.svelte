@@ -12,6 +12,7 @@
   export let loading: boolean = false;
   export let tabindex: number = 0;
   export let ref: HTMLElement | null = null;
+  export let fullWidth: boolean = true;
 
   $: buttonProps = {
     id,
@@ -19,7 +20,7 @@
     tabindex,
     disabled,
     ...$$restProps,
-    class: [$$restProps.class, getButtonStyle(size, rounded, loading)]
+    class: [$$restProps.class, getButtonStyle(size, rounded, loading, fullWidth)]
       .filter(Boolean)
       .join(" "),
   };

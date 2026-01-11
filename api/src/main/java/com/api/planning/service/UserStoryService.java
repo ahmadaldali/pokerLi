@@ -57,14 +57,15 @@ public class UserStoryService {
     Long sprintId,
     String name,
     String description,
-    String link
+    String link,
+    Boolean isActive
   ) {
     UserStory userStory = UserStory.builder()
       .sprint(entityManager.getReference(Sprint.class, sprintId))
       .name(name)
       .description(description)
       .link(link)
-      .isActive(true)
+      .isActive(isActive)
       .build();
 
     userStoryRepository.save(userStory);
@@ -80,6 +81,16 @@ public class UserStoryService {
     updateUserStoryFields(userStory, name, description, link);
 
     return userStoryResponseMapper.toResponse(userStory);
+  }
+
+  // when we start a new voting "create a new generic us"
+  public void closeRevealedUserStory(Long sprintId) {
+    // find the active (not revealed) user story for the sprint
+    UserStory userStory = userStoryRepository
+      .findBySprint_IdAndIsActiveAndIsRevealed(sprintId, true, true).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
+
+    userStory.setIsActive(false);
+    userStoryRepository.save(userStory);
   }
 
   @Transactional
@@ -150,6 +161,8 @@ public class UserStoryService {
     userStory.setIsRevealed(false);
     userStoryRepository.save(userStory);
 
+    // set active and set other false
+
     return new SuccessResponse("");
   }
 
@@ -207,7 +220,7 @@ public class UserStoryService {
       UserStory userStory = userStoryRepository.findWithActiveEstimations(userStoryId)
         .orElseThrow(EntityNotFoundException::new);
 
-      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseMapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS)));
+      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseMapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS, SprintInclude.ESTIMATION_RESULTS)));
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

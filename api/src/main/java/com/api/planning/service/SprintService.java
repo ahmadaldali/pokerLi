@@ -7,11 +7,13 @@ import com.api.common.enums.UserRole;
 import com.api.common.exception.ForbiddenException;
 import com.api.common.exception.ValidationException;
 import com.api.common.utils.Utils;
+import com.api.event.publisher.UserStoryEventPublisher;
 import com.api.planning.dto.response.sprint.SprintResponse;
 import com.api.planning.dto.response.sprint.SprintResponseMapper;
 import com.api.planning.dto.response.sprint.UserSprintsResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.entity.Sprint;
+import com.api.planning.entity.UserStory;
 import com.api.planning.repository.SprintRepository;
 import com.api.user.dto.response.UserResponse;
 import com.api.user.entity.User;
@@ -41,6 +43,7 @@ public class SprintService {
   private final ParticipantService participantService;
   private final UserService userService;
   private final CardDeckService cardDeckService;
+  private final UserStoryEventPublisher userStoryEventPublisher;
 
   // response
   private final SprintResponseMapper sprintResponseMapper;
@@ -150,9 +153,17 @@ public class SprintService {
       throw new ForbiddenException();
     }
 
-    return userStoryService.create(
-      sprint.getId(), name, description, link
+    if (isGenericUS) {
+      userStoryService.closeRevealedUserStory(sprintId);
+    }
+
+    UserStoryResponse us = userStoryService.create(
+      sprint.getId(), name, description, link, isGenericUS
     );
+
+    sendUserStoryUpdatedEvent(sprintId);
+
+    return us;
   }
 
   // ======== HELPERS ====================
@@ -293,5 +304,18 @@ public class SprintService {
     return sprintResponseMapper.toResponse(sprintRepository.findById(sprintId).orElseThrow(), Set.of(SprintInclude.MEMBERS));
   }
 
+
+  public void sendUserStoryUpdatedEvent(Long id) {
+    try {
+      System.out.println("Sending sprint updated event");
+
+      Sprint sprint = sprintRepository.findFull(id)
+        .orElseThrow(EntityNotFoundException::new);
+
+      userStoryEventPublisher.publishSprintUpdated(sprintResponseMapper.toResponse(sprint, Set.of(SprintInclude.ESTIMATIONS,  SprintInclude.MEMBERS, SprintInclude.USER_STORIES, SprintInclude.ESTIMATION_RESULTS)));
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
 
 }

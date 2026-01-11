@@ -28,6 +28,12 @@ public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
     boolean isRevealed
   );
 
+  Optional<UserStory> findBySprint_IdAndIsActiveAndIsRevealed(
+    Long sprintId,
+    boolean isActive,
+    boolean isRevealed
+  );
+
   @EntityGraph(attributePaths = {
     "estimations",
     "estimationResults"
