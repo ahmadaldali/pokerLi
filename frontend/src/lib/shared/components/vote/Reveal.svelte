@@ -55,10 +55,12 @@
   <StartNewVoting {sprintId} />
   -->
   {#if notRevealedCount === 0}
-      All user stories have been revealed.
       <StartNewVoting {sprintId} />
     {:else}
-      choose the next user story to vote on.
+    <p class="text-sm font-medium text-slate-400">
+          choose the next user story to vote on.
+      </p>
+
     {/if}
   {/if}
 </div>

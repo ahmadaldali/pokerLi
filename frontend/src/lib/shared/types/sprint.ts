@@ -3,6 +3,8 @@ import type { TUser } from "./user";
 export interface TUserStoryEstimation {
     estimation: number;
     user: TUser;
+    estimationResultId: number;
+    date: Date;
 }
 
 export interface TUserStoryEstimationResult {
@@ -20,7 +22,7 @@ export interface TUserStory {
     isRevealed: boolean;
     voters?: number[];
     isActive: boolean; // voting ongoing for this us. we keep only one us active at the same moment
-    estimations?: TUserStoryEstimation[]; // estimations given by users for ongoing voting only (not revealed yet).
+    estimations?: TUserStoryEstimation[];
     estimationResults?: TUserStoryEstimationResult[];
 }
 

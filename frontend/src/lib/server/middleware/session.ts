@@ -39,6 +39,7 @@ export default (({ logger, event, resolve }) => {
       return session;
     } else {
       logger.info("session not found", { event });
+      tokenStore.set(null);
 
       // If the accessed route is public set the session to undefined
       // in order to pass the event to the next method in squence

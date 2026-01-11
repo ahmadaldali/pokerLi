@@ -18,7 +18,6 @@ export function connect(
 
       // User story events
       client?.subscribe("/topic/user-story-channel", (message) => {
-        console.log("📩 User story message received", message);
         const payload = JSON.parse(message.body) as {
           user_story: TUserStory;
         };
@@ -27,7 +26,6 @@ export function connect(
 
       // Sprint events
       client?.subscribe("/topic/sprint-channel", (message) => {
-        console.log("📩 Sprint message received", message);
         const payload = JSON.parse(message.body) as {
           sprint: TSprint;
         };

@@ -9,8 +9,6 @@
 
   export let data: PageData;
 
-  console.log(data);
-
   const tableConfig: TTableConfig<any> = {
     columns: [
       { key: "name", label: "Room" },

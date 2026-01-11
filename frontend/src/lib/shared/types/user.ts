@@ -1,8 +1,8 @@
 import type { UserRole } from "../enums/user";
 
 export type TUser = {
-    id: string;
+    id: number;
     name: string;
-    email: string;
+    email?: string;
     role: UserRole;
 };

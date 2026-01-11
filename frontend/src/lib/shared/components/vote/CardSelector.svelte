@@ -5,7 +5,7 @@
   export let sequeceElements: number[];
   export let userStoryId: number;
   export let estimations: TUserStoryEstimation[] | undefined;
-  export let userId: string;
+  export let userId: number;
 
   async function handleEstimateClick(value: number) {
     const response = await toggleEstimationVote(

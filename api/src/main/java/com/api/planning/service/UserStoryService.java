@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -85,12 +86,16 @@ public class UserStoryService {
 
   // when we start a new voting "create a new generic us"
   public void closeRevealedUserStory(Long sprintId) {
-    // find the active (not revealed) user story for the sprint
-    UserStory userStory = userStoryRepository
-      .findBySprint_IdAndIsActiveAndIsRevealed(sprintId, true, true).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
+    // find the active and revealed user story for the sprint
+    Optional<UserStory> userStoryOpt =
+      userStoryRepository.findBySprint_IdAndIsActiveAndIsRevealed(
+        sprintId, true, true
+      );
 
-    userStory.setIsActive(false);
-    userStoryRepository.save(userStory);
+    userStoryOpt.ifPresent(userStory -> {
+      userStory.setIsActive(false);
+      userStoryRepository.save(userStory);
+    });
   }
 
   @Transactional
@@ -140,7 +145,7 @@ public class UserStoryService {
     // reveal estimations
     estimationService.reveal(userStoryId, estResultResponse.getId());
 
-    // end the voting for this US
+    // end voting for this US
     userStory.setIsRevealed(true);
     userStoryRepository.save(userStory);
 
@@ -217,14 +222,23 @@ public class UserStoryService {
   public void sendUserStoryUpdatedEvent(Long userStoryId) {
     try {
       System.out.println("Sending user story updated event");
-      UserStory userStory = userStoryRepository.findWithActiveEstimations(userStoryId)
+
+      UserStory userStory = userStoryRepository.findFull(userStoryId)
         .orElseThrow(EntityNotFoundException::new);
 
-      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseMapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS, SprintInclude.ESTIMATION_RESULTS)));
+      userStoryEventPublisher.publishUserStoryUpdated(
+        userStoryResponseMapper.toResponse(
+          userStory,
+          Set.of(SprintInclude.ESTIMATIONS, SprintInclude.ESTIMATION_RESULTS)
+        )
+      );
+
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      System.err.println("Error sending user story updated event for id=" + userStoryId);
+      e.printStackTrace();
     }
   }
+
 
   public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
   }

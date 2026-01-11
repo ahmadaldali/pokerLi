@@ -59,9 +59,29 @@ public record UserStoryResponseMapper(
           .toList()
       );
 
+      Long lastEstimationResultId = null;
+
+      if (userStory.getIsRevealed()) {
+        lastEstimationResultId =
+          Optional.ofNullable(userStory.getEstimationResults())
+            .orElse(Collections.emptySet())
+            .stream()
+            .map(er -> er.getId())
+            .max(Long::compareTo) // last = highest id
+            .orElse(null);
+      }
+
+      final Long finalLastEstimationResultId = lastEstimationResultId;
+
       response.setVoters(
         estimations.stream()
-          .map(e -> e.getUser().getId())
+          .filter(est ->
+            userStory.getIsRevealed()
+              ? est.getEstimationResult() != null
+              && est.getEstimationResult().getId().equals(finalLastEstimationResultId)
+              : est.getEstimationResult() == null
+          )
+          .map(est -> est.getUser().getId())
           .distinct()
           .toList()
       );

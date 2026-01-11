@@ -15,16 +15,11 @@ import { get } from "svelte/store";
 export const load = (async ({ locals, params }) => {
   let user = null as TUser | null;
 
-
-
   const token = get(tokenStore);
-  console.log('Layout server load - token:', token);
-
   if (token) {
-    const apiResponse = (await getUser());
+    const apiResponse = await getUser();
 
     if (!apiResponse.success) {
-      console.log('Invalid token, logging out user.', apiResponse);
       // expired or invalid token, force logout
       throw redirect(302, locals.t.routes.auth.logout());
     }

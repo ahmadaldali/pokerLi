@@ -14,4 +14,5 @@ public class EstimationResponse {
   private double estimation;
   private LocalDateTime date;
   private UserResponse user;
+  private Long estimationResultId;
 }

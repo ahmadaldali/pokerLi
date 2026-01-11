@@ -25,8 +25,8 @@ public class UserStoryResponse {
   // TODO: get the last result only, we need the history for reports/dashboard not for voting
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private List<EstimationResponse> estimations; // ongoing estimations only (before revealed)
+  private List<EstimationResponse> estimations;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private List<Long> voters;
+  private List<Long> voters; // active voters (voters for the ongoing voting or the last revealed)
 }

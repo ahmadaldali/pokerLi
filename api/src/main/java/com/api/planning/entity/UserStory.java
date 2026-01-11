@@ -47,13 +47,13 @@ public class UserStory {
     }
   }
 
-  /* Estimations (ongoing only) */
+  /* Estimations (history and ongoing only) */
   @OneToMany(
     mappedBy = "userStory",
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
-  @Where(clause = "estimation_result_id IS NULL")
+  @OrderBy("id DESC")
   private Set<Estimation> estimations = new HashSet<>();
 
   /* Estimation history */
@@ -62,6 +62,7 @@ public class UserStory {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
+  @OrderBy("id DESC")
   private Set<EstimationResult> estimationResults = new HashSet<>();
 
 }
