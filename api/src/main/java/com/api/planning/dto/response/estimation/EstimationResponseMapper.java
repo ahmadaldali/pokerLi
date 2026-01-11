@@ -15,7 +15,6 @@ public record EstimationResponseMapper(
       .id(estimation.getId())
       .estimation(estimation.getEstimation())
       .date(estimation.getDate())
-      .isOnGoing(estimation.getEstimationResult() == null)
       .user(userResponseMapper.toResponse(estimation.getUser()))
       .build();
   }

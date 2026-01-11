@@ -16,7 +16,8 @@ public class UserStoryResponse {
   private String name;
   private String description;
   private String link;
-  private Boolean isVotingOver;
+  private Boolean isRevealed;
+  private Boolean isActive; // voting ongoing for this us. we keep only one us active at the same moment
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<EstimationResultResponse> estimationResults;

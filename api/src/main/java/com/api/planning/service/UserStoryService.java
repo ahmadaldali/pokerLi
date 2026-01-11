@@ -64,6 +64,7 @@ public class UserStoryService {
       .name(name)
       .description(description)
       .link(link)
+      .isActive(true)
       .build();
 
     userStoryRepository.save(userStory);
@@ -74,7 +75,7 @@ public class UserStoryService {
   public UserStoryResponse updateGenericUserStory(Long sprintId, String name, String description, String link) {
     // find the active (not revealed) user story for the sprint
     UserStory userStory = userStoryRepository
-      .findBySprint_IdAndNameAndIsVotingOver(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
+      .findBySprint_IdAndNameAndIsRevealed(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
 
     updateUserStoryFields(userStory, name, description, link);
 
@@ -109,7 +110,11 @@ public class UserStoryService {
   public SuccessResponse unVote(Long userStoryId, Long userId) {
     getActiveUserStoryWithSprint(userStoryId, userId);
 
-    return estimationService.deleteEstimation(userStoryId, userId);
+    SuccessResponse response = estimationService.deleteEstimation(userStoryId, userId);
+
+    sendUserStoryUpdatedEvent(userStoryId);
+
+    return response;
   }
 
   @Transactional
@@ -125,22 +130,24 @@ public class UserStoryService {
     estimationService.reveal(userStoryId, estResultResponse.getId());
 
     // end the voting for this US
-    userStory.setIsVotingOver(true);
+    userStory.setIsRevealed(true);
     userStoryRepository.save(userStory);
+
+    sendUserStoryUpdatedEvent(userStoryId);
 
     return new SuccessResponse("");
   }
 
   /**
    * vote again = start new voting again for a story
-   * start new voting again = is_voting_over = false
-   * So story should be already voted , is_voting_over = true
+   * start new voting again = is_revealed = false
+   * So story should be already voted , is_revealed = true
    */
   public SuccessResponse voteAgain(Long userStoryId, Long userId) {
     UserStory userStory = getVotedUserStoryWithSprint(userStoryId, userId).userStory();
 
     // open the voting again for this US
-    userStory.setIsVotingOver(false);
+    userStory.setIsRevealed(false);
     userStoryRepository.save(userStory);
 
     return new SuccessResponse("");
@@ -161,7 +168,7 @@ public class UserStoryService {
   public UserStoryAndSprint getActiveUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
-    if (userStoryWithSprint.userStory().getIsVotingOver()) {
+    if (userStoryWithSprint.userStory().getIsRevealed()) {
       throw new ValidationException("error.userStory.already_revealed");
     }
 
@@ -171,7 +178,7 @@ public class UserStoryService {
   public UserStoryAndSprint getVotedUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
-    if (!userStoryWithSprint.userStory().getIsVotingOver()) {
+    if (!userStoryWithSprint.userStory().getIsRevealed()) {
       throw new ValidationException("error.userStory.not_revealed");
     }
 
@@ -179,11 +186,11 @@ public class UserStoryService {
   }
 
   public boolean hasActiveGenericUserStory(Long sprintId) {
-    return userStoryRepository.existsBySprint_IdAndNameAndIsVotingOver(sprintId, null, false);
+    return userStoryRepository.existsBySprint_IdAndNameAndIsRevealed(sprintId, null, false);
   }
 
   public boolean hasActiveUserStory(Long sprintId) {
-    return userStoryRepository.existsBySprint_IdAndIsVotingOver(sprintId, false);
+    return userStoryRepository.existsBySprint_IdAndIsRevealed(sprintId, false);
   }
 
   public void updateUserStoryFields(UserStory userStory, String name, String description, String link) {

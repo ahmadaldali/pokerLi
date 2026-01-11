@@ -3,7 +3,7 @@
 import type { Locales, TranslationFunctions } from '$i18n/i18n-types';
 import type { Session as LocalSession } from '$lib/server/middleware/session';
 import type { TApiResponse } from '$lib/shared/types/http';
-import type { TCurrentLoggedInUser } from '$lib/shared/types/user';
+import type { TUser } from '$lib/shared/types/user';
 
 // for information about these interfaces
 declare global {
@@ -14,7 +14,7 @@ declare global {
         // interface PageState {}
         // interface Platform {}
 		interface Locals {
-            user: TCurrentLoggedInUser | null;
+            user: TUser | null;
             t: TranslationFunctions;
             redirectTo: string | null;
             locale: Locales;

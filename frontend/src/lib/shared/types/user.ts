@@ -1,6 +1,6 @@
 import type { UserRole } from "../enums/user";
 
-export type TCurrentLoggedInUser = {
+export type TUser = {
     id: string;
     name: string;
     email: string;

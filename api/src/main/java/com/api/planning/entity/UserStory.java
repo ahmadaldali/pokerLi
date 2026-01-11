@@ -2,6 +2,7 @@ package com.api.planning.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,8 +27,12 @@ public class UserStory {
   @JoinColumn(name = "sprint_id", nullable = false)
   private Sprint sprint;
 
-  @Column(name = "is_voting_over", nullable = false)
-  private Boolean isVotingOver;
+  @Column(name = "is_revealed", nullable = false)
+  private Boolean isRevealed;
+
+  // active = voting for this users tory now
+  @Column(name = "isActive", nullable = false)
+  private Boolean isActive;
 
   @Column(name = "description", length = 1000)
   private String description;
@@ -37,17 +42,18 @@ public class UserStory {
 
   @PrePersist
   private void prePersist() {
-    if (isVotingOver == null) {
-      isVotingOver = Boolean.FALSE;
+    if (isRevealed == null) {
+      isRevealed = Boolean.FALSE;
     }
   }
 
-  /* Estimations (ongoing + historical) */
+  /* Estimations (ongoing) */
   @OneToMany(
     mappedBy = "userStory",
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
+  @Where(clause = "estimation_result_id IS NULL")
   private Set<Estimation> estimations = new HashSet<>();
 
   /* Estimation history */

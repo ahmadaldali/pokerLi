@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params, parent }) =>
 
 const userSprints = (await parent()).userSprints;
 
- const sprintResponse = await api.getSprint(params.id, 'userStories' , fetch);
+ const sprintResponse = await api.getSprint(params.id, ['userStories', 'estimations' , 'members'], fetch);
 
  const sprint = sprintResponse.success ? sprintResponse.result : null;
 
@@ -41,5 +41,5 @@ if (userSprints.error == "UN_AUTHORIZED") {
     }
   }
   
-  return { sprintResponse, sprint, userStories: sprint?.userStories || [] };
+  return { sprintResponse, sprint };
 };

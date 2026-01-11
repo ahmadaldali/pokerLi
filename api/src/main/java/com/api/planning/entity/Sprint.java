@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,7 @@ public class Sprint {
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
-  private List<UserStory> userStories = new ArrayList<>();
+  private Set<UserStory> userStories = new HashSet<>();
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(

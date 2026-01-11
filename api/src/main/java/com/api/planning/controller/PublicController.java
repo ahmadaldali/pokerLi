@@ -19,7 +19,7 @@ public class PublicController {
   private final SprintService sprintService;
 
   @GetMapping("/sprints/{id}")
-  public ResponseEntity<SprintResponse> get(@PathVariable Long id, @RequestParam(required = false) Set<String> include) {
+  public ResponseEntity<SprintResponse> getSprint(@PathVariable Long id, @RequestParam(required = false) Set<String> include) {
     return ResponseEntity.ok(sprintService.get(id, include));
   }
 }

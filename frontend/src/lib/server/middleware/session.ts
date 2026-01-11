@@ -33,7 +33,8 @@ export default (({ logger, event, resolve }) => {
   async function hasSession(): Promise<any> {
     const session = getSession(event.cookies);
     if (session) {
-      event.locals.token = session;
+      event.locals.token = session.trim();
+      tokenStore.set(session.trim()); // set the store token "server side"
 
       return session;
     } else {
@@ -99,7 +100,7 @@ export function getSession(cookies: Cookies | undefined): string | null {
     
     // this.checkSession(token);
     
-    return token;
+    return token.trim();
   } catch (error) {
     console.error("Error getting session data:", error);
     return null;

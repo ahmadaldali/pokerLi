@@ -11,21 +11,21 @@ import java.util.Optional;
 @Repository
 public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
 
-  boolean existsBySprint_IdAndIsVotingOver(
+  boolean existsBySprint_IdAndIsRevealed(
     Long sprintId,
-    boolean isVotingOver
+    boolean isRevealed
   );
 
-  boolean existsBySprint_IdAndNameAndIsVotingOver(
+  boolean existsBySprint_IdAndNameAndIsRevealed(
     Long sprintId,
     String name,
-    boolean isVotingOver
+    boolean isRevealed
   );
 
-  Optional<UserStory> findBySprint_IdAndNameAndIsVotingOver(
+  Optional<UserStory> findBySprint_IdAndNameAndIsRevealed(
     Long sprintId,
     String name,
-    boolean isVotingOver
+    boolean isRevealed
   );
 
   @EntityGraph(attributePaths = {

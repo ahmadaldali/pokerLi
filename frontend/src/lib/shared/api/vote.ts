@@ -27,7 +27,7 @@ export const unVote = (
 ): Promise<TApiResponse<TSuccessResponse>> => {
   return Promise.resolve(
     api({
-      url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/vote`,
+      url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/un-vote`,
       method: "POST",
       fetch: fetchFn,
       data: {},

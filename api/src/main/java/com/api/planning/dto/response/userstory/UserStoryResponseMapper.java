@@ -68,7 +68,8 @@ public record UserStoryResponseMapper(
       .name(userStory.getName())
       .description(userStory.getDescription())
       .link(userStory.getLink())
-      .isVotingOver(userStory.getIsVotingOver())
+      .isRevealed(userStory.getIsRevealed())
+      .isActive(userStory.getIsActive())
       .build();
   }
 }

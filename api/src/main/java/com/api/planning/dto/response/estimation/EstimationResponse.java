@@ -13,6 +13,5 @@ public class EstimationResponse {
   private Long id;
   private double estimation;
   private LocalDateTime date;
-  private boolean isOnGoing;
   private UserResponse user;
 }

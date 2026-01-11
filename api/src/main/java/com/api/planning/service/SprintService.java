@@ -78,6 +78,7 @@ public class SprintService {
     Set<SprintInclude> includes = SprintInclude.parse(include);
 
     Sprint sprint = this.getSprint(sprintId, includes);
+    System.out.println(sprint.getUserStories().size());
 
     return sprintResponseMapper.toResponse(sprint, includes);
   }

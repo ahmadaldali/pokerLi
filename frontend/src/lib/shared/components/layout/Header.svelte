@@ -1,9 +1,9 @@
 <script lang="ts">
   import PokerLiLogo from "$components/design/PokerLiLogo.svelte";
-  import type { TCurrentLoggedInUser } from "$lib/shared/types/user";
+  import type { TUser } from "$lib/shared/types/user";
   import LL from "$i18n/i18n-svelte";
 
-  export let user: TCurrentLoggedInUser | null;
+  export let user: TUser | null;
 
   let userMenuOpen = false;
 </script>
