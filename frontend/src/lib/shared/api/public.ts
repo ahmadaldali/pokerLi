@@ -6,7 +6,7 @@ import type { TApiResponse } from '../types/http';
 const MODULE_ROUTE = 'public';
 
 export const getSprint = (
-	id: string,
+	id: number,
 	include?: string | string[],
 	fetchFn?: typeof fetch
 ): Promise<TApiResponse<TSprint>> => {

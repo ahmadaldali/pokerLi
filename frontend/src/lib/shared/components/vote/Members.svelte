@@ -69,7 +69,7 @@
         </div>
 
         <!-- USER NAME -->
-        <p class="max-w-[5rem] truncate text-center text-xs text-slate-400">
+        <p class="text-center text-xs text-slate-400">
           {member.name}
         </p>
       </div>

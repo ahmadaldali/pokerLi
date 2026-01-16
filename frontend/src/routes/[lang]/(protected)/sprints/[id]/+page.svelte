@@ -8,6 +8,16 @@
   import EmptyUserStories from "$components/vote/EmptyUserStories.svelte";
   import Reveal from "$components/vote/Reveal.svelte";
   import UserStoryResults from "$components/vote/UserStoryResults.svelte";
+  import Modal from "$components/design/Modal.svelte";
+  import Input from "$components/design/Input.svelte";
+  import Link from "$components/design/Link.svelte";
+  import LL from "$i18n/i18n-svelte";
+  import { EUserRole } from "$lib/shared/enums/user";
+  import { superForm } from "sveltekit-superforms";
+  import Button from "$components/design/Button.svelte";
+  import Error from "$components/design/Error.svelte";
+  import { getL18ErrorMessage } from "$lib/shared/api";
+  import CreateGuestModal from "$components/modal/CreateGuestModal.svelte";
 
   export let data: PageData;
 
@@ -19,7 +29,6 @@
 
   $: userStories = sprint?.userStories || [];
   $: members = sprint?.members || [];
-
   $: activeVotingUserStroy = userStories.find((story) => story.isActive);
 
   onMount(() => {
@@ -88,9 +97,11 @@
                     </p>
                   </li>
 
-                  <button on:click={() => selectUserStory(story)}
-                    >select us
-                  </button>
+                  {#if user.role !== EUserRole.GUEST}
+                    <button on:click={() => selectUserStory(story)}
+                      >select us
+                    </button>
+                  {/if}
                 {/each}
               </ul>
             </aside>
@@ -127,6 +138,7 @@
                     isRevealed={activeVotingUserStroy.isRevealed}
                     notRevealedCount={userStories.filter((us) => !us.isRevealed)
                       .length}
+                    userRole={user.role}
                   />
 
                   {#if activeVotingUserStroy.isRevealed}
@@ -162,6 +174,11 @@
   {:else if sprintResponse.result.error == "UN_AUTHORIZED"}
     <h1>Unauthorized</h1>
     <p>Login or join as guest.</p>
+    {$LL.routes.sprints.details(2)}
+
+    <CreateGuestModal formData={data.form} />
+
+
   {:else}
     <h1>Error Loading Sprint</h1>
     <p>There was an error loading the sprint details.</p>
