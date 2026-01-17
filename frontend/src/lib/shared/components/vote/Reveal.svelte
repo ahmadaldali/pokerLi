@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as api from "$lib/shared/api/vote";
+  import { userStoryApi } from "$lib/shared/api/user-story";
   import { EUserRole } from "$lib/shared/enums/user";
   import type { TApiResponse, TSuccessResponse } from "$lib/shared/types/http";
   import StartNewVoting from "./StartNewVoting.svelte";
@@ -14,11 +14,11 @@
   let response: TApiResponse<TSuccessResponse> | null = null;
 
   async function reveal() {
-    response = await api.reveal(userStoryId);
+    response = await userStoryApi().reveal(userStoryId);
   }
 </script>
 
-{#if userRole !== EUserRole.GUEST}
+
   <div
     class="
     mx-auto my-10 max-w-md rounded-2xl
@@ -62,4 +62,4 @@
       {/if}
     {/if}
   </div>
-{/if}
+

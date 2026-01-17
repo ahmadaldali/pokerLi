@@ -28,6 +28,7 @@
   let estimationValue: number | null = null;
 </script>
 
+
 <div class="flex justify-center flex-col items-center space-y-4">
   <p class="text-sm text-slate-400">Choose your card 👇</p>
 
@@ -35,6 +36,7 @@
 
         
       {#each sequeceElements as element}
+        {#key element}
         <button
           class="group relative"
           on:click={() => handleEstimateClick(element)}
@@ -54,6 +56,7 @@
             {element}
           </div>
         </button>
+        {/key}
       {/each}
   </div>
 </div>

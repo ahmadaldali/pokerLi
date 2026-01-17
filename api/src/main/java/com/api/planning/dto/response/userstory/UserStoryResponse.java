@@ -18,6 +18,7 @@ public class UserStoryResponse {
   private String link;
   private Boolean isRevealed;
   private Boolean isActive; // voting ongoing for this us. we keep only one us active at the same moment
+  private Long sprintId;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<EstimationResultResponse> estimationResults; // history results (after revealed)

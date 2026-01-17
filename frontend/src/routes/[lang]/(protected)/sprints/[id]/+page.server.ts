@@ -15,7 +15,8 @@ export const load: PageServerLoad = async ({
   const { userSprints, user } = await parent();
   const form = await superValidate(zod(createGuestSchema(locals.t)));
 
-  const sprintId = Number(params.id);
+  const sprintId = Number(atob(params.id));
+
   const isJoinable =
     userSprints?.joinable?.some((s) => s.id === sprintId) ?? false;
   let isJoined = userSprints?.joined?.some((s) => s.id === sprintId) ?? false;
@@ -47,13 +48,23 @@ export const load: PageServerLoad = async ({
       };
     }
 
-    if (!isJoined && !isJoinable && user?.role !== EUserRole.GUEST) {
-      // any case, join request for guests failed, they will be able to see any sprint "without ability to do any action", so no need to block access
+    if (!isJoined && !isJoinable) {
       return {
         form,
         sprintResponse: {
           success: false,
           result: { error: "SPRINT_NOT_ACCESSIBLE" },
+        },
+        sprint: null,
+      };
+    }
+
+    if (!isJoined && isJoinable) {
+      return {
+        form,
+        sprintResponse: {
+          success: false,
+          result: { error: "JOIN_TO_VOTE" },
         },
         sprint: null,
       };

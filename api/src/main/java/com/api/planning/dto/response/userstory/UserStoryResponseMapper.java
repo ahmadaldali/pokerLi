@@ -98,6 +98,7 @@ public record UserStoryResponseMapper(
       .link(userStory.getLink())
       .isRevealed(userStory.getIsRevealed())
       .isActive(userStory.getIsActive())
+      .sprintId(userStory.getSprint().getId())
       .build();
   }
 }

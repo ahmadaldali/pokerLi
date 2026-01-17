@@ -13,7 +13,6 @@ import com.api.planning.dto.response.sprint.SprintResponseMapper;
 import com.api.planning.dto.response.sprint.UserSprintsResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import com.api.planning.entity.Sprint;
-import com.api.planning.entity.UserStory;
 import com.api.planning.repository.SprintRepository;
 import com.api.user.dto.response.UserResponse;
 import com.api.user.entity.User;
@@ -160,7 +159,7 @@ public class SprintService {
       sprint.getId(), name, description, link, isGenericUS
     );
 
-    sendUserStoryUpdatedEvent(sprintId);
+    sendSprintUpdatedEvent(sprintId);
 
     return us;
   }
@@ -304,7 +303,7 @@ public class SprintService {
   }
 
 
-  public void sendUserStoryUpdatedEvent(Long id) {
+  public void sendSprintUpdatedEvent(Long id) {
     try {
       System.out.println("Sending sprint updated event");
 

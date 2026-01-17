@@ -15,7 +15,6 @@
   let estimationByUser = new Map<number, TUserStoryEstimation>();
 
   $: {
-    console.log("Updating estimationByUser map");
     estimationByUser = new Map();
 
     if (estimations) {

@@ -3,8 +3,11 @@ package com.api.planning.controller;
 
 import com.api.common.dto.SuccessResponse;
 import com.api.planning.dto.request.EstimateUserStoryRequest;
+import com.api.planning.dto.response.userstory.UserStoryResponse;
+import com.api.planning.service.SprintService;
 import com.api.planning.service.UserStoryService;
 import com.api.user.service.CustomUserDetails;
+import com.api.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserStoryController {
 
   private final UserStoryService userStoryService;
+  private final SprintService sprintService;
 
   @PostMapping("/{id}/vote")
   public ResponseEntity<SuccessResponse> vote(@Valid @RequestBody EstimateUserStoryRequest request, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -36,6 +40,15 @@ public class UserStoryController {
   @PostMapping("/{id}/vote-again")
   public ResponseEntity<SuccessResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(userStoryService.voteAgain(id,  userDetails.getUserId()));
+  }
+
+  @PostMapping("/{id}/select")
+  public ResponseEntity<UserStoryResponse> select(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    UserStoryResponse response = userStoryService.select(id,  userDetails.getUserId());
+
+    sprintService.sendSprintUpdatedEvent(response.getSprintId());
+
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{id}")

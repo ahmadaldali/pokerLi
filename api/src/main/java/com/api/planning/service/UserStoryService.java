@@ -171,6 +171,24 @@ public class UserStoryService {
     return new SuccessResponse("");
   }
 
+  /**
+   * Make the other active are not active (sure for this sprint)
+   * Make the selected one is active
+   */
+  @Transactional
+  public UserStoryResponse select(Long userStoryId, Long userId) {
+    UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
+
+    Sprint  sprint = userStoryWithSprint.sprint();
+    userStoryRepository.deactivateAllBySprintId(sprint.getId());
+
+    UserStory userStory = userStoryWithSprint.userStory();
+    userStory.setIsActive(true);
+    userStoryRepository.save(userStory);
+
+    return userStoryResponseMapper.toResponse(userStory);
+  }
+
   // ======== HELPERS ====================
 
   public UserStoryAndSprint getUserStoryWithSprint(Long userStoryId, Long userId) {

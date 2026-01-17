@@ -1,52 +1,58 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import type { TUserStory } from "$lib/shared/types/sprint";
+  import { connect, disconnect } from "$lib/client/websocket/vote";
+  import { onMount, onDestroy } from "svelte";
+
   import CardSelector from "$components/vote/CardSelector.svelte";
   import Members from "$components/vote/Members.svelte";
-  import { connect, disconnect } from "$lib/client/websocket/vote";
-  import { onDestroy, onMount } from "svelte";
   import EmptyUserStories from "$components/vote/EmptyUserStories.svelte";
   import Reveal from "$components/vote/Reveal.svelte";
   import UserStoryResults from "$components/vote/UserStoryResults.svelte";
-  import Modal from "$components/design/Modal.svelte";
-  import Input from "$components/design/Input.svelte";
-  import Link from "$components/design/Link.svelte";
-  import LL from "$i18n/i18n-svelte";
-  import { EUserRole } from "$lib/shared/enums/user";
-  import { superForm } from "sveltekit-superforms";
-  import Button from "$components/design/Button.svelte";
-  import Error from "$components/design/Error.svelte";
-  import { getL18ErrorMessage } from "$lib/shared/api";
   import CreateGuestModal from "$components/modal/CreateGuestModal.svelte";
+  import Button from "$components/design/Button.svelte";
+  import { userStoryApi } from "$lib/shared/api/user-story";
 
   export let data: PageData;
 
   const { sprintResponse, sprint, user } = data;
 
-  function selectUserStory(story: TUserStory) {
-    // logic to select a user story for voting
+  let userStories: TUserStory[] = sprint?.userStories ?? [];
+  let members = sprint?.members ?? [];
+  let activeVotingUserStory: TUserStory | undefined;
+
+  $: {
+    const found = userStories.find((s) => s.isActive);
+    if (found?.id !== activeVotingUserStory?.id) {
+      activeVotingUserStory = found;
+    }
   }
 
-  $: userStories = sprint?.userStories || [];
-  $: members = sprint?.members || [];
-  $: activeVotingUserStroy = userStories.find((story) => story.isActive);
+  function updateUserStory(updated: TUserStory) {
+    const index = userStories.findIndex((u) => u.id === updated.id);
+    if (index === -1) return;
+
+    // immutable update (important!)
+    userStories = userStories.map((u, i) => (i === index ? updated : u));
+  }
 
   onMount(() => {
     connect(
+      // single user story update
       (userStory) => {
-        const index = userStories.findIndex((us) => us.id === userStory.id);
-        if (index !== -1) {
-          console.log("Received updated userStory via websocket:", userStory);
-
-          userStories[index] = userStory;
-          userStories = [...userStories];
-        }
+        updateUserStory(userStory);
       },
+
+      // full sprint update
       (updatedSprint) => {
-        if (updatedSprint.id === sprint?.id) {
-          userStories = updatedSprint.userStories || [];
-          members = updatedSprint.members || [];
+        if (updatedSprint.id !== sprint?.id) return;
+
+        // update stories safely
+        for (const us of updatedSprint.userStories ?? []) {
+          updateUserStory(us);
         }
+
+        members = updatedSprint.members ?? [];
       }
     );
   });
@@ -54,134 +60,122 @@
   onDestroy(() => {
     disconnect();
   });
+
+  async function selectUserStory(userStoryId: number) {
+    await userStoryApi().select(userStoryId);
+  }
 </script>
 
-<div class="px-6 py-8 md:px-10 justify-center items-start gap-4 flex flex-col">
+<div class="px-6 py-8 md:px-10 flex flex-col gap-4">
   {#if sprint}
-    <!-- Sprint header -->
     <div class="mb-8">
-      <p class="mt-1 text-sm text-slate-400">
-        {sprint.name}
-      </p>
+      <p class="text-sm text-slate-400">{sprint.name}</p>
     </div>
 
     {#if user}
-      <div class="flex flex-col justify-center items-center w-full">
-        {#if userStories.length === 0}
-          <EmptyUserStories sprintId={sprint.id} />
-        {:else}
-          <!-- Voting layout -->
-          <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <!-- Left: user stories list -->
-            <aside
-              class="lg:col-span-1 rounded-2xl border border-white/10
-                 bg-slate-900/80 backdrop-blur shadow-xl"
-            >
-              <div class="border-b border-white/10 px-4 py-3">
-                <h2
-                  class="text-sm font-semibold uppercase tracking-wide text-slate-400"
-                >
-                  User stories
-                </h2>
-              </div>
+      {#if userStories.length === 0}
+        <EmptyUserStories sprintId={sprint.id} />
+      {:else}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- LEFT: STORIES -->
+          <aside class="rounded-2xl border border-white/10 bg-slate-900/80">
+            <div class="border-b border-white/10 px-4 py-3">
+              <h2 class="text-sm font-semibold text-slate-400 uppercase">
+                User stories
+              </h2>
+            </div>
 
-              <ul class="divide-y divide-white/5">
-                {#each userStories as story}
-                  <li
-                    class="cursor-pointer px-4 py-3 text-sm
-                       text-slate-200 hover:bg-slate-800/60 transition"
-                  >
-                    <p class="font-medium">{story.name}</p>
-                    <p class="text-xs text-slate-400 truncate">
-                      {story.description}
-                    </p>
-                  </li>
-
-                  {#if user.role !== EUserRole.GUEST}
-                    <button on:click={() => selectUserStory(story)}
-                      >select us
-                    </button>
-                  {/if}
-                {/each}
-              </ul>
-            </aside>
-
-            <!-- Right: active voting -->
-            <section
-              class="lg:col-span-2 rounded-2xl border border-white/10
-                 bg-slate-900/80 backdrop-blur shadow-xl"
-            >
-              <div class="border-b border-white/10 px-6 py-4">
-                <h2 class="text-lg font-semibold text-white">Active voting</h2>
-              </div>
-
-              <div class="px-6 py-8 flex flex-col items-center">
-                {#if activeVotingUserStroy}
-                  {@const lastEstimationResult =
-                    activeVotingUserStroy.estimationResults?.[0]}
-                  <p class="text-sm text-slate-400">
-                    {activeVotingUserStroy.name}
+            <ul class="divide-y divide-white/5">
+              {#each userStories as story}
+                <li class="px-4 py-3 hover:bg-slate-800/60 text-slate-200">
+                  <p class="font-medium">{story.id}</p>
+                  <p class="text-xs text-slate-400 truncate">
+                    {story.description}
                   </p>
 
-                  <Members
-                    {members}
-                    voters={activeVotingUserStroy.voters || []}
-                    isRevealed={activeVotingUserStroy.isRevealed}
-                    lastEstimationResultId={lastEstimationResult?.id}
-                    estimations={activeVotingUserStroy.estimations}
-                  />
-
-                  <Reveal
-                    sprintId={sprint.id}
-                    userStoryId={activeVotingUserStroy.id}
-                    voters={activeVotingUserStroy.voters || []}
-                    isRevealed={activeVotingUserStroy.isRevealed}
-                    notRevealedCount={userStories.filter((us) => !us.isRevealed)
-                      .length}
-                    userRole={user.role}
-                  />
-
-                  {#if activeVotingUserStroy.isRevealed}
-                    <UserStoryResults
-                      estimate={lastEstimationResult?.estimation}
-                      count={lastEstimationResult?.count}
-                    />
+                  {#if activeVotingUserStory?.id === story.id}
+                    <span
+                      class="
+                      mt-2 inline-block rounded-full bg-emerald-500/20
+                      px-2 py-0.5 text-xs font-semibold text-emerald-400
+                    "
+                    >
+                      Voting this issue
+                    </span>
                   {:else}
-                    <CardSelector
-                      sequeceElements={sprint.sequence}
-                      userStoryId={activeVotingUserStroy.id}
-                      userId={user.id}
-                      estimations={activeVotingUserStroy.estimations}
-                    />
+                    <Button
+                      variant="outline"
+                      fullWidth={false}
+                      on:click={() => selectUserStory(story.id)}
+                    >
+                      vote this issue
+                    </Button>
                   {/if}
+                </li>
+              {/each}
+            </ul>
+          </aside>
+
+          <!-- RIGHT: ACTIVE VOTING -->
+          <section
+            class="lg:col-span-2 rounded-2xl border text-slate-200 border-white/10 bg-slate-900/80 backdrop-blur shadow-xl"
+          >
+            <div class="border-b border-white/10 px-6 py-4">
+              <h2 class="text-lg font-semibold">
+                Active voting {activeVotingUserStory?.id}
+              </h2>
+            </div>
+
+            <div class="p-6">
+              {#if activeVotingUserStory}
+                {@const last = activeVotingUserStory.estimationResults?.[0]}
+
+                <Members
+                  {members}
+                  voters={activeVotingUserStory.voters || []}
+                  isRevealed={activeVotingUserStory.isRevealed}
+                  lastEstimationResultId={last?.id}
+                  estimations={activeVotingUserStory.estimations}
+                />
+
+                <Reveal
+                  sprintId={sprint.id}
+                  userStoryId={activeVotingUserStory.id}
+                  voters={activeVotingUserStory.voters || []}
+                  isRevealed={activeVotingUserStory.isRevealed}
+                  notRevealedCount={userStories.filter((u) => !u.isRevealed)
+                    .length}
+                  userRole={user.role}
+                />
+
+               {#if activeVotingUserStory?.isRevealed}
+                  {#key activeVotingUserStory.id}
+                    <UserStoryResults
+                      estimate={last?.estimation}
+                      count={last?.count}
+                    />
+                  {/key}
                 {:else}
-                  <!-- Placeholder for voting UI -->
-                  <div
-                    class="flex h-64 flex-col items-center justify-center
-                     text-center text-slate-400"
-                  >
-                    <p class="mb-2 text-sm">
-                      Select a user story to begin voting
-                    </p>
-                  </div>
+                  <CardSelector
+                    sequeceElements={sprint.sequence}
+                    userStoryId={activeVotingUserStory.id}
+                    userId={user.id}
+                    estimations={activeVotingUserStory.estimations}
+                  />
                 {/if}
-              </div>
-            </section>
-          </div>
-        {/if}
-      </div>
+              {:else}
+                <p class="text-center text-slate-400">
+                  Select a user story to begin voting
+                </p>
+              {/if}
+            </div>
+          </section>
+        </div>
+      {/if}
     {/if}
-  {:else if sprintResponse.result.error == "UN_AUTHORIZED"}
-    <h1>Unauthorized</h1>
-    <p>Login or join as guest.</p>
-    {$LL.routes.sprints.details(2)}
-
+  {:else if sprintResponse.result.error === "UN_AUTHORIZED"}
     <CreateGuestModal formData={data.form} />
-
-
   {:else}
-    <h1>Error Loading Sprint</h1>
-    <p>There was an error loading the sprint details.</p>
-    <pre>{JSON.stringify(sprintResponse.result.error, null, 2)}</pre>
+    <p>Error loading sprint.</p>
   {/if}
 </div>
