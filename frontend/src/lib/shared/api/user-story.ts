@@ -35,7 +35,7 @@ export const userStoriesApi = () => {
     /**
      * Vote again after reveal
      */
-    voteAgain: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TSuccessResponse>> =>
+    voteAgain: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TUserStory>> =>
       post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/vote-again`, fetchFn),
 
     /**

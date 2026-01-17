@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button from "$components/design/Button.svelte";
   import { userStoriesApi } from "$lib/shared/api/user-story";
   import { EUserRole } from "$lib/shared/enums/user";
   import type { TApiResponse, TSuccessResponse } from "$lib/shared/types/http";
@@ -30,19 +31,9 @@
   >
     {#if !isRevealed}
       {#if voters.length > 0}
-        <button
-          on:click={reveal}
-          class="
-          inline-flex items-center justify-center gap-2
-          rounded-lg bg-emerald-500 px-6 py-3
-          font-semibold text-slate-950
-          transition
-          hover:bg-emerald-400
-          focus:outline-none focus:ring-2 focus:ring-emerald-500
-        "
-        >
-          Reveal cards
-        </button>
+        <Button on:click={reveal} variant="primary" fullWidth={false}>
+            Reveal cards
+        </Button>
       {:else}
         <p class="text-sm font-medium text-slate-400">Pick your cards</p>
       {/if}

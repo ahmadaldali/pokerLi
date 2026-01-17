@@ -159,16 +159,9 @@ public class UserStoryService {
    * start new voting again = is_revealed = false
    * So story should be already voted , is_revealed = true
    */
-  public SuccessResponse voteAgain(Long userStoryId, Long userId) {
-    UserStory userStory = getVotedUserStoryWithSprint(userStoryId, userId).userStory();
-
-    // open the voting again for this US
-    userStory.setIsRevealed(false);
-    userStoryRepository.save(userStory);
-
-    // set active and set other false
-
-    return new SuccessResponse("");
+  @Transactional
+  public UserStoryResponse voteAgain(Long userStoryId, Long userId) {
+    return activateStory(userStoryId, userId, true);
   }
 
   /**
@@ -177,16 +170,7 @@ public class UserStoryService {
    */
   @Transactional
   public UserStoryResponse select(Long userStoryId, Long userId) {
-    UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
-
-    Sprint  sprint = userStoryWithSprint.sprint();
-    userStoryRepository.deactivateAllBySprintId(sprint.getId());
-
-    UserStory userStory = userStoryWithSprint.userStory();
-    userStory.setIsActive(true);
-    userStoryRepository.save(userStory);
-
-    return userStoryResponseMapper.toResponse(userStory);
+    return activateStory(userStoryId, userId, false);
   }
 
   // ======== HELPERS ====================
@@ -237,6 +221,29 @@ public class UserStoryService {
     userStoryRepository.save(userStory);
   }
 
+  public UserStoryResponse activateStory(
+    Long userStoryId,
+    Long userId,
+    boolean resetRevealState
+  ) {
+    UserStoryAndSprint result = getUserStoryWithSprint(userStoryId, userId);
+
+    Sprint sprint = result.sprint();
+    userStoryRepository.deactivateAllBySprintId(sprint.getId());
+
+    UserStory story = result.userStory();
+
+    if (resetRevealState) {
+      story.setIsRevealed(false);
+    }
+
+    story.setIsActive(true);
+    userStoryRepository.save(story);
+
+    return userStoryResponseMapper.toResponse(story);
+  }
+
+
   public void sendUserStoryUpdatedEvent(Long userStoryId) {
     try {
       System.out.println("Sending user story updated event");
@@ -256,7 +263,6 @@ public class UserStoryService {
       e.printStackTrace();
     }
   }
-
 
   public record UserStoryAndSprint(UserStory userStory, Sprint sprint) {
   }

@@ -18,8 +18,8 @@ const sizes: Record<TButtonSize, string> = {
 export const variants = {
   /** Main app action */
   primary: `
-    bg-emerald-500 text-slate-950
-    hover:bg-emerald-400
+    bg-emerald-600 text-slate-900
+    hover:text-slate-900 hover:bg-emerald-700
     disabled:bg-emerald-700
     focus:ring-emerald-500
   `,
@@ -47,7 +47,7 @@ export const variants = {
   /** Border version */
   outline: `
     border border-emerald-500 text-emerald-400
-    hover:bg-emerald-500 hover:text-slate-950
+    hover:bg-emerald-500 hover:text-slate-200
     disabled:border-emerald-700 disabled:text-slate-600
     focus:ring-emerald-500
   `,

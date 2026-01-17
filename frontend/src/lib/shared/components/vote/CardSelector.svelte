@@ -20,9 +20,11 @@
     }
   }
 
+  $: console.log("Estimations:", estimations);
+
   $: if (estimations) {
     estimationValue =
-      estimations?.find((est) => est.user.id === userId)?.estimation || null;
+      estimations?.find((est) => est.user.id === userId && est.estimationResultId === null)?.estimation || null;
   }
 
   let estimationValue: number | null = null;

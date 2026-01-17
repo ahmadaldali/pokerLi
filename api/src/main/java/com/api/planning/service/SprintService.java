@@ -88,7 +88,7 @@ public class SprintService {
     Set<SprintMembership> memberships = SprintMembership.parse(membership);
     Set<SprintInclude> includes = SprintInclude.parse(include);
 
-    return this.getSprintsByMembership(memberId,  memberships, includes);
+    return this.getSprintsByMembership(memberId, memberships, includes);
   }
 
   @Transactional
@@ -182,7 +182,7 @@ public class SprintService {
     return findSprintByInclude(sprintId, includes);
   }
 
-  private UserSprintsResponse getSprintsByMembership(Long memberId, Set<SprintMembership> memberships,    Set<SprintInclude> includes) {
+  private UserSprintsResponse getSprintsByMembership(Long memberId, Set<SprintMembership> memberships, Set<SprintInclude> includes) {
     return this.findSprintsByMembership(memberId, memberships, includes);
   }
 
@@ -236,7 +236,7 @@ public class SprintService {
     boolean joinable = memberships.contains(SprintMembership.JOINABLE);
 
     int flags =
-        (joinable ? 4 : 0) |
+      (joinable ? 4 : 0) |
         (members ? 2 : 0) |
         (all ? 1 : 0);
 
@@ -310,7 +310,7 @@ public class SprintService {
       Sprint sprint = sprintRepository.findFull(id)
         .orElseThrow(EntityNotFoundException::new);
 
-      userStoryEventPublisher.publishSprintUpdated(sprintResponseMapper.toResponse(sprint, Set.of(SprintInclude.ESTIMATIONS,  SprintInclude.MEMBERS, SprintInclude.USER_STORIES, SprintInclude.ESTIMATION_RESULTS)));
+      userStoryEventPublisher.publishSprintUpdated(sprintResponseMapper.toResponse(sprint, Set.of(SprintInclude.ESTIMATIONS, SprintInclude.MEMBERS, SprintInclude.USER_STORIES, SprintInclude.ESTIMATION_RESULTS)));
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

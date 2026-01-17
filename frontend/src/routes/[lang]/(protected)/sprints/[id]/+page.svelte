@@ -10,8 +10,8 @@
   import Reveal from "$components/vote/Reveal.svelte";
   import UserStoryResults from "$components/vote/UserStoryResults.svelte";
   import CreateGuestModal from "$components/modal/CreateGuestModal.svelte";
-  import Button from "$components/design/Button.svelte";
-  import { userStoriesApi } from "$lib/shared/api/user-story";
+  import UserStoriesList from "$components/vote/UserStoriesList.svelte";
+  import SprintHeader from "$components/sprint/SprintHeader.svelte";
 
   export let data: PageData;
 
@@ -21,13 +21,12 @@
   let members = sprint?.members ?? [];
   let activeVotingUserStory: TUserStory | undefined;
 
-$: activeVotingUserStory = userStories.find((s) => s.isActive);
+  $: activeVotingUserStory = userStories.find((s) => s.isActive);
 
   function updateUserStory(updated: TUserStory) {
     const index = userStories.findIndex((u) => u.id === updated.id);
     if (index === -1) return;
 
-    // immutable update (important!)
     userStories = userStories.map((u, i) => (i === index ? updated : u));
   }
 
@@ -35,7 +34,6 @@ $: activeVotingUserStory = userStories.find((s) => s.isActive);
     connect(
       // single user story update
       (userStory) => {
-        console.log("Received user story update via websocket", userStory);
         updateUserStory(userStory);
       },
 
@@ -43,30 +41,27 @@ $: activeVotingUserStory = userStories.find((s) => s.isActive);
       (updatedSprint) => {
         if (updatedSprint.id !== sprint?.id) return;
 
-        // update stories safely
-        for (const us of updatedSprint.userStories ?? []) {
-          updateUserStory(us);
-        }
-
+        userStories = updatedSprint.userStories ?? [];
         members = updatedSprint.members ?? [];
-      }
+      },
     );
   });
 
   onDestroy(() => {
     disconnect();
   });
-
-  async function selectUserStory(userStoryId: number) {
-    await userStoriesApi().select(userStoryId);
-  }
 </script>
 
 <div class="px-6 py-8 md:px-10 flex flex-col gap-4">
   {#if sprint}
-    <div class="mb-8">
-      <p class="text-sm text-slate-400">{sprint.name}</p>
-    </div>
+    <SprintHeader
+      name={sprint.name}
+      sequence={sprint.sequence}
+      creator={sprint.creator}
+      {userStories}
+      {members}
+      votingActive={!!activeVotingUserStory}
+    />
 
     {#if user}
       {#if userStories.length === 0}
@@ -81,38 +76,7 @@ $: activeVotingUserStory = userStories.find((s) => s.isActive);
               </h2>
             </div>
 
-            <ul class="divide-y divide-white/5">
-              {#each userStories as story}
-                {#key story.id}
-                <li class="px-4 py-3 hover:bg-slate-800/60 text-slate-200">
-                  <p class="font-medium">{story.id}</p>
-                  <p class="text-xs text-slate-400 truncate">
-                    {story.description}
-                  </p>
-
-                  {#if activeVotingUserStory?.id === story.id}
-                    <span
-                      class="
-                      mt-2 inline-block rounded-full bg-emerald-500/20
-                      px-2 py-0.5 text-xs font-semibold text-emerald-400
-                    "
-                    >
-                      Voting this issue
-                    </span>
-                  {:else}
-                    <Button
-                      variant="outline"
-                      fullWidth={false}
-                      on:click={() => selectUserStory(story.id)}
-                    >
-                      vote this issue
-                    </Button>
-                  {/if}
-                  </li>
-                {/key}
-         
-              {/each}
-            </ul>
+            <UserStoriesList {userStories} {activeVotingUserStory} />
           </aside>
 
           <!-- RIGHT: ACTIVE VOTING -->
@@ -121,15 +85,13 @@ $: activeVotingUserStory = userStories.find((s) => s.isActive);
           >
             <div class="border-b border-white/10 px-6 py-4">
               <h2 class="text-lg font-semibold">
-                Active voting {activeVotingUserStory?.id}
+                Active voting • {activeVotingUserStory?.id} - {activeVotingUserStory?.name ?? ""}
               </h2>
             </div>
 
             <div class="p-6">
               {#if activeVotingUserStory}
                 {@const last = activeVotingUserStory.estimationResults?.[0]}
-
-           <p class="bg-red-700">   est {last?.id}</p>
 
                 <Members
                   {members}
@@ -149,7 +111,7 @@ $: activeVotingUserStory = userStories.find((s) => s.isActive);
                   userRole={user.role}
                 />
 
-               {#if activeVotingUserStory?.isRevealed}
+                {#if activeVotingUserStory?.isRevealed}
                   {#key activeVotingUserStory.id}
                     <UserStoryResults
                       estimate={last?.estimation}

@@ -38,8 +38,12 @@ public class UserStoryController {
   }
 
   @PostMapping("/{id}/vote-again")
-  public ResponseEntity<SuccessResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    return ResponseEntity.ok(userStoryService.voteAgain(id,  userDetails.getUserId()));
+  public ResponseEntity<UserStoryResponse> voteAgain(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    UserStoryResponse response = userStoryService.voteAgain(id,  userDetails.getUserId());
+
+    sprintService.sendSprintUpdatedEvent(response.getSprintId());
+
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/{id}/select")
