@@ -11,7 +11,7 @@
   import UserStoryResults from "$components/vote/UserStoryResults.svelte";
   import CreateGuestModal from "$components/modal/CreateGuestModal.svelte";
   import Button from "$components/design/Button.svelte";
-  import { userStoryApi } from "$lib/shared/api/user-story";
+  import { userStoriesApi } from "$lib/shared/api/user-story";
 
   export let data: PageData;
 
@@ -21,12 +21,7 @@
   let members = sprint?.members ?? [];
   let activeVotingUserStory: TUserStory | undefined;
 
-  $: {
-    const found = userStories.find((s) => s.isActive);
-    if (found?.id !== activeVotingUserStory?.id) {
-      activeVotingUserStory = found;
-    }
-  }
+$: activeVotingUserStory = userStories.find((s) => s.isActive);
 
   function updateUserStory(updated: TUserStory) {
     const index = userStories.findIndex((u) => u.id === updated.id);
@@ -40,6 +35,7 @@
     connect(
       // single user story update
       (userStory) => {
+        console.log("Received user story update via websocket", userStory);
         updateUserStory(userStory);
       },
 
@@ -62,7 +58,7 @@
   });
 
   async function selectUserStory(userStoryId: number) {
-    await userStoryApi().select(userStoryId);
+    await userStoriesApi().select(userStoryId);
   }
 </script>
 
@@ -87,6 +83,7 @@
 
             <ul class="divide-y divide-white/5">
               {#each userStories as story}
+                {#key story.id}
                 <li class="px-4 py-3 hover:bg-slate-800/60 text-slate-200">
                   <p class="font-medium">{story.id}</p>
                   <p class="text-xs text-slate-400 truncate">
@@ -111,7 +108,9 @@
                       vote this issue
                     </Button>
                   {/if}
-                </li>
+                  </li>
+                {/key}
+         
               {/each}
             </ul>
           </aside>
@@ -129,6 +128,8 @@
             <div class="p-6">
               {#if activeVotingUserStory}
                 {@const last = activeVotingUserStory.estimationResults?.[0]}
+
+           <p class="bg-red-700">   est {last?.id}</p>
 
                 <Members
                   {members}
@@ -177,5 +178,6 @@
     <CreateGuestModal formData={data.form} />
   {:else}
     <p>Error loading sprint.</p>
+    <p>{sprintResponse.result.error}</p>
   {/if}
 </div>

@@ -15,7 +15,16 @@ export const load: PageServerLoad = async ({
   const { userSprints, user } = await parent();
   const form = await superValidate(zod(createGuestSchema(locals.t)));
 
-  const sprintId = Number(atob(params.id));
+  let sprintId: number;
+  try {
+    sprintId = Number(atob(params.id));
+  } catch {
+    return {
+      form,
+      sprintResponse: { success: false, result: { error: "INVALID_ID" } },
+      sprint: null,
+    };
+  }
 
   const isJoinable =
     userSprints?.joinable?.some((s) => s.id === sprintId) ?? false;
@@ -23,7 +32,7 @@ export const load: PageServerLoad = async ({
 
   if (user?.role === EUserRole.GUEST && !isJoined) {
     // Guests join any sprint automatically
-    const responseForJoin = await api.join(sprintId, fetch);
+    const responseForJoin = await api.sprintsApi().join(sprintId, fetch);
     if (responseForJoin.success) {
       isJoined = true;
     }

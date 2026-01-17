@@ -1,10 +1,10 @@
 import type { Locales } from "$i18n/i18n-types";
-import { getUser } from "$lib/shared/api/user";
 import { tokenStore } from "$lib/shared/stores/user";
 import type { TUser } from "$lib/shared/types/user";
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import { get } from "svelte/store";
+import { usersApi } from "$lib/shared/api";
 
 /**
  * Root layout is responsible of returning global application data that can be
@@ -17,7 +17,7 @@ export const load = (async ({ locals, params }) => {
 
   const token = get(tokenStore);
   if (token) {
-    const apiResponse = await getUser();
+    const apiResponse = await usersApi().getUser();
 
     if (!apiResponse.success) {
       // expired or invalid token, force logout

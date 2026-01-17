@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { userStoryApi } from "$lib/shared/api/user-story";
+  import { userStoriesApi } from "$lib/shared/api/user-story";
   import { EUserRole } from "$lib/shared/enums/user";
   import type { TApiResponse, TSuccessResponse } from "$lib/shared/types/http";
   import StartNewVoting from "./StartNewVoting.svelte";
@@ -14,7 +14,7 @@
   let response: TApiResponse<TSuccessResponse> | null = null;
 
   async function reveal() {
-    response = await userStoryApi().reveal(userStoryId);
+    response = await userStoriesApi().reveal(userStoryId);
   }
 </script>
 

@@ -3,7 +3,7 @@
   import Error from "$components/design/Error.svelte";
   import Table from "$components/design/Table.svelte";
   import LL from "$i18n/i18n-svelte";
-  import { getL18ErrorMessage, join } from "$lib/shared/api";
+  import { getL18ErrorMessage, sprintsApi } from "$lib/shared/api";
   import type { TApiResponse } from "$lib/shared/types/http";
   import type { TSprint } from "$lib/shared/types/sprint";
   import type { TTableConfig } from "$lib/shared/types/table";
@@ -17,7 +17,7 @@
       {
         label: "Join",
         onClick: async (row) => {
-          responseForJoin = await join(row.id);
+          responseForJoin = await sprintsApi().join(row.id);
           if (responseForJoin.success) {
             await goto(`/sprints/${btoa(row.id.toString())}`);
           }

@@ -1,7 +1,7 @@
-import { api } from "./http";
+import { post } from "./http";
 import { PUBLIC_API_URL } from "$env/static/public";
 import type { TApiResponse, TSuccessResponse } from "$lib/shared/types/http";
-import type { TRawData } from "../types/general";
+import type { TUserStory } from "../types/sprint";
 
 const MODULE_ROUTE = "user-stories";
 
@@ -11,23 +11,10 @@ type VotePayload = {
   estimation: number;
 };
 
-function post<T = TSuccessResponse>(
-  path: string,
-  fetchFn?: FetchFn,
-  data?: TRawData,
-): Promise<TApiResponse<T>> {
-  return api({
-    url: `${PUBLIC_API_URL}/${MODULE_ROUTE}/${path}`,
-    method: "POST",
-    fetch: fetchFn,
-    data,
-  });
-}
-
 /**
  * User Stories API
  */
-export const userStoryApi = () => {
+export const userStoriesApi = () => {
   return {
     /**
      * Vote on a user story
@@ -36,31 +23,31 @@ export const userStoryApi = () => {
       userStoryId: number,
       data: VotePayload,
       fetchFn?: FetchFn
-    ) =>
-      post(`${userStoryId}/vote`, fetchFn, data),
+    ): Promise<TApiResponse<TSuccessResponse>> =>
+      post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/vote`, fetchFn, data),
 
     /**
      * Remove current vote
      */
-    unVote: (userStoryId: number, fetchFn?: FetchFn) =>
-      post(`${userStoryId}/un-vote`, fetchFn),
+    unVote: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TSuccessResponse>> =>
+      post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/un-vote`, fetchFn),
 
     /**
      * Vote again after reveal
      */
-    voteAgain: (userStoryId: number, fetchFn?: FetchFn) =>
-      post(`${userStoryId}/vote-again`, fetchFn),
+    voteAgain: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TSuccessResponse>> =>
+      post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/vote-again`, fetchFn),
 
     /**
      * Reveal votes
      */
-    reveal: (userStoryId: number, fetchFn?: FetchFn) =>
-      post(`${userStoryId}/reveal`, fetchFn),
+    reveal: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TSuccessResponse>> =>
+      post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/reveal`, fetchFn),
 
     /**
      * Select user story for voting
      */
-    select: (userStoryId: number, fetchFn?: FetchFn) =>
-      post(`${userStoryId}/select`, fetchFn),
+    select: (userStoryId: number, fetchFn?: FetchFn): Promise<TApiResponse<TUserStory>> =>
+      post(`${PUBLIC_API_URL}/${MODULE_ROUTE}/${userStoryId}/select`, fetchFn),
   };
 };

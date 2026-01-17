@@ -24,6 +24,7 @@ export interface TUserStory {
     isActive: boolean; // voting ongoing for this us. we keep only one us active at the same moment
     estimations?: TUserStoryEstimation[];
     estimationResults?: TUserStoryEstimationResult[];
+    sprintId: number;
 }
 
 export interface TSprint {

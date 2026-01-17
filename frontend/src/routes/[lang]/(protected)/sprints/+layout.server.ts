@@ -1,9 +1,8 @@
 import type { LayoutServerLoad } from "./$types";
-import * as api from "$lib/shared/api/user";
-import type { TUserSprintsApiResponse } from "$lib/shared/types/sprint";
+import { usersApi } from "$lib/shared/api";
 
 export const load = (async ({}) => {
-  const response = await api.getUserSprints();
+  const response = await usersApi().getUserSprints();
 
   return {
     userSprintsResponse: response,

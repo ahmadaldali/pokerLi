@@ -83,6 +83,30 @@ export const api = async (options: TApiOptions): Promise<TApiResponse> => {
   }
 };
 
+export const post = async(
+  url: string,
+  fetchFn?: typeof fetch,
+  data?: TRawData
+): Promise<TApiResponse> => {
+  return api({
+    url,
+    method: "POST",
+    fetch: fetchFn,
+    data,
+  });
+}
+
+export const getR = async(
+  url: string,
+  fetchFn?: typeof fetch
+): Promise<TApiResponse> => {
+  return api({
+    url,
+    method: "GET",
+    fetch: fetchFn,
+  });
+}
+
 export const getL18ErrorMessage = (errors: any, code: string | null | undefined) => {
   if (!code) return null;
   
