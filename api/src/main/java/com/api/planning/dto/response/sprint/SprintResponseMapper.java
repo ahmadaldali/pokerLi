@@ -7,7 +7,7 @@ import com.api.planning.entity.Sprint;
 import com.api.user.dto.response.UserResponseMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.*;
 
 @Service
 public record SprintResponseMapper(
@@ -42,10 +42,34 @@ public record SprintResponseMapper(
     }
 
     if (includes.contains(SprintInclude.MEMBERS)) {
-      base.setMembers(sprint.getMembers().stream().map(userResponseMapper::toResponse).toList());
+      base.setMembers(
+        Optional.ofNullable(sprint.getMembers())
+          .orElse(Collections.emptySet())
+          .stream()
+          .map(userResponseMapper::toResponse)
+          .toList()
+      );
     }
 
     return base;
+  }
+
+  // LIST
+  public List<SprintResponse> toResponseList(Collection<Sprint> sprints) {
+    return toResponseList(sprints, NO_INCLUDES);
+  }
+
+  public List<SprintResponse> toResponseList(
+    Collection<Sprint> sprints,
+    Set<SprintInclude> includes
+  ) {
+    if (sprints == null || sprints.isEmpty()) {
+      return List.of();
+    }
+
+    return sprints.stream()
+      .map(sprint -> toResponse(sprint, includes))
+      .toList();
   }
 }
 

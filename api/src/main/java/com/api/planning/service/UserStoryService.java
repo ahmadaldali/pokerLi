@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -26,8 +27,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Transactional
 public class UserStoryService {
-
-  // don't use sprint service here
 
   // repo
   private final UserStoryRepository userStoryRepository;
@@ -59,13 +58,15 @@ public class UserStoryService {
     Long sprintId,
     String name,
     String description,
-    String link
+    String link,
+    Boolean isActive
   ) {
     UserStory userStory = UserStory.builder()
       .sprint(entityManager.getReference(Sprint.class, sprintId))
       .name(name)
       .description(description)
       .link(link)
+      .isActive(isActive)
       .build();
 
     userStoryRepository.save(userStory);
@@ -76,11 +77,25 @@ public class UserStoryService {
   public UserStoryResponse updateGenericUserStory(Long sprintId, String name, String description, String link) {
     // find the active (not revealed) user story for the sprint
     UserStory userStory = userStoryRepository
-      .findBySprint_IdAndNameAndIsVotingOver(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
+      .findBySprint_IdAndNameAndIsRevealed(sprintId, null, false).orElseThrow(() -> new ValidationException("error.userStory.notFound"));
 
     updateUserStoryFields(userStory, name, description, link);
 
     return userStoryResponseMapper.toResponse(userStory);
+  }
+
+  // when we start a new voting "create a new generic us"
+  public void closeRevealedUserStory(Long sprintId) {
+    // find the active and revealed user story for the sprint
+    Optional<UserStory> userStoryOpt =
+      userStoryRepository.findBySprint_IdAndIsActiveAndIsRevealed(
+        sprintId, true, true
+      );
+
+    userStoryOpt.ifPresent(userStory -> {
+      userStory.setIsActive(false);
+      userStoryRepository.save(userStory);
+    });
   }
 
   @Transactional
@@ -111,7 +126,11 @@ public class UserStoryService {
   public SuccessResponse unVote(Long userStoryId, Long userId) {
     getActiveUserStoryWithSprint(userStoryId, userId);
 
-    return estimationService.deleteEstimation(userStoryId, userId);
+    SuccessResponse response = estimationService.deleteEstimation(userStoryId, userId);
+
+    sendUserStoryUpdatedEvent(userStoryId);
+
+    return response;
   }
 
   @Transactional
@@ -126,26 +145,32 @@ public class UserStoryService {
     // reveal estimations
     estimationService.reveal(userStoryId, estResultResponse.getId());
 
-    // end the voting for this US
-    userStory.setIsVotingOver(true);
+    // end voting for this US
+    userStory.setIsRevealed(true);
     userStoryRepository.save(userStory);
+
+    sendUserStoryUpdatedEvent(userStoryId);
 
     return new SuccessResponse("");
   }
 
   /**
    * vote again = start new voting again for a story
-   * start new voting again = is_voting_over = false
-   * So story should be already voted , is_voting_over = true
+   * start new voting again = is_revealed = false
+   * So story should be already voted , is_revealed = true
    */
-  public SuccessResponse voteAgain(Long userStoryId, Long userId) {
-    UserStory userStory = getVotedUserStoryWithSprint(userStoryId, userId).userStory();
+  @Transactional
+  public UserStoryResponse voteAgain(Long userStoryId, Long userId) {
+    return activateStory(userStoryId, userId, true);
+  }
 
-    // open the voting again for this US
-    userStory.setIsVotingOver(false);
-    userStoryRepository.save(userStory);
-
-    return new SuccessResponse("");
+  /**
+   * Make the other active are not active (sure for this sprint)
+   * Make the selected one is active
+   */
+  @Transactional
+  public UserStoryResponse select(Long userStoryId, Long userId) {
+    return activateStory(userStoryId, userId, false);
   }
 
   // ======== HELPERS ====================
@@ -163,7 +188,7 @@ public class UserStoryService {
   public UserStoryAndSprint getActiveUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
-    if (userStoryWithSprint.userStory().getIsVotingOver()) {
+    if (userStoryWithSprint.userStory().getIsRevealed()) {
       throw new ValidationException("error.userStory.already_revealed");
     }
 
@@ -173,7 +198,7 @@ public class UserStoryService {
   public UserStoryAndSprint getVotedUserStoryWithSprint(Long userStoryId, Long userId) {
     UserStoryAndSprint userStoryWithSprint = this.getUserStoryWithSprint(userStoryId, userId);
 
-    if (!userStoryWithSprint.userStory().getIsVotingOver()) {
+    if (!userStoryWithSprint.userStory().getIsRevealed()) {
       throw new ValidationException("error.userStory.not_revealed");
     }
 
@@ -181,11 +206,11 @@ public class UserStoryService {
   }
 
   public boolean hasActiveGenericUserStory(Long sprintId) {
-    return userStoryRepository.existsBySprint_IdAndNameAndIsVotingOver(sprintId, null, false);
+    return userStoryRepository.existsBySprint_IdAndNameAndIsRevealed(sprintId, null, false);
   }
 
   public boolean hasActiveUserStory(Long sprintId) {
-    return userStoryRepository.existsBySprint_IdAndIsVotingOver(sprintId, false);
+    return userStoryRepository.existsBySprint_IdAndIsRevealed(sprintId, false);
   }
 
   public void updateUserStoryFields(UserStory userStory, String name, String description, String link) {
@@ -196,15 +221,45 @@ public class UserStoryService {
     userStoryRepository.save(userStory);
   }
 
+  public UserStoryResponse activateStory(
+    Long userStoryId,
+    Long userId,
+    boolean resetRevealState
+  ) {
+    UserStoryAndSprint result = getUserStoryWithSprint(userStoryId, userId);
+
+    Sprint sprint = result.sprint();
+    userStoryRepository.deactivateAllBySprintId(sprint.getId());
+
+    UserStory story = result.userStory();
+
+    if (resetRevealState) {
+      story.setIsRevealed(false);
+    }
+
+    story.setIsActive(true);
+    userStoryRepository.save(story);
+
+    return userStoryResponseMapper.toResponse(story);
+  }
+
   public void sendUserStoryUpdatedEvent(Long userStoryId) {
     try {
       System.out.println("Sending user story updated event");
-      UserStory userStory = userStoryRepository.findWithActiveEstimations(userStoryId)
+
+      UserStory userStory = userStoryRepository.findFull(userStoryId)
         .orElseThrow(EntityNotFoundException::new);
 
-      userStoryEventPublisher.publishUserStoryUpdated(userStoryResponseMapper.toResponse(userStory, Set.of(SprintInclude.ESTIMATIONS)));
+      userStoryEventPublisher.publishUserStoryUpdated(
+        userStoryResponseMapper.toResponse(
+          userStory,
+          Set.of(SprintInclude.ESTIMATIONS, SprintInclude.ESTIMATION_RESULTS)
+        )
+      );
+
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      System.err.println("Error sending user story updated event for id=" + userStoryId);
+      e.printStackTrace();
     }
   }
 

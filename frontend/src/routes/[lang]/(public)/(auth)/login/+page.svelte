@@ -1,7 +1,7 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
   import type { PageData } from "./$types";
-  import AuthContainer from "$components/form/AuthContainer.svelte";
+  import FormContainer from "$components/form/FormContainer.svelte";
   import LL from "$i18n/i18n-svelte";
   import Input from "$components/design/Input.svelte";
   import Button from "$components/design/Button.svelte";
@@ -13,7 +13,7 @@
   });
 </script>
 
-<AuthContainer
+<FormContainer
   title={$LL.pages.auth.login.title()}
   response={$message}
   link={$LL.routes.auth.signUp()}
@@ -46,4 +46,4 @@
       {$LL.pages.auth.login.submit()}
     </Button>
   </form>
-</AuthContainer>
+</FormContainer>

@@ -40,6 +40,25 @@ type RootTranslation = {
 			 */
 			homepage: string
 		}
+		sprints: {
+			/**
+			 * /​e​n​/​s​p​r​i​n​t​s
+			 */
+			index: string
+			/**
+			 * /​e​n​/​s​p​r​i​n​t​s​/​{​0​}
+			 * @param {unknown} 0
+			 */
+			details: RequiredParams<'0'>
+		}
+		admin: {
+			sprints: {
+				/**
+				 * /​e​n​/​a​d​m​i​n​/​s​p​r​i​n​t​s​/​n​e​w
+				 */
+				'new': string
+			}
+		}
 	}
 	pages: {
 		auth: {
@@ -108,6 +127,28 @@ type RootTranslation = {
 			 */
 			logout: string
 		}
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * C​r​e​a​t​e​ ​N​e​w​ ​S​p​r​i​n​t
+					 */
+					title: string
+					/**
+					 * S​p​r​i​n​t​ ​N​a​m​e
+					 */
+					name: string
+					/**
+					 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e​ ​(​c​o​m​m​a​ ​s​e​p​a​r​a​t​e​d​)
+					 */
+					sequence: string
+					/**
+					 * C​r​e​a​t​e​ ​S​p​r​i​n​t
+					 */
+					submit: string
+				}
+			}
+		}
 	}
 	errors: {
 		/**
@@ -118,6 +159,22 @@ type RootTranslation = {
 		 * A​n​ ​i​n​t​e​r​n​a​l​ ​s​e​r​v​e​r​ ​e​r​r​o​r​ ​o​c​c​u​r​r​e​d​.​ ​P​l​e​a​s​e​ ​t​r​y​ ​a​g​a​i​n​ ​l​a​t​e​r
 		 */
 		INTERNAL_SERVER_ERROR: string
+		/**
+		 * T​h​e​ ​r​e​q​u​e​s​t​e​d​ ​r​e​s​o​u​r​c​e​ ​w​a​s​ ​n​o​t​ ​f​o​u​n​d
+		 */
+		NOT_FOUND: string
+		/**
+		 * Y​o​u​ ​a​r​e​ ​n​o​t​ ​a​u​t​h​o​r​i​z​e​d​ ​t​o​ ​p​e​r​f​o​r​m​ ​t​h​i​s​ ​a​c​t​i​o​n
+		 */
+		UN_AUTHORIZED: string
+		/**
+		 * T​h​i​s​ ​a​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​a​l​l​o​w​e​d
+		 */
+		ACTION_NOT_ALLOWED: string
+		/**
+		 * B​a​d​ ​r​e​q​u​e​s​t​.​ ​P​l​e​a​s​e​ ​c​h​e​c​k​ ​y​o​u​r​ ​i​n​p​u​t
+		 */
+		BAD_REQUEST: string
 		/**
 		 * {​f​i​e​l​d​}​ ​i​s​ ​r​e​q​u​i​r​e​d
 		 * @param {unknown} field
@@ -165,6 +222,12 @@ type RootTranslation = {
 		invalid_email: string
 	}
 	blocks: {
+		header: {
+			/**
+			 * S​p​r​i​n​t​s
+			 */
+			sprints: string
+		}
 	}
 	fields: {
 		name: {
@@ -207,6 +270,26 @@ type RootTranslation = {
 			 */
 			placeholder: string
 		}
+		sprintName: {
+			/**
+			 * S​p​r​i​n​t​ ​N​a​m​e
+			 */
+			label: string
+			/**
+			 * S​p​r​i​n​t​ ​1
+			 */
+			placeholder: string
+		}
+		sequence: {
+			/**
+			 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e
+			 */
+			label: string
+			/**
+			 * e​.​g​.​,​ ​1​,​2​,​3​,​5​,​8​,​1​3​,​2​1
+			 */
+			placeholder: string
+		}
 	}
 }
 
@@ -235,6 +318,24 @@ export type TranslationFunctions = {
 			 * /en/user
 			 */
 			homepage: () => LocalizedString
+		}
+		sprints: {
+			/**
+			 * /en/sprints
+			 */
+			index: () => LocalizedString
+			/**
+			 * /en/sprints/{0}
+			 */
+			details: (arg0: unknown) => LocalizedString
+		}
+		admin: {
+			sprints: {
+				/**
+				 * /en/admin/sprints/new
+				 */
+				'new': () => LocalizedString
+			}
 		}
 	}
 	pages: {
@@ -304,6 +405,28 @@ export type TranslationFunctions = {
 			 */
 			logout: () => LocalizedString
 		}
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * Create New Sprint
+					 */
+					title: () => LocalizedString
+					/**
+					 * Sprint Name
+					 */
+					name: () => LocalizedString
+					/**
+					 * Estimation Sequence (comma separated)
+					 */
+					sequence: () => LocalizedString
+					/**
+					 * Create Sprint
+					 */
+					submit: () => LocalizedString
+				}
+			}
+		}
 	}
 	errors: {
 		/**
@@ -314,6 +437,22 @@ export type TranslationFunctions = {
 		 * An internal server error occurred. Please try again later
 		 */
 		INTERNAL_SERVER_ERROR: () => LocalizedString
+		/**
+		 * The requested resource was not found
+		 */
+		NOT_FOUND: () => LocalizedString
+		/**
+		 * You are not authorized to perform this action
+		 */
+		UN_AUTHORIZED: () => LocalizedString
+		/**
+		 * This action is not allowed
+		 */
+		ACTION_NOT_ALLOWED: () => LocalizedString
+		/**
+		 * Bad request. Please check your input
+		 */
+		BAD_REQUEST: () => LocalizedString
 		/**
 		 * {field} is required
 		 */
@@ -352,6 +491,12 @@ export type TranslationFunctions = {
 		invalid_email: () => LocalizedString
 	}
 	blocks: {
+		header: {
+			/**
+			 * Sprints
+			 */
+			sprints: () => LocalizedString
+		}
 	}
 	fields: {
 		name: {
@@ -391,6 +536,26 @@ export type TranslationFunctions = {
 			label: () => LocalizedString
 			/**
 			 * ••••••••
+			 */
+			placeholder: () => LocalizedString
+		}
+		sprintName: {
+			/**
+			 * Sprint Name
+			 */
+			label: () => LocalizedString
+			/**
+			 * Sprint 1
+			 */
+			placeholder: () => LocalizedString
+		}
+		sequence: {
+			/**
+			 * Estimation Sequence
+			 */
+			label: () => LocalizedString
+			/**
+			 * e.g., 1,2,3,5,8,13,21
 			 */
 			placeholder: () => LocalizedString
 		}

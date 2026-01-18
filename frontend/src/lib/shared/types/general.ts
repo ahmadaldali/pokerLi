@@ -1,1 +1,1 @@
-export type RawData = Record<any, any>;
+export type TRawData = Record<any, any>;

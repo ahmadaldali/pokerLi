@@ -2,8 +2,8 @@
 
 import type { Locales, TranslationFunctions } from '$i18n/i18n-types';
 import type { Session as LocalSession } from '$lib/server/middleware/session';
-import type { ApiResponse } from '$lib/shared/types/http';
-import type { TCurrentLoggedInUser } from '$lib/shared/types/user';
+import type { TApiResponse } from '$lib/shared/types/http';
+import type { TUser } from '$lib/shared/types/user';
 
 // for information about these interfaces
 declare global {
@@ -14,14 +14,14 @@ declare global {
         // interface PageState {}
         // interface Platform {}
 		interface Locals {
-            user: TCurrentLoggedInUser | null;
+            user: TUser | null;
             t: TranslationFunctions;
             redirectTo: string | null;
             locale: Locales;
             token: string | null;
         }
         namespace Superforms {
-        type Message = ApiResponse;
+        type Message = TApiResponse;
     }
     }
 }

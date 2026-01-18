@@ -1,12 +1,13 @@
 package com.api.planning.dto.response.userstory;
 
-
 import com.api.common.enums.SprintInclude;
 import com.api.planning.dto.response.estimation.EstimationResponseMapper;
 import com.api.planning.dto.response.estimation.EstimationResultResponseMapper;
 import com.api.planning.entity.UserStory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -21,7 +22,6 @@ public record UserStoryResponseMapper(
     if (userStory == null) {
       return null;
     }
-
     return toResponse(userStory, NO_INCLUDES);
   }
 
@@ -29,6 +29,10 @@ public record UserStoryResponseMapper(
     UserStory userStory,
     Set<SprintInclude> includes
   ) {
+    if (userStory == null) {
+      return null;
+    }
+
     Set<SprintInclude> safeIncludes =
       includes == null ? NO_INCLUDES : includes;
 
@@ -36,14 +40,18 @@ public record UserStoryResponseMapper(
 
     if (safeIncludes.contains(SprintInclude.ESTIMATION_RESULTS)) {
       response.setEstimationResults(
-        userStory.getEstimationResults().stream()
+        Optional.ofNullable(userStory.getEstimationResults())
+          .orElse(Collections.emptySet())
+          .stream()
           .map(estimationResultResponseMapper::toResponse)
           .toList()
       );
     }
 
     if (safeIncludes.contains(SprintInclude.ESTIMATIONS)) {
-      var estimations = userStory.getEstimations();
+      var estimations =
+        Optional.ofNullable(userStory.getEstimations())
+          .orElse(Collections.emptySet());
 
       response.setEstimations(
         estimations.stream()
@@ -51,9 +59,29 @@ public record UserStoryResponseMapper(
           .toList()
       );
 
+      Long lastEstimationResultId = null;
+
+      if (userStory.getIsRevealed()) {
+        lastEstimationResultId =
+          Optional.ofNullable(userStory.getEstimationResults())
+            .orElse(Collections.emptySet())
+            .stream()
+            .map(er -> er.getId())
+            .max(Long::compareTo) // last = highest id
+            .orElse(null);
+      }
+
+      final Long finalLastEstimationResultId = lastEstimationResultId;
+
       response.setVoters(
         estimations.stream()
-          .map(estimation -> estimation.getUser().getId())
+          .filter(est ->
+            userStory.getIsRevealed()
+              ? est.getEstimationResult() != null
+              && est.getEstimationResult().getId().equals(finalLastEstimationResultId)
+              : est.getEstimationResult() == null
+          )
+          .map(est -> est.getUser().getId())
           .distinct()
           .toList()
       );
@@ -68,7 +96,9 @@ public record UserStoryResponseMapper(
       .name(userStory.getName())
       .description(userStory.getDescription())
       .link(userStory.getLink())
-      .isVotingOver(userStory.getIsVotingOver())
+      .isRevealed(userStory.getIsRevealed())
+      .isActive(userStory.getIsActive())
+      .sprintId(userStory.getSprint().getId())
       .build();
   }
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InvitationService {
 
-  // Don't user service here
   private final InvitationRepository invitationRepository;
 
   @PersistenceContext

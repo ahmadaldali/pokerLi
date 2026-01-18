@@ -1,6 +1,7 @@
 package com.api.event.publisher;
 
 
+import com.api.planning.dto.response.sprint.SprintResponse;
 import com.api.planning.dto.response.userstory.UserStoryResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,14 @@ public class UserStoryEventPublisher {
   public void publishUserStoryUpdated(UserStoryResponse details) {
     messagingTemplate.convertAndSend(
       "/topic/user-story-channel",
-      Map.of("user_story_details", details)
+      Map.of("user_story", details)
+    );
+  }
+
+  public void publishSprintUpdated(SprintResponse details) {
+    messagingTemplate.convertAndSend(
+      "/topic/sprint-channel",
+      Map.of("sprint", details)
     );
   }
 }

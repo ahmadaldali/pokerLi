@@ -3,29 +3,38 @@ package com.api.planning.repository;
 import com.api.planning.entity.UserStory;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Repository
 public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
 
-  boolean existsBySprint_IdAndIsVotingOver(
+  boolean existsBySprint_IdAndIsRevealed(
     Long sprintId,
-    boolean isVotingOver
+    boolean isRevealed
   );
 
-  boolean existsBySprint_IdAndNameAndIsVotingOver(
+  boolean existsBySprint_IdAndNameAndIsRevealed(
     Long sprintId,
     String name,
-    boolean isVotingOver
+    boolean isRevealed
   );
 
-  Optional<UserStory> findBySprint_IdAndNameAndIsVotingOver(
+  Optional<UserStory> findBySprint_IdAndNameAndIsRevealed(
     Long sprintId,
     String name,
-    boolean isVotingOver
+    boolean isRevealed
+  );
+
+  Optional<UserStory> findBySprint_IdAndIsActiveAndIsRevealed(
+    Long sprintId,
+    boolean isActive,
+    boolean isRevealed
   );
 
   @EntityGraph(attributePaths = {
@@ -42,4 +51,8 @@ public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
   @Query("SELECT us FROM UserStory us LEFT JOIN FETCH us.estimations e " +
     "WHERE us.id = :userStoryId AND (e.estimationResult IS NULL)")
   Optional<UserStory> findWithActiveEstimations(Long userStoryId);
+
+  @Modifying(clearAutomatically = true)
+  @Query("UPDATE UserStory us SET us.isActive = false WHERE us.sprint.id = :sprintId")
+  int deactivateAllBySprintId(@Param("sprintId") Long sprintId);
 }

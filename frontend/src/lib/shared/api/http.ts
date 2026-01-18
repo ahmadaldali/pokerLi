@@ -1,9 +1,9 @@
 import { get } from "svelte/store";
-import type { ApiOptionsType } from "$lib/shared/types/http";
+import type { TApiOptions, TApiResponse } from "$lib/shared/types/http";
 import { tokenStore } from "$lib/shared/stores/user";
-import { redirectTo } from "$lib/shared/utils/redirect";
+import type { TRawData } from "$lib/shared/types/general";
 
-const apiHeaders = (additionalHeaders: Record<string, string>) => {
+const apiHeaders = (additionalHeaders: TRawData) => {
   const defaultHeaders = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -14,7 +14,7 @@ const apiHeaders = (additionalHeaders: Record<string, string>) => {
     : defaultHeaders;
 };
 
-export const api = async (options: ApiOptionsType) => {
+export const api = async (options: TApiOptions): Promise<TApiResponse> => {
   const fetchMethod = options.fetch || fetch;
   try {
     const token = get(tokenStore);
@@ -45,7 +45,10 @@ export const api = async (options: ApiOptionsType) => {
     if (response.status === 401) {  
       // Unauthorized - token might be expired or invalid
       console.warn("Unauthorized access - invalid or expired token.");
-      redirectTo('/logout');
+      return {
+        result: { error: "UN_AUTHORIZED" },
+        success: false,
+      };
     }
 
     if (!response.ok) {
@@ -79,6 +82,30 @@ export const api = async (options: ApiOptionsType) => {
     }
   }
 };
+
+export const post = async(
+  url: string,
+  fetchFn?: typeof fetch,
+  data?: TRawData
+): Promise<TApiResponse> => {
+  return api({
+    url,
+    method: "POST",
+    fetch: fetchFn,
+    data,
+  });
+}
+
+export const getR = async(
+  url: string,
+  fetchFn?: typeof fetch
+): Promise<TApiResponse> => {
+  return api({
+    url,
+    method: "GET",
+    fetch: fetchFn,
+  });
+}
 
 export const getL18ErrorMessage = (errors: any, code: string | null | undefined) => {
   if (!code) return null;

@@ -28,14 +28,14 @@ public interface EstimationRepository extends JpaRepository<Estimation, Long> {
   Optional<Estimation> findByUser_IdAndUserStory_IdAndEstimationResult_Id(Long userId, Long userStoryId, Long estimationResultId);
   List<Estimation> findByUserStory_IdAndEstimationResult_Id(Long userStoryId,  Long estimationResultId);
 
-  @Modifying
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(
     value = """
-        UPDATE estimations
-        SET estimation_result_id = :estimationResultId
-        WHERE user_story_id = :userStoryId
-          AND estimation_result_id IS NULL
-    """,
+      UPDATE estimations
+      SET estimation_result_id = :estimationResultId
+      WHERE user_story_id = :userStoryId
+        AND estimation_result_id IS NULL
+  """,
     nativeQuery = true
   )
   void attachResultToOngoingEstimations(

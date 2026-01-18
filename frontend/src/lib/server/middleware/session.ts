@@ -1,13 +1,14 @@
 import { type RequestEvent, redirect, type Cookies } from "@sveltejs/kit";
 import {
   isAsset,
-  isAuthRoute,
   isProtectedRoute,
   isPublicRoute,
+  isSprintRoute,
 } from "$lib/shared/utils/check";
 import type { MiddlewareBuilder } from "./utils";
 import { PUBLIC_ENV } from "$env/static/public";
 import { resetData } from "$lib/server/auth";
+import { tokenStore } from "$lib/shared/stores/user";
 
 /** Implements the `session` middleware interface */
 export default (({ logger, event, resolve }) => {
@@ -32,16 +33,17 @@ export default (({ logger, event, resolve }) => {
   async function hasSession(): Promise<any> {
     const session = getSession(event.cookies);
     if (session) {
-      event.locals.token = session;
+      event.locals.token = session.trim();
+      tokenStore.set(session.trim()); // set the store token "server side"
 
       return session;
     } else {
       logger.info("session not found", { event });
-      await resetData(event);
+      tokenStore.set(null);
 
       // If the accessed route is public set the session to undefined
       // in order to pass the event to the next method in squence
-      if (isPublicRoute(event.route.id) || isAuthRoute(event.route.id)) {
+      if (isPublicRoute(event.route.id) || isSprintRoute(event.route.id)) {
         return undefined;
       }
 
@@ -73,6 +75,8 @@ export default (({ logger, event, resolve }) => {
  * Request cookies object.
  */
 export function setSession(cookies: Cookies, token: string) {
+  tokenStore.set(token); // set the store token "server side"
+  
   cookies.set(SESSION_KEY, token, {  // ✅ Store RAW JWT token
     path: "/",
     httpOnly: true,                  // ✅ Client can't access
@@ -97,7 +101,7 @@ export function getSession(cookies: Cookies | undefined): string | null {
     
     // this.checkSession(token);
     
-    return token;
+    return token.trim();
   } catch (error) {
     console.error("Error getting session data:", error);
     return null;
@@ -128,7 +132,7 @@ export function verifySession(expiredTime: number): boolean {
 export function deleteSession(cookies: Cookies) {
   cookies.delete(SESSION_KEY, {
     path: "/",
-    ...(PUBLIC_ENV !== "localhost" && { domain: ".yoboo.health" }),
+    ...(PUBLIC_ENV !== "localhost" && { domain: "." }), // TODO check this
   });
 }
 

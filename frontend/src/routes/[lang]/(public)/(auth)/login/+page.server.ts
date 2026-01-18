@@ -1,11 +1,11 @@
-import { fail, redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
-import * as api from "$lib/shared/api/auth";
 import { setSession } from "$lib/server/middleware/session.js";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { loginSchema } from "$lib/shared/schemas";
 import { redirectTo } from "$lib/shared/utils/redirect";
+import { authApi } from "$lib/shared/api";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const form = await superValidate(zod(loginSchema(locals.t)));
@@ -23,7 +23,7 @@ export const actions: Actions = {
     }
 
     const { email, password } = form.data;
-    const response = await api.login({ email, password }, fetch);
+    const response = await authApi().login({ email, password }, fetch);
 
     if (!response.success) {
       return message(form, response);

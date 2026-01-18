@@ -24,10 +24,6 @@ export function isLocalizedRoute(routeId: string | null) {
     return routeId !== null && routeId.startsWith('/[lang]');
 }
 
-export function isAuthRoute(routeId: string | null) {
-    return routeId !== null && routeId.startsWith('/[lang]/(public)/(auth)');
-}
-
 export function isSignUpRoute(routeId: string | null) {
     return routeId !== null && routeId.startsWith('/[lang]/(public)/(auth)/sign-up');
 }
@@ -42,6 +38,10 @@ export function isPublicRoute(routeId: string | null) {
 
 export function isProtectedRoute(routeId: string | null) {
     return routeId !== null && routeId.startsWith('/[lang]/(protected)');
+}
+
+export function isSprintRoute(routeId: string | null) {
+    return routeId !== null && routeId.startsWith('/[lang]/(protected)/sprints/[id]');
 }
 
 export function isUserRoute(routeId: string | null) {

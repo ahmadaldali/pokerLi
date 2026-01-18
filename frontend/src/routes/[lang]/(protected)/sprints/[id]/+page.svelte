@@ -1,0 +1,145 @@
+<script lang="ts">
+  import type { PageData } from "./$types";
+  import type { TUserStory } from "$lib/shared/types/sprint";
+  import { connect, disconnect } from "$lib/client/websocket/vote";
+  import { onMount, onDestroy } from "svelte";
+
+  import CardSelector from "$components/vote/CardSelector.svelte";
+  import Members from "$components/vote/Members.svelte";
+  import EmptyUserStories from "$components/vote/EmptyUserStories.svelte";
+  import Reveal from "$components/vote/Reveal.svelte";
+  import UserStoryResults from "$components/vote/UserStoryResults.svelte";
+  import CreateGuestModal from "$components/modal/CreateGuestModal.svelte";
+  import UserStoriesList from "$components/vote/UserStoriesList.svelte";
+  import SprintHeader from "$components/sprint/SprintHeader.svelte";
+
+  export let data: PageData;
+
+  const { sprintResponse, sprint, user } = data;
+
+  let userStories: TUserStory[] = sprint?.userStories ?? [];
+  let members = sprint?.members ?? [];
+  let activeVotingUserStory: TUserStory | undefined;
+
+  $: activeVotingUserStory = userStories.find((s) => s.isActive);
+
+  function updateUserStory(updated: TUserStory) {
+    const index = userStories.findIndex((u) => u.id === updated.id);
+    if (index === -1) return;
+
+    userStories = userStories.map((u, i) => (i === index ? updated : u));
+  }
+
+  onMount(() => {
+    connect(
+      // single user story update
+      (userStory) => {
+        updateUserStory(userStory);
+      },
+
+      // full sprint update
+      (updatedSprint) => {
+        if (updatedSprint.id !== sprint?.id) return;
+
+        userStories = updatedSprint.userStories ?? [];
+        members = updatedSprint.members ?? [];
+      },
+    );
+  });
+
+  onDestroy(() => {
+    disconnect();
+  });
+</script>
+
+<div class="px-6 py-8 md:px-10 flex flex-col gap-4 justify-center items-center">
+  {#if sprint}
+    <SprintHeader
+      name={sprint.name}
+      sequence={sprint.sequence}
+      creator={sprint.creator}
+      {userStories}
+      {members}
+      votingActive={!!activeVotingUserStory}
+    />
+
+    {#if user}
+      {#if userStories.length === 0}
+        <EmptyUserStories sprintId={sprint.id} />
+      {:else}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+          <!-- LEFT: STORIES -->
+          <aside class="rounded-2xl border border-white/10 bg-slate-900/80">
+            <div class="border-b border-white/10 px-4 py-3">
+              <h2 class="text-sm font-semibold text-slate-400 uppercase">
+                User stories
+              </h2>
+            </div>
+
+            <UserStoriesList {userStories} {activeVotingUserStory} />
+          </aside>
+
+          <!-- RIGHT: ACTIVE VOTING -->
+          <section
+            class="w-full lg:col-span-2 rounded-2xl border text-slate-200 border-white/10 bg-slate-900/80 backdrop-blur shadow-xl"
+          >
+            <div class="border-b border-white/10 px-6 py-4">
+              <h2 class="text-lg font-semibold">
+                Active voting • {activeVotingUserStory?.id} - {activeVotingUserStory?.name ?? ""}
+              </h2>
+            </div>
+
+            <div class="p-6">
+              {#if activeVotingUserStory}
+                {@const last = activeVotingUserStory.estimationResults?.[0]}
+
+                <Members
+                  {members}
+                  voters={activeVotingUserStory.voters || []}
+                  isRevealed={activeVotingUserStory.isRevealed}
+                  lastEstimationResultId={last?.id}
+                  estimations={activeVotingUserStory.estimations}
+                />
+
+                <Reveal
+                  sprintId={sprint.id}
+                  userStoryId={activeVotingUserStory.id}
+                  voters={activeVotingUserStory.voters || []}
+                  isRevealed={activeVotingUserStory.isRevealed}
+                  notRevealedCount={userStories.filter((u) => !u.isRevealed)
+                    .length}
+                  userRole={user.role}
+                />
+
+                {#if activeVotingUserStory?.isRevealed}
+                  {#key activeVotingUserStory.id}
+                    <UserStoryResults
+                      estimate={last?.estimation}
+                      count={last?.count}
+                    />
+                  {/key}
+                {:else}
+                  <CardSelector
+                    sequeceElements={sprint.sequence}
+                    userStoryId={activeVotingUserStory.id}
+                    userId={user.id}
+                    estimations={activeVotingUserStory.estimations}
+                  />
+                {/if}
+              {:else}
+                <p class="text-center text-slate-400">
+                  Select a user story to begin voting
+                </p>
+              {/if}
+            </div>
+          </section>
+        </div>
+      {/if}
+    {/if}
+  {:else if sprintResponse.result.error === "UN_AUTHORIZED"}
+    <CreateGuestModal formData={data.form} />
+  {:else}
+    <p>Error loading sprint.</p>
+    <p>{sprintResponse.result.error}</p>
+  {/if}
+</div>
