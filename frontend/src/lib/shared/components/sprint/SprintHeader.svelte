@@ -22,6 +22,7 @@
     backdrop-blur
     gap-2
     flex flex-col
+    w-full
   "
 >
   <!-- Title -->

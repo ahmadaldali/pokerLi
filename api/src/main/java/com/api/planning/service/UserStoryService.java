@@ -243,7 +243,6 @@ public class UserStoryService {
     return userStoryResponseMapper.toResponse(story);
   }
 
-
   public void sendUserStoryUpdatedEvent(Long userStoryId) {
     try {
       System.out.println("Sending user story updated event");

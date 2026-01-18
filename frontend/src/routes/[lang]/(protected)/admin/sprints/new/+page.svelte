@@ -1,4 +1,3 @@
-
 <script lang="ts">
   import Input from "$components/design/Input.svelte";
   import { superForm } from "sveltekit-superforms";
@@ -15,33 +14,30 @@
 </script>
 
 <div class="w-full md:max-w-md">
-  <FormContainer
-  title={$LL.pages.auth.login.title()}
-  response={$message}
->
-  <form method="POST" use:enhance class="space-y-5">
-    <Input
-      name="name"
-      type="text"
-      bind:value={$form.name}
-      label={$LL.fields.sprintName.label()}
-      placeholder={$LL.fields.sprintName.placeholder()}
-      required
-      errors={$errors.name}
-    />
-    <Input
-      name="sequence"
-      type="text"
-      bind:value={$form.sequence}
-      label={$LL.fields.sequence.label()}
-      placeholder={$LL.fields.sequence.placeholder()}
-      required
-      errors={$errors.sequence}
-    />
+  <FormContainer title="dsa" response={$message}>
+    <form method="POST" use:enhance class="space-y-5">
+      <Input
+        name="name"
+        type="text"
+        bind:value={$form.name}
+        label={$LL.fields.sprintName.label()}
+        placeholder={$LL.fields.sprintName.placeholder()}
+        required
+        errors={$errors.name}
+      />
+      <Input
+        name="sequence"
+        type="text"
+        bind:value={$form.sequence}
+        label={$LL.fields.sequence.label()}
+        placeholder={$LL.fields.sequence.placeholder()}
+        required
+        errors={$errors.sequence as unknown as string[]}
+      />
 
-    <Button type="submit" disabled={$submitting} loading={$submitting}>
-      {$LL.pages.admin.sprints.new.submit()}
-    </Button>
-  </form>
-</FormContainer>
+      <Button type="submit" disabled={$submitting} loading={$submitting}>
+        {$LL.pages.admin.sprints.new.submit()}
+      </Button>
+    </form>
+  </FormContainer>
 </div>

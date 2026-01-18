@@ -17,13 +17,18 @@
   <div class="flex flex-col gap-10">
     {#if data.user?.role === EUserRole.ADMIN}
       <div class="w-full flex justify-end">
-        <Button fullWidth={false} on:click={() => {
-          redirectTo($LL.routes.admin.sprints.new());
-        }}>create a new sprint</Button>
+        <Button
+          fullWidth={false}
+          on:click={() => {
+            redirectTo($LL.routes.admin.sprints.new());
+          }}>create a new sprint</Button
+        >
       </div>
     {/if}
     <JoinedSprintsTable sprints={data.userSprints.joined} />
-    <JoinableSprintsTable sprints={data.userSprints.joinable} />
+    {#if data.user?.role !== EUserRole.GUEST}
+      <JoinableSprintsTable sprints={data.userSprints.joinable} />
+    {/if}
   </div>
 {:else}
   <Error

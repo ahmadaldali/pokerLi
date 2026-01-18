@@ -6,11 +6,17 @@ import { zod } from "sveltekit-superforms/adapters";
 import { redirectTo } from "$lib/shared/utils/redirect";
 import { authApi, sprintsApi } from "$lib/shared/api";
 import { createSprintSchema } from "$lib/shared/schemas/sprint";
+import { redirect } from "@sveltejs/kit";
+import { EUserRole } from "$lib/shared/enums/user";
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, parent }) => {
   const form = await superValidate(zod(createSprintSchema(locals.t)));
 
-  console.log(locals.user, "in new sprint creation")
+  // Ensure only admin users can access this page - as we break the layout load chain.
+  const { user } = await parent();
+  if (!user || user.role !== EUserRole.ADMIN) {
+    throw redirect(302, "/");
+  }
 
   return { form };
 };

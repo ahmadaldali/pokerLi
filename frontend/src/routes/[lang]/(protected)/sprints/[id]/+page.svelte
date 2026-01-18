@@ -52,7 +52,7 @@
   });
 </script>
 
-<div class="px-6 py-8 md:px-10 flex flex-col gap-4">
+<div class="px-6 py-8 md:px-10 flex flex-col gap-4 justify-center items-center">
   {#if sprint}
     <SprintHeader
       name={sprint.name}
@@ -67,7 +67,7 @@
       {#if userStories.length === 0}
         <EmptyUserStories sprintId={sprint.id} />
       {:else}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
           <!-- LEFT: STORIES -->
           <aside class="rounded-2xl border border-white/10 bg-slate-900/80">
             <div class="border-b border-white/10 px-4 py-3">
@@ -81,7 +81,7 @@
 
           <!-- RIGHT: ACTIVE VOTING -->
           <section
-            class="lg:col-span-2 rounded-2xl border text-slate-200 border-white/10 bg-slate-900/80 backdrop-blur shadow-xl"
+            class="w-full lg:col-span-2 rounded-2xl border text-slate-200 border-white/10 bg-slate-900/80 backdrop-blur shadow-xl"
           >
             <div class="border-b border-white/10 px-6 py-4">
               <h2 class="text-lg font-semibold">

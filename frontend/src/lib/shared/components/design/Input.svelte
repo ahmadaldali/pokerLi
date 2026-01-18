@@ -7,7 +7,7 @@
   export let placeholder = "";
   export let required = false;
   export let value: any;
-  export let errors: string | string[] | null = null;
+  export let errors: string | string[] | null | undefined = null;
 
   function setType(node: any) {
     node.type = type;
