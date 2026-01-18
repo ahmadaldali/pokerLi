@@ -15,6 +15,11 @@ export function localeRoutes(locale: Locales) {
         sprints: {
             index: `/${locale}/sprints`,
             details: `/${locale}/sprints/{0}` as RequiredParams<'0'>,
+        },
+        admin: {
+            sprints: {
+                new: `/${locale}/admin/sprints/new`,
+            }
         }
     };
 }

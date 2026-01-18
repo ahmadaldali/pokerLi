@@ -1,5 +1,3 @@
-
-import { createGuestSchema } from "$lib/shared/schemas/sprint";
 import { redirectTo } from "$lib/shared/utils/redirect";
 import { fail, message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -7,6 +5,7 @@ import { setSession } from "$lib/server/middleware/session";
 import type { SprintPageRequestEvent } from "$lib/shared/types/request-event";
 import { generateRandomString } from "$lib/shared/utils/helper";
 import { authApi } from "$lib/shared/api";
+import { createGuestSchema } from "$lib/shared/schemas";
 
 export const createGuestRequest = async (event: SprintPageRequestEvent) => {
   const formData = await event.request.formData();

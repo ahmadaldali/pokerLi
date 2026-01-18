@@ -21,3 +21,9 @@ export const signupSchema = (t: TranslationFunctions) =>
       path: ["confirmPassword"],
       message: t.errors.password_mismatch(),
     });
+
+  export const createGuestSchema = (t: TranslationFunctions) =>
+  z.object({
+    name: nameField(t),
+    guestId: requiredString(t, "guestId"),
+  });

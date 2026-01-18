@@ -1,10 +1,10 @@
 import type { PageServerLoad } from "./$types";
 import * as api from "$lib/shared/api/index";
 import { EUserRole } from "$lib/shared/enums/user";
-import { createGuestSchema } from "$lib/shared/schemas/sprint";
 import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms";
 import { createGuestRequest } from "$lib/server/request/sprint";
+import { createGuestSchema } from "$lib/shared/schemas";
 
 export const load: PageServerLoad = async ({
   fetch,

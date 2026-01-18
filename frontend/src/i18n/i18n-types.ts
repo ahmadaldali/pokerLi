@@ -51,6 +51,14 @@ type RootTranslation = {
 			 */
 			details: RequiredParams<'0'>
 		}
+		admin: {
+			sprints: {
+				/**
+				 * /​e​n​/​a​d​m​i​n​/​s​p​r​i​n​t​s​/​n​e​w
+				 */
+				'new': string
+			}
+		}
 	}
 	pages: {
 		auth: {
@@ -118,6 +126,28 @@ type RootTranslation = {
 			 * l​o​g​o​u​t
 			 */
 			logout: string
+		}
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * C​r​e​a​t​e​ ​N​e​w​ ​S​p​r​i​n​t
+					 */
+					title: string
+					/**
+					 * S​p​r​i​n​t​ ​N​a​m​e
+					 */
+					name: string
+					/**
+					 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e​ ​(​c​o​m​m​a​ ​s​e​p​a​r​a​t​e​d​)
+					 */
+					sequence: string
+					/**
+					 * C​r​e​a​t​e​ ​S​p​r​i​n​t
+					 */
+					submit: string
+				}
+			}
 		}
 	}
 	errors: {
@@ -240,6 +270,26 @@ type RootTranslation = {
 			 */
 			placeholder: string
 		}
+		sprintName: {
+			/**
+			 * S​p​r​i​n​t​ ​N​a​m​e
+			 */
+			label: string
+			/**
+			 * S​p​r​i​n​t​ ​1
+			 */
+			placeholder: string
+		}
+		sequence: {
+			/**
+			 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e
+			 */
+			label: string
+			/**
+			 * e​.​g​.​,​ ​1​,​2​,​3​,​5​,​8​,​1​3​,​2​1
+			 */
+			placeholder: string
+		}
 	}
 }
 
@@ -278,6 +328,14 @@ export type TranslationFunctions = {
 			 * /en/sprints/{0}
 			 */
 			details: (arg0: unknown) => LocalizedString
+		}
+		admin: {
+			sprints: {
+				/**
+				 * /en/admin/sprints/new
+				 */
+				'new': () => LocalizedString
+			}
 		}
 	}
 	pages: {
@@ -346,6 +404,28 @@ export type TranslationFunctions = {
 			 * logout
 			 */
 			logout: () => LocalizedString
+		}
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * Create New Sprint
+					 */
+					title: () => LocalizedString
+					/**
+					 * Sprint Name
+					 */
+					name: () => LocalizedString
+					/**
+					 * Estimation Sequence (comma separated)
+					 */
+					sequence: () => LocalizedString
+					/**
+					 * Create Sprint
+					 */
+					submit: () => LocalizedString
+				}
+			}
 		}
 	}
 	errors: {
@@ -456,6 +536,26 @@ export type TranslationFunctions = {
 			label: () => LocalizedString
 			/**
 			 * ••••••••
+			 */
+			placeholder: () => LocalizedString
+		}
+		sprintName: {
+			/**
+			 * Sprint Name
+			 */
+			label: () => LocalizedString
+			/**
+			 * Sprint 1
+			 */
+			placeholder: () => LocalizedString
+		}
+		sequence: {
+			/**
+			 * Estimation Sequence
+			 */
+			label: () => LocalizedString
+			/**
+			 * e.g., 1,2,3,5,8,13,21
 			 */
 			placeholder: () => LocalizedString
 		}

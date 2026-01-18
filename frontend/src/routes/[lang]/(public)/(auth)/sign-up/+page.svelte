@@ -2,7 +2,7 @@
   import { superForm } from "sveltekit-superforms";
   import type { PageData } from "./$types";
   import LL from "$i18n/i18n-svelte";
-  import AuthContainer from "$components/form/AuthContainer.svelte";
+  import FormContainer from "$components/form/FormContainer.svelte";
   import Input from "$components/design/Input.svelte";
 
   export let data: PageData;
@@ -12,7 +12,7 @@
   });
 </script>
 
-<AuthContainer
+<FormContainer
   title={$LL.pages.auth.signUp.title()}
   response={$message}
   link={$LL.routes.auth.login()}
@@ -81,4 +81,4 @@
       {/if}
     </button>
   </form>
-</AuthContainer>
+</FormContainer>
