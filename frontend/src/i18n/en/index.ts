@@ -47,6 +47,7 @@ const ErrorsTranslation = {
   UN_AUTHORIZED: "You are not authorized to perform this action",
   ACTION_NOT_ALLOWED: "This action is not allowed",
   BAD_REQUEST: "Bad request. Please check your input",
+  NAME_EXIST: "Name already exists",
 
   //
   required: "{field} is required",

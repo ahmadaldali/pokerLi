@@ -8,6 +8,7 @@ import { authApi, sprintsApi } from "$lib/shared/api";
 import { createSprintSchema } from "$lib/shared/schemas/sprint";
 import { redirect } from "@sveltejs/kit";
 import { EUserRole } from "$lib/shared/enums/user";
+import { sprintUtils } from "$lib/shared/utils/sprint";
 
 export const load: PageServerLoad = async ({ locals, parent }) => {
   const form = await superValidate(zod(createSprintSchema(locals.t)));
@@ -41,6 +42,12 @@ export const actions: Actions = {
       return message(form, response);
     }
 
-    redirectTo(locals.t.routes.sprints.index());
+    console.log("Sprint created:", response.result);
+
+    redirectTo(
+      locals.t.routes.sprints.details(
+        sprintUtils().encodeSprintId(response.result.id),
+      ),
+    );
   },
 };

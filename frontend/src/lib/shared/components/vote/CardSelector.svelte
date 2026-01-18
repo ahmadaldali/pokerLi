@@ -19,9 +19,7 @@
 
     }
   }
-
-  $: console.log("Estimations:", estimations);
-
+  
   $: if (estimations) {
     estimationValue =
       estimations?.find((est) => est.user.id === userId && est.estimationResultId === null)?.estimation || null;

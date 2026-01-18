@@ -65,6 +65,8 @@ public class SprintService {
     validateSprintName(sprint);
     sprintRepository.save(sprint);
 
+
+
     return this.createSprintMember(sprint.getId(), userId);
   }
 
@@ -109,7 +111,11 @@ public class SprintService {
       default -> throw new ForbiddenException();
     }
 
-    return this.createSprintMember(sprintId, memberId);
+    SprintResponse response = this.createSprintMember(sprintId, memberId);
+
+    sendSprintUpdatedEvent(sprintId);
+
+    return response;
   }
 
   // ========================= sprint user-stories ==========================

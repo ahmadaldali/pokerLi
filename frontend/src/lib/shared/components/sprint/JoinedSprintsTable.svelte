@@ -14,7 +14,7 @@
       {
         label: "Enter",
         onClick: async (row) => {
-          await goto(`/sprints/${btoa(row.id.toString())}`);
+          await goto(`/sprints/${sprintUtils().encodeSprintId(row.id)}`);
         },
       },
     ],

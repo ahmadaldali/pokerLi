@@ -26,11 +26,15 @@ public class ParticipantService {
 
   // TODO: change the type of the returned value
   public void createParticipant(Long sprintId, Long memberId) {
+    Sprint sprint = entityManager.getReference(Sprint.class, sprintId);
+
     Participant participant = Participant.builder()
       .member(entityManager.getReference(User.class, memberId))
       .sprint(entityManager.getReference(Sprint.class, sprintId))
       .joinedDate(LocalDateTime.now())
       .build();
+
+    sprint.getParticipants().add(participant);
 
     participantRepository.save(participant);
   }

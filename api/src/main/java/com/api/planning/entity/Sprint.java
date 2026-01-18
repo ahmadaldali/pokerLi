@@ -11,6 +11,7 @@ import org.hibernate.annotations.Type;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -44,11 +45,14 @@ public class Sprint {
   )
   private Set<UserStory> userStories = new HashSet<>();
 
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(
-    name = "participants",
-    joinColumns = @JoinColumn(name = "sprint_id"),
-    inverseJoinColumns = @JoinColumn(name = "member_id")
-  )
-  private Set<User> members = new HashSet<>();
+  @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private Set<Participant> participants = new HashSet<>();
+
+  @Transient
+  public Set<User> getMembers() {
+    return participants.stream()
+      .map(Participant::getMember)
+      .collect(Collectors.toSet());
+  }
 }

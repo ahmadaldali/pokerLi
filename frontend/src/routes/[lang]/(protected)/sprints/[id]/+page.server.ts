@@ -5,6 +5,7 @@ import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms";
 import { createGuestRequest } from "$lib/server/request/sprint";
 import { createGuestSchema } from "$lib/shared/schemas";
+import { sprintUtils } from "$lib/shared/utils/sprint";
 
 export const load: PageServerLoad = async ({
   fetch,
@@ -17,7 +18,7 @@ export const load: PageServerLoad = async ({
 
   let sprintId: number;
   try {
-    sprintId = Number(atob(params.id));
+    sprintId = sprintUtils().decodeSprintId(params.id);
   } catch {
     return {
       form,

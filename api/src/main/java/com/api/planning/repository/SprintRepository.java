@@ -11,22 +11,37 @@ import java.util.Optional;
 
 @Repository
 public interface SprintRepository extends JpaRepository<Sprint, Long> {
+
   Boolean existsByName(String name);
 
-  @EntityGraph(attributePaths = "creator")
+  // ------------------------------------------------------------------
+  // Basic fetch
+  // ------------------------------------------------------------------
+
+  @EntityGraph(attributePaths = {
+    "creator",
+    "participants",
+    "participants.member"
+  })
   Optional<Sprint> findById(Long id);
 
   @EntityGraph(attributePaths = {
     "creator",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithMembers(Long id);
 
+  // ------------------------------------------------------------------
+  // With user stories
+  // ------------------------------------------------------------------
+
   @EntityGraph(attributePaths = {
     "creator",
     "userStories",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStories(Long id);
@@ -35,7 +50,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     "creator",
     "userStories",
     "userStories.estimationResults",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStoriesWithEstimationResults(Long id);
@@ -44,7 +60,8 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     "creator",
     "userStories",
     "userStories.estimations",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findWithStoriesWithEstimations(Long id);
@@ -54,40 +71,52 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     "userStories",
     "userStories.estimations",
     "userStories.estimationResults",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("select s from Sprint s where s.id = :id")
   Optional<Sprint> findFull(Long id);
 
+  // ------------------------------------------------------------------
+  // Membership queries
+  // ------------------------------------------------------------------
+
   @EntityGraph(attributePaths = {
     "creator",
-    "members"
+    "participants",
+    "participants.member"
   })
   @Query("""
-  select distinct s
-  from Sprint s
-  join s.members m
-  where m.id = :memberId
-  """)
+        select distinct s
+        from Sprint s
+        join s.participants p
+        join p.member m
+        where m.id = :memberId
+    """)
   List<Sprint> findAllByMemberId(Long memberId);
+
+  // ------------------------------------------------------------------
+  // Joinable sprints
+  // ------------------------------------------------------------------
 
   @EntityGraph(attributePaths = {
     "creator"
   })
   @Query("""
-    select s
-    from Sprint s
-    where s.creator.id = (
-        select u.inviter.id
-        from User u
-        where u.id = :userId
-          and u.inviter is not null
-    )
-    and not exists (
-        select 1
-        from s.members m
-        where m.id = :userId
-    )
-""")
+        select s
+        from Sprint s
+        where s.creator.id = (
+            select u.inviter.id
+            from User u
+            where u.id = :userId
+              and u.inviter is not null
+        )
+        and not exists (
+            select 1
+            from Participant p
+            where p.sprint = s
+              and p.member.id = :userId
+        )
+    """)
   List<Sprint> findAllJoinableForUser(Long userId);
 }

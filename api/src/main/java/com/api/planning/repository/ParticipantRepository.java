@@ -11,16 +11,4 @@ import java.util.List;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
   boolean existsByMemberIdAndSprintId(Long memberId, Long sprintId);
-
-  @EntityGraph(attributePaths = {
-    "creator",
-    "members"
-  })
-  @Query("""
-  select distinct s
-  from Sprint s
-  join s.members m
-  where m.id = :memberId
-  """)
-  List<Sprint> findAllToJoin(Long memberId);
 }

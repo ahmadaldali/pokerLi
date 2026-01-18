@@ -19,7 +19,7 @@
         onClick: async (row) => {
           responseForJoin = await sprintsApi().join(row.id);
           if (responseForJoin.success) {
-            await goto(`/sprints/${btoa(row.id.toString())}`);
+            await goto(`/sprints/${sprintUtils().encodeSprintId(row.id)}`);
           }
         },
       },
