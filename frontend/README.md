@@ -1,38 +1,84 @@
-# sv
+# PokerLi Frontend (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Overview
 
-## Creating a project
+This is the frontend for PokerLi, a real-time Agile Planning Poker platform. Built with SvelteKit, TypeScript, and TailwindCSS, it provides a modern, responsive UI for collaborative estimation, sprint management, and real-time updates.
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
 
+## Features
+
+- Responsive, mobile-friendly UI
+- Real-time updates via WebSocket (SockJS)
+- User authentication (register, login, guest)
+- Sprint and user story management
+- Role-based access (Admin, Member, Guest)
+- Internationalization (English, Romanian)
+- Type-safe API integration
+
+---
+
+## Technologies Used
+
+- SvelteKit
+- TypeScript
+- TailwindCSS
+- Vite
+- typesafe-i18n
+- SockJS (WebSocket)
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js v18+
+
+### 1. Install Dependencies
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+npm install
 ```
 
-## Developing
+### 2. Configure Environment (Optional)
+- Copy `.env.example` to `.env` and adjust API URLs if needed.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+### 3. Start the Development Server
 ```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
+- The app runs at `http://localhost:5173` by default.
 
-## Building
-
-To create a production version of your app:
-
+### 4. Build for Production
 ```sh
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+---
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Usage Examples
+
+- Register, login, or join as guest
+- Create or join sprints
+- Vote on user stories in real time
+- Switch language (EN/RO)
+
+---
+
+## Project Structure
+
+- `src/routes/` — SvelteKit pages and layouts
+- `src/lib/` — Shared client/server code, API, and assets
+- `src/i18n/` — Internationalization setup and translations
+- `static/` — Static assets (fonts, robots.txt, etc.)
+
+---
+
+## Further Documentation
+- See the main [README.md](../README.md) for project-wide info
+- API endpoints: [../api/README.md](../api/README.md)
+
+---
+
+## License
+See [../LICENSE](../LICENSE)
