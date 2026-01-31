@@ -10,8 +10,6 @@
   export let actionsTitle: string = $LL.tables.default.actions();
 
   const hasActions = !!config.actions?.length;
-
-  console.log("Table component loaded with config:", config);
 </script>
 
 <div
