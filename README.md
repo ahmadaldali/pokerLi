@@ -1,8 +1,5 @@
 # PokerLi: Agile Planning Poker Platform
 
-![Build Status](api/target/surefire-reports/TEST-com.api.ApplicationTests.xml)
-![License](LICENSE)
-
 ## Table of Contents
 - [Description](#description)
 - [Features](#features)
@@ -11,7 +8,6 @@
   - [Backend Setup (Spring Boot)](#backend-setup-spring-boot)
   - [Frontend Setup (SvelteKit)](#frontend-setup-sveltekit)
 - [Support & Documentation](#support--documentation)
-- [Contributing](#contributing)
 - [Maintainers](#maintainers)
 
 ---
@@ -64,7 +60,7 @@
 
 ### 1. Clone the Repository
 ```sh
-git clone <this-repo-url>
+git clone `https://github.com/ahmadaldali/pokerLi`
 cd pokerLi
 ```
 
@@ -87,7 +83,7 @@ cd pokerLi
 ### Frontend Setup (SvelteKit)
 1. Install dependencies:
    ```sh
-   cd ../frontend
+   cd frontend `from root directory`
    npm install
    cp .env.example .env
    ```
