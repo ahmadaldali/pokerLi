@@ -1,0 +1,804 @@
+{
+  "info": {
+    "_postman_id": "13dd5c6c-6d6f-4834-a86d-a1ed7e7cda66",
+    "name": "poker",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "15237114"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = JSON.parse(responseBody);",
+                  "pm.environment.set(\"jwt_token\", data.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test1@gmail.com\",\n    \"password\": \"12345678aA@\"\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = JSON.parse(responseBody);",
+                  "pm.environment.set(\"jwt_token\", data.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Ahmad Aldali\",\n    //\"refCode\": \"38AC5A92-1DA9-46B7-8C19-8BF1059E\",\n    \"email\": \"ahmad23+admin22@gmail.com\",\n    \"password\": 123456\n\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create guest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = JSON.parse(responseBody);",
+                  "pm.environment.set(\"jwt_token\", data.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Ahmad Aldal73233\",\n    \"guestId\": \"7323333\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/auth/guest",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "auth",
+                "guest"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "noauth"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "sprint",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"terr55123333366\",\n  \"sequence\": [1.0, 2.0, 3.0, 5.0, 6,7,8.0]\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create a user story",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"171521\",\n    \"description\": \"third\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints/1/user-stories",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints",
+                "1",
+                "user-stories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "start new voting",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints/2/start-new-voting",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints",
+                "2",
+                "start-new-voting"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "join",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints/2/join",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints",
+                "2",
+                "join"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints/11",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get with include",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/sprints/18?include=userStories,estimationResults,members,estimations",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "sprints",
+                "18"
+              ],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "userStories,estimationResults,members,estimations"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user story",
+      "item": [
+        {
+          "name": "vote",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"estimation\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/22/vote",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "22",
+                "vote"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "select",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"estimation\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/8/select",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "8",
+                "select"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"estimation\": 13\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/1",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reveal",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/22/reveal",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "22",
+                "reveal"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "vote again",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/22/vote-again",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "22",
+                "vote-again"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "un vote",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/user-stories/1/un-vote",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "user-stories",
+                "1",
+                "un-vote"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "invite",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"ahmad23+joinable1@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/users/invite",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "invite"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get user",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/users/me",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user - sprints",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/users/sprints?membership=joinable,all",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "sprints"
+              ],
+              "query": [
+                {
+                  "key": "membership",
+                  "value": "joinable,all"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "public",
+      "item": [
+        {
+          "name": "get sprint",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/public/sprints/2",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "public",
+                "sprints",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "noauth"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZDFkYzllMmRlZTYyNzJjOGRiYzk4ZmZkNjEyZDYzNjEwM2FlMzEzZmRhOWJiOTQ5ZTVlYjc0MWM2YTM1MGVhNTViOTBmZGY3NWNiYzZmMTkiLCJpYXQiOjE3MDE0MTQ2OTQuOTk2NzcxLCJuYmYiOjE3MDE0MTQ2OTQuOTk2NzczLCJleHAiOjE3MTcyMjU4OTQuOTk1Mzc1LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.LtaCxhKFs114Y2CXU3XSJOul3eY8xvCIapepTQgfAO4NtUW58nUAtcbLc0J8HEBhKyomNM0mjZ0r-98iQWnaZeTfomrOwdcrJ7oDb8LBIrs4pNTyz12_syDMNdoNhUTYSjEpRaTqMYeZ5GtsllW6rjK5C6uW4P0JaObTEinvB5SwwQluaYe6bYtGJjdv0pqyuaXHVagig4lMxqo-B2Cop2jX1pYKLCzz0YYuXhQHPrjqzgz3DE7IROar0qeiZilJxMkE23J50k5QJzdEqhHFEQ1b_bZEF5ZEoTAZ7dXmbpZR-qLBZs8TggyEv_cEuZldOT5ne4NIcDs-UM1lxVj1yxMQauml1elUip3hop3t3kyRbDBrbEdRyOh5EyWRDAofK7zificxIPoUF7QpMYUPnsPlLqRS5iA2ssGKrDURJhqwzQlHmhOF8n-HApuB7nS2mIY9HgdEcidELG68RkNgH8afnRJxDtMhM7syXEkTx7NkUGhaEpd6XLCuj1FDPLnMgT9f6faSnfcNXOxOsr_j6uhLbYtBuk5Npo-2x2Lz7mHrEtbOAyXNoh32ecnohgb3fozGwnK9sO3BEpQbhF8e78jx7WERKEKU4SMdmT1Z0LpOWlBW58mMxJiwwakYTe25dp8TaUfqFt7W2xdadoB-_i59YLoMCeoikq_m6TKY1iQ"
+    },
+    {
+      "key": "member_token",
+      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNjU2MWU1Njg4NjczNWViZDEwMDBkNGIxMjIxMzczYzE4MzhhNjFlMTA3NjgzNWVjZWE0ZTc4MTFlNDVkNTdhNTgwYjM2ZmZjOTI2NjY1NjgiLCJpYXQiOjE3MDE0MTczMjguMDcyNjk0LCJuYmYiOjE3MDE0MTczMjguMDcyNjk1LCJleHAiOjE3MTcyMjg1MjguMDcxMzk3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.M8KoKzo78w9B2RI47MlWeKvzqZNIrWSTZJEHL5kT_sDjXfRYtbqI-VVLESOa5fIoyZ9k2oV7yKUvt0UZaC6uMcpYr-0NNL1QbVMciYVJLLxQ8JJyoViNE5WAaEekcLc70FhhWfTUWXx9XtKykCJ-LNJNeW3qQ0gkCdb08Tcky-DtJYV83HxCJhQmjUplrdelEiE95ieyNqLj3SWoYwEjZlwuzReTJgEr0vzs81_A1ibMhWKAXFywMaOO_uaCQYykKCFmGNXycTx85py0ibLAWVXikW90Lf4Tv6-a0V0k4ee7altjHHIujZWkU4rvKHUp5hAy5YUP8mEPTTqOeJuNbEB4u4QzrcwzF8vL1xExMzPmy7xIY41WKKReVfN5L1zaWQkkT9Lraa874U-wk_zv1VEmoBZa2Okqcwzn8oSeTHv2-CMZwsHw1MgwVAZKoLO9Kd2taMb79psEQDMm5XA3Zzv1drQrLSBV-0WBtUjZfXeXRNa7VEX9-TYbITqQsUFSoaDZG9ROqO8nOZ0SAT03Y3QMoP2wC8H5JXxv4KgGYfI1XWhvuSmyyM2k9DbQMR-dPermXULxNHBICw_BgENO3Kxiz_69lTzAW3tUdDScNWiiEp8kra_KvP1GgZ-A50uQ6fR0TKpjqKDqd5Rkqby_Vj5cWejYsuO3BYGtdn2nLdU"
+    }
+  ]
+}

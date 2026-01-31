@@ -98,6 +98,7 @@ cd pokerLi
 ## Support & Documentation
 
 - **API Reference**: See [api/README.md](api/README.md) and [api/HELP.md](api/HELP.md)
+- **Postman Collection**: Import [poker.postman_collection.json](poker.postman_collection.json) into Postman to try the API endpoints quickly
 - **Frontend Docs**: See [frontend/README.md](frontend/README.md)
 - **Issue Tracker**: Use GitHub Issues
 ---
