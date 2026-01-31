@@ -60,7 +60,7 @@
 
 ### 1. Clone the Repository
 ```sh
-git clone `https://github.com/ahmadaldali/pokerLi`
+git clone https://github.com/ahmadaldali/pokerLi
 cd pokerLi
 ```
 
@@ -81,9 +81,9 @@ cd pokerLi
    The API runs by default on `http://localhost:8000/api`.
 
 ### Frontend Setup (SvelteKit)
-1. Install dependencies:
+1. Install dependencies: `from root directory`
    ```sh
-   cd frontend `from root directory`
+   cd frontend
    npm install
    cp .env.example .env
    ```
