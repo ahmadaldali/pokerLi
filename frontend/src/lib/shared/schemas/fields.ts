@@ -19,7 +19,7 @@ export const nameField = (t: TranslationFunctions) =>
 export const sequenceField = (t: TranslationFunctions) =>
   z
     .string()
-    .min(1, "sequence.required")
+    .min(1, t.errors.required({ field: "Estimation Sequence" }))
     .transform((value) => {
       const numbers = value
         .split(",")
@@ -30,6 +30,6 @@ export const sequenceField = (t: TranslationFunctions) =>
     })
     .refine(
       (arr) => arr.every((n) => !Number.isNaN(n)),
-      "sequence_invalid_numbers",
+      t.errors.sequence_invalid_numbers(),
     )
-    .refine((arr) => arr.length <= 10, "sequence_max_items");
+    .refine((arr) => arr.length <= 10, t.errors.sequence_max_items());

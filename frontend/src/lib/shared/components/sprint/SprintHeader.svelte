@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { TUserStory } from "$lib/shared/types/sprint";
+  import LL from "$i18n/i18n-svelte";
 
   export let name: string;
   export let sequence: number[];
@@ -33,9 +34,9 @@
 
     <div class="flex items-center gap-2 text-sm text-slate-400">
       {#if votingActive}
-        <span class="text-emerald-400"> • Voting in progress </span>
+        <span class="text-emerald-400"> • {$LL.blocks.sprints.header.inProgress()} </span>
       {:else}
-        <span class="text-slate-500"> • No active voting </span>
+        <span class="text-slate-500"> • {$LL.blocks.sprints.header.noActiveVoting()} </span>
       {/if}
     </div>
   </div>
@@ -52,39 +53,39 @@
       <span class="font-medium text-slate-300">
         {userStories.length}
       </span>
-      user stories
+      {$LL.blocks.sprints.header.userStories()}
     </div>
 
     <div>
       <span class="font-medium text-slate-300">
         {revealedCount}
       </span>
-      stories revealed
+      {$LL.blocks.sprints.header.revealedStories()}
     </div>
 
     <div>
       <span class="font-medium text-slate-300">
         {members.length}
       </span>
-      members in sprint
+      {$LL.blocks.sprints.header.membersInSprint()}
     </div>
 
     <div>
       <span class="font-medium text-slate-300">
         {uniqueVotersCount}
       </span>
-      unique voters
+      {$LL.blocks.sprints.header.uniqueVoters()}
     </div>
 
     <div>
-      Created by
+      {$LL.blocks.sprints.header.createdBy()}
       <span class="font-medium text-slate-300">
         {creator}
       </span>
     </div>
 
     <div class="truncate">
-      Sequence:
+      {$LL.blocks.sprints.header.sequence()}
       <span class="text-slate-300">
         {sequence.join(", ")}
       </span>

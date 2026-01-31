@@ -10,7 +10,7 @@ export type TTableColumn<T> = {
 
 export type TTableAction<T> = {
   label: string;
-  onClick: (row: T) => void;
+  onClick: (row: number) => Promise<void | string> | void;
   class?: string;
   disabled?: (row: T) => boolean;
   variant?: TButtonVariant;

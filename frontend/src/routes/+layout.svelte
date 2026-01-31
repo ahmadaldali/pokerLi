@@ -6,6 +6,7 @@
   import type { Locales } from '$i18n/i18n-types';
   import '../app.css';
   import Header from '$components/layout/Header.svelte';
+  import Footer from '$components/layout/Footer.svelte';
 
   $effect(() => {
     const lang = (page?.params?.lang ?? 'en') as Locales;
@@ -34,3 +35,5 @@
 >
 {@render children()}
 </div>
+
+<Footer />

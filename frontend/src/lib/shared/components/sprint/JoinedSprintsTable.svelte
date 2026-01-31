@@ -4,29 +4,30 @@
   import type { TTableConfig } from "$lib/shared/types/table";
   import { sprintUtils } from "$lib/shared/utils/sprint";
   import LL from "$i18n/i18n-svelte";
-  import { goto } from "$app/navigation";
 
   export let sprints: TSprint[];
 
-  const config: TTableConfig<TSprint> = {
-    columns: sprintUtils().getSprintTableColumns($LL),
-    actions: [
-      {
-        label: "Enter",
-        onClick: async (row) => {
-          await goto(`/sprints/${sprintUtils().encodeSprintId(row.id)}`);
-        },
-      },
-    ],
-  };
+  export function getTableConfig(ll: typeof $LL): TTableConfig<TSprint> {
+    return {
+      columns: sprintUtils().getSprintTableColumns(ll),
+      actions: sprintUtils().getJoinedSprintTableActions(ll),
+    };
+  }
 </script>
 
 <section class="space-y-4">
   <div class="flex items-center justify-between">
-    <h2 class="text-lg font-semibold text-white">Sprints you’ve joined</h2>
+    <h2 class="text-lg font-semibold text-white">
+      {$LL.blocks.sprints.joined()}
+    </h2>
   </div>
 
   <div class="rounded-xl border border-white/10 bg-white/5 p-4">
-    <Table rows={sprints} {config} emptyText="No Sprints found" />
+    <Table
+      rows={sprints}
+      config={getTableConfig($LL)}
+      emptyText={$LL.tables.sprints.empty()}
+      actionsTitle={$LL.tables.sprints.actions.title()}
+    />
   </div>
 </section>

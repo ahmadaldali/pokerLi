@@ -3,6 +3,7 @@
   import type { TUserStory } from "$lib/shared/types/sprint";
   import { connect, disconnect } from "$lib/client/websocket/vote";
   import { onMount, onDestroy } from "svelte";
+  import LL from "$i18n/i18n-svelte";
 
   import CardSelector from "$components/vote/CardSelector.svelte";
   import Members from "$components/vote/Members.svelte";
@@ -72,7 +73,7 @@
           <aside class="rounded-2xl border border-white/10 bg-slate-900/80">
             <div class="border-b border-white/10 px-4 py-3">
               <h2 class="text-sm font-semibold text-slate-400 uppercase">
-                User stories
+                {$LL.pages.sprint.userStories()}
               </h2>
             </div>
 
@@ -85,7 +86,8 @@
           >
             <div class="border-b border-white/10 px-6 py-4">
               <h2 class="text-lg font-semibold">
-                Active voting • {activeVotingUserStory?.id} - {activeVotingUserStory?.name ?? ""}
+                {$LL.pages.sprint.activeVoting()} • {activeVotingUserStory?.id} -
+                {activeVotingUserStory?.name ?? ""}
               </h2>
             </div>
 
@@ -108,7 +110,6 @@
                   isRevealed={activeVotingUserStory.isRevealed}
                   notRevealedCount={userStories.filter((u) => !u.isRevealed)
                     .length}
-                  userRole={user.role}
                 />
 
                 {#if activeVotingUserStory?.isRevealed}
@@ -128,7 +129,7 @@
                 {/if}
               {:else}
                 <p class="text-center text-slate-400">
-                  Select a user story to begin voting
+                  {$LL.pages.sprint.selectUserStoryToBeginVoting()}
                 </p>
               {/if}
             </div>
@@ -139,7 +140,7 @@
   {:else if sprintResponse.result.error === "UN_AUTHORIZED"}
     <CreateGuestModal formData={data.form} />
   {:else}
-    <p>Error loading sprint.</p>
+    <p>{$LL.errors.errorLoadingSprint()}</p>
     <p>{sprintResponse.result.error}</p>
   {/if}
 </div>

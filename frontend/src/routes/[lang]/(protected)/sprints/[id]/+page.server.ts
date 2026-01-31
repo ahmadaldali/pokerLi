@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({
   const sprintResponse = await api.getSprint(
     sprintId,
     ["userStories", "estimations", "members", "estimationResults"],
-    fetch
+    fetch,
   );
 
   const sprint = sprintResponse.success ? sprintResponse.result : null;

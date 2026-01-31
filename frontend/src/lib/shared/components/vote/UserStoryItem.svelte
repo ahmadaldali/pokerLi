@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button from "$components/design/Button.svelte";
   import { fade } from "svelte/transition";
+  import LL from "$i18n/i18n-svelte";
 
   export let id: number;
   export let name: string | null;
@@ -36,7 +37,7 @@
             text-emerald-400
           "
       >
-        Voting now
+        {$LL.blocks.userStory.votingNow()}
       </span>
     {:else}
       <Button
@@ -48,7 +49,7 @@
                 cursor-pointer select-none"
         on:click={() => !active && onVote(id)}
       >
-        {isRevealed ? "Vote again" : "Vote this story"}
+        {isRevealed ? $LL.blocks.userStory.voteAgain() : $LL.blocks.userStory.voteThisStory()}
       </Button>
     {/if}
   </div>
