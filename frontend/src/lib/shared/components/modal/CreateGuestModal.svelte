@@ -29,7 +29,7 @@
   <form method="POST" class="space-y-5" action="?/createGuest">
     <div class="mx-auto max-w-md space-y-6">
       <p class="text-lg text-center font-semibold text-white">
-        Choose your display name
+        {$LL.modals.createGuest.title()}
       </p>
 
       <div>
@@ -56,18 +56,24 @@
         type="submit"
         variant="primary"
         loading={$submitting}
-        disabled={$submitting}>"Join as a guest"</Button
+        disabled={$submitting}>{$LL.modals.createGuest.submit()}</Button
       >
 
       <div
         class="rounded-xl text-center border border-white/10 bg-white/5 p-5 space-y-4"
       >
-        <p class="text-sm text-white/70">Want to stay with us permanently?</p>
+        <p class="text-sm text-white/70">{$LL.modals.createGuest.title()}</p>
 
         <div class="flex items-center justify-between gap-4">
-          <Link link={$LL.routes.auth.login()} linkText="Login" />
+          <Link
+            link={$LL.routes.auth.login()}
+            linkText={$LL.modals.createGuest.login()}
+          />
 
-          <Link link={$LL.routes.auth.signUp()} linkText="Sign up" />
+          <Link
+            link={$LL.routes.auth.signUp()}
+            linkText={$LL.modals.createGuest.signUp()}
+          />
         </div>
       </div>
     </div>

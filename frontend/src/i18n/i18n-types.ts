@@ -61,6 +61,28 @@ type RootTranslation = {
 		}
 	}
 	pages: {
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * C​r​e​a​t​e​ ​N​e​w​ ​S​p​r​i​n​t
+					 */
+					title: string
+					/**
+					 * S​p​r​i​n​t​ ​N​a​m​e
+					 */
+					name: string
+					/**
+					 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e​ ​(​c​o​m​m​a​ ​s​e​p​a​r​a​t​e​d​)
+					 */
+					sequence: string
+					/**
+					 * C​r​e​a​t​e​ ​S​p​r​i​n​t
+					 */
+					submit: string
+				}
+			}
+		}
 		auth: {
 			login: {
 				/**
@@ -127,27 +149,25 @@ type RootTranslation = {
 			 */
 			logout: string
 		}
-		admin: {
-			sprints: {
-				'new': {
-					/**
-					 * C​r​e​a​t​e​ ​N​e​w​ ​S​p​r​i​n​t
-					 */
-					title: string
-					/**
-					 * S​p​r​i​n​t​ ​N​a​m​e
-					 */
-					name: string
-					/**
-					 * E​s​t​i​m​a​t​i​o​n​ ​S​e​q​u​e​n​c​e​ ​(​c​o​m​m​a​ ​s​e​p​a​r​a​t​e​d​)
-					 */
-					sequence: string
-					/**
-					 * C​r​e​a​t​e​ ​S​p​r​i​n​t
-					 */
-					submit: string
-				}
-			}
+		sprints: {
+			/**
+			 * c​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​p​r​i​n​t
+			 */
+			createNewSprint: string
+		}
+		sprint: {
+			/**
+			 * U​s​e​r​ ​s​t​o​r​i​e​s
+			 */
+			userStories: string
+			/**
+			 * A​c​t​i​v​e​ ​v​o​t​i​n​g
+			 */
+			activeVoting: string
+			/**
+			 * S​e​l​e​c​t​ ​a​ ​u​s​e​r​ ​s​t​o​r​y​ ​t​o​ ​b​e​g​i​n​ ​v​o​t​i​n​g
+			 */
+			selectUserStoryToBeginVoting: string
 		}
 	}
 	errors: {
@@ -175,6 +195,10 @@ type RootTranslation = {
 		 * B​a​d​ ​r​e​q​u​e​s​t​.​ ​P​l​e​a​s​e​ ​c​h​e​c​k​ ​y​o​u​r​ ​i​n​p​u​t
 		 */
 		BAD_REQUEST: string
+		/**
+		 * N​a​m​e​ ​a​l​r​e​a​d​y​ ​e​x​i​s​t​s
+		 */
+		NAME_EXIST: string
 		/**
 		 * {​f​i​e​l​d​}​ ​i​s​ ​r​e​q​u​i​r​e​d
 		 * @param {unknown} field
@@ -220,6 +244,18 @@ type RootTranslation = {
 		 * I​n​v​a​l​i​d​ ​e​m​a​i​l​ ​a​d​d​r​e​s​s
 		 */
 		invalid_email: string
+		/**
+		 * E​s​t​i​m​a​t​i​o​n​ ​s​e​q​u​e​n​c​e​ ​m​u​s​t​ ​c​o​n​t​a​i​n​ ​o​n​l​y​ ​n​u​m​b​e​r​s
+		 */
+		sequence_invalid_numbers: string
+		/**
+		 * E​s​t​i​m​a​t​i​o​n​ ​s​e​q​u​e​n​c​e​ ​c​a​n​ ​h​a​v​e​ ​a​t​ ​m​o​s​t​ ​1​0​ ​i​t​e​m​s
+		 */
+		sequence_max_items: string
+		/**
+		 * E​r​r​o​r​ ​l​o​a​d​i​n​g​ ​s​p​r​i​n​t​.
+		 */
+		errorLoadingSprint: string
 	}
 	blocks: {
 		header: {
@@ -227,6 +263,172 @@ type RootTranslation = {
 			 * S​p​r​i​n​t​s
 			 */
 			sprints: string
+			/**
+			 * L​o​g​o​u​t
+			 */
+			logout: string
+			/**
+			 * P​r​o​f​i​l​e
+			 */
+			profile: string
+			/**
+			 * L​o​g​i​n
+			 */
+			login: string
+			/**
+			 * G​e​t​ ​s​t​a​r​t​e​d
+			 */
+			getStarted: string
+		}
+		footer: {
+			/**
+			 * S​i​m​p​l​e​,​ ​c​o​l​l​a​b​o​r​a​t​i​v​e​ ​e​s​t​i​m​a​t​i​o​n​ ​f​o​r​ ​a​g​i​l​e​ ​t​e​a​m​s​.​ ​C​r​e​a​t​e​ ​r​o​o​m​s​,​ ​v​o​t​e​ ​e​f​f​o​r​t​l​e​s​s​l​y​,​ ​a​n​d​ ​r​e​a​c​h​ ​c​o​n​s​e​n​s​u​s​ ​f​a​s​t​e​r​.
+			 */
+			text: string
+			navigation: {
+				/**
+				 * N​a​v​i​g​a​t​i​o​n
+				 */
+				title: string
+				/**
+				 * H​o​m​e
+				 */
+				home: string
+				/**
+				 * S​p​r​i​n​t​s
+				 */
+				sprints: string
+				/**
+				 * L​o​g​i​n
+				 */
+				login: string
+				/**
+				 * R​e​g​i​s​t​e​r
+				 */
+				register: string
+			}
+			legal: {
+				/**
+				 * L​e​g​a​l
+				 */
+				title: string
+				/**
+				 * P​r​i​v​a​c​y​ ​P​o​l​i​c​y
+				 */
+				privacyPolicy: string
+				/**
+				 * T​e​r​m​s​ ​o​f​ ​S​e​r​v​i​c​e
+				 */
+				termsOfService: string
+			}
+			social: {
+				/**
+				 * F​o​l​l​o​w​ ​U​s
+				 */
+				title: string
+				/**
+				 * L​i​n​k​e​d​I​n
+				 */
+				linkedIn: string
+			}
+		}
+		sprints: {
+			/**
+			 * S​p​r​i​n​t​s​ ​y​o​u​’​v​e​ ​j​o​i​n​e​d
+			 */
+			joined: string
+			/**
+			 * S​p​r​i​n​t​s​ ​y​o​u​ ​c​a​n​ ​j​o​i​n
+			 */
+			joinable: string
+			header: {
+				/**
+				 * V​o​t​i​n​g​ ​i​n​ ​p​r​o​g​r​e​s​s
+				 */
+				inProgress: string
+				/**
+				 * N​o​ ​a​c​t​i​v​e​ ​v​o​t​i​n​g
+				 */
+				noActiveVoting: string
+				/**
+				 * u​s​e​r​ ​s​t​o​r​i​e​s
+				 */
+				userStories: string
+				/**
+				 * s​t​o​r​i​e​s​ ​r​e​v​e​a​l​e​d
+				 */
+				revealedStories: string
+				/**
+				 * m​e​m​b​e​r​s​ ​i​n​ ​s​p​r​i​n​t
+				 */
+				membersInSprint: string
+				/**
+				 * u​n​i​q​u​e​ ​v​o​t​e​r​s
+				 */
+				uniqueVoters: string
+				/**
+				 * C​r​e​a​t​e​d​ ​b​y
+				 */
+				createdBy: string
+				/**
+				 * S​e​q​u​e​n​c​e​:
+				 */
+				sequence: string
+			}
+		}
+		emptyUserStory: {
+			/**
+			 * N​o​ ​u​s​e​r​ ​s​t​o​r​i​e​s​ ​y​e​t
+			 */
+			title: string
+			/**
+			 * S​t​a​r​t​ ​a​ ​n​e​w​ ​v​o​t​i​n​g​ ​s​e​s​s​i​o​n​ ​t​o​ ​e​s​t​i​m​a​t​e​ ​y​o​u​r​ ​f​i​r​s​t​ ​s​t​o​r​y​.
+			 */
+			description: string
+		}
+		userStory: {
+			/**
+			 * V​o​t​i​n​g​ ​n​o​w
+			 */
+			votingNow: string
+			/**
+			 * V​o​t​e​ ​a​g​a​i​n
+			 */
+			voteAgain: string
+			/**
+			 * V​o​t​e​ ​t​h​i​s​ ​s​t​o​r​y
+			 */
+			voteThisStory: string
+		}
+		userStoryResults: {
+			/**
+			 * V​o​t​e​s
+			 */
+			votesCast: string
+			/**
+			 * A​v​e​r​a​g​e​ ​e​s​t​i​m​a​t​e
+			 */
+			averageEstimate: string
+		}
+		reveal: {
+			/**
+			 * R​e​v​e​a​l​ ​V​o​t​e​s
+			 */
+			title: string
+			/**
+			 * P​i​c​k​ ​y​o​u​r​ ​c​a​r​d​s
+			 */
+			text: string
+			/**
+			 * C​h​o​o​s​e​ ​t​h​e​ ​n​e​x​t​ ​u​s​e​r​ ​s​t​o​r​y​ ​t​o​ ​e​s​t​i​m​a​t​e
+			 */
+			chooseNextUserStory: string
+		}
+		startNewVoting: {
+			/**
+			 * S​t​a​r​t​ ​N​e​w​ ​V​o​t​i​n​g
+			 */
+			startNewVoting: string
 		}
 	}
 	fields: {
@@ -291,6 +493,72 @@ type RootTranslation = {
 			placeholder: string
 		}
 	}
+	modals: {
+		createGuest: {
+			/**
+			 * J​o​i​n​ ​a​s​ ​a​ ​G​u​e​s​t
+			 */
+			title: string
+			/**
+			 * L​o​g​i​n
+			 */
+			login: string
+			/**
+			 * S​i​g​n​ ​u​p
+			 */
+			signUp: string
+			/**
+			 * J​o​i​n
+			 */
+			submit: string
+		}
+	}
+	tables: {
+		'default': {
+			/**
+			 * A​c​t​i​o​n​s
+			 */
+			actions: string
+			/**
+			 * N​o​ ​d​a​t​a​ ​a​v​a​i​l​a​b​l​e
+			 */
+			noData: string
+		}
+		sprints: {
+			/**
+			 * N​o​ ​S​p​r​i​n​t​s​ ​f​o​u​n​d
+			 */
+			empty: string
+			columns: {
+				/**
+				 * S​p​r​i​n​t
+				 */
+				name: string
+				/**
+				 * C​r​e​a​t​o​r
+				 */
+				creator: string
+				/**
+				 * S​e​q​u​e​n​c​e
+				 */
+				sequence: string
+			}
+			actions: {
+				/**
+				 * A​c​t​i​o​n​s
+				 */
+				title: string
+				/**
+				 * J​o​i​n
+				 */
+				join: string
+				/**
+				 * V​i​e​w
+				 */
+				view: string
+			}
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -339,6 +607,28 @@ export type TranslationFunctions = {
 		}
 	}
 	pages: {
+		admin: {
+			sprints: {
+				'new': {
+					/**
+					 * Create New Sprint
+					 */
+					title: () => LocalizedString
+					/**
+					 * Sprint Name
+					 */
+					name: () => LocalizedString
+					/**
+					 * Estimation Sequence (comma separated)
+					 */
+					sequence: () => LocalizedString
+					/**
+					 * Create Sprint
+					 */
+					submit: () => LocalizedString
+				}
+			}
+		}
 		auth: {
 			login: {
 				/**
@@ -405,27 +695,25 @@ export type TranslationFunctions = {
 			 */
 			logout: () => LocalizedString
 		}
-		admin: {
-			sprints: {
-				'new': {
-					/**
-					 * Create New Sprint
-					 */
-					title: () => LocalizedString
-					/**
-					 * Sprint Name
-					 */
-					name: () => LocalizedString
-					/**
-					 * Estimation Sequence (comma separated)
-					 */
-					sequence: () => LocalizedString
-					/**
-					 * Create Sprint
-					 */
-					submit: () => LocalizedString
-				}
-			}
+		sprints: {
+			/**
+			 * create a new sprint
+			 */
+			createNewSprint: () => LocalizedString
+		}
+		sprint: {
+			/**
+			 * User stories
+			 */
+			userStories: () => LocalizedString
+			/**
+			 * Active voting
+			 */
+			activeVoting: () => LocalizedString
+			/**
+			 * Select a user story to begin voting
+			 */
+			selectUserStoryToBeginVoting: () => LocalizedString
 		}
 	}
 	errors: {
@@ -453,6 +741,10 @@ export type TranslationFunctions = {
 		 * Bad request. Please check your input
 		 */
 		BAD_REQUEST: () => LocalizedString
+		/**
+		 * Name already exists
+		 */
+		NAME_EXIST: () => LocalizedString
 		/**
 		 * {field} is required
 		 */
@@ -489,6 +781,18 @@ export type TranslationFunctions = {
 		 * Invalid email address
 		 */
 		invalid_email: () => LocalizedString
+		/**
+		 * Estimation sequence must contain only numbers
+		 */
+		sequence_invalid_numbers: () => LocalizedString
+		/**
+		 * Estimation sequence can have at most 10 items
+		 */
+		sequence_max_items: () => LocalizedString
+		/**
+		 * Error loading sprint.
+		 */
+		errorLoadingSprint: () => LocalizedString
 	}
 	blocks: {
 		header: {
@@ -496,6 +800,172 @@ export type TranslationFunctions = {
 			 * Sprints
 			 */
 			sprints: () => LocalizedString
+			/**
+			 * Logout
+			 */
+			logout: () => LocalizedString
+			/**
+			 * Profile
+			 */
+			profile: () => LocalizedString
+			/**
+			 * Login
+			 */
+			login: () => LocalizedString
+			/**
+			 * Get started
+			 */
+			getStarted: () => LocalizedString
+		}
+		footer: {
+			/**
+			 * Simple, collaborative estimation for agile teams. Create rooms, vote effortlessly, and reach consensus faster.
+			 */
+			text: () => LocalizedString
+			navigation: {
+				/**
+				 * Navigation
+				 */
+				title: () => LocalizedString
+				/**
+				 * Home
+				 */
+				home: () => LocalizedString
+				/**
+				 * Sprints
+				 */
+				sprints: () => LocalizedString
+				/**
+				 * Login
+				 */
+				login: () => LocalizedString
+				/**
+				 * Register
+				 */
+				register: () => LocalizedString
+			}
+			legal: {
+				/**
+				 * Legal
+				 */
+				title: () => LocalizedString
+				/**
+				 * Privacy Policy
+				 */
+				privacyPolicy: () => LocalizedString
+				/**
+				 * Terms of Service
+				 */
+				termsOfService: () => LocalizedString
+			}
+			social: {
+				/**
+				 * Follow Us
+				 */
+				title: () => LocalizedString
+				/**
+				 * LinkedIn
+				 */
+				linkedIn: () => LocalizedString
+			}
+		}
+		sprints: {
+			/**
+			 * Sprints you’ve joined
+			 */
+			joined: () => LocalizedString
+			/**
+			 * Sprints you can join
+			 */
+			joinable: () => LocalizedString
+			header: {
+				/**
+				 * Voting in progress
+				 */
+				inProgress: () => LocalizedString
+				/**
+				 * No active voting
+				 */
+				noActiveVoting: () => LocalizedString
+				/**
+				 * user stories
+				 */
+				userStories: () => LocalizedString
+				/**
+				 * stories revealed
+				 */
+				revealedStories: () => LocalizedString
+				/**
+				 * members in sprint
+				 */
+				membersInSprint: () => LocalizedString
+				/**
+				 * unique voters
+				 */
+				uniqueVoters: () => LocalizedString
+				/**
+				 * Created by
+				 */
+				createdBy: () => LocalizedString
+				/**
+				 * Sequence:
+				 */
+				sequence: () => LocalizedString
+			}
+		}
+		emptyUserStory: {
+			/**
+			 * No user stories yet
+			 */
+			title: () => LocalizedString
+			/**
+			 * Start a new voting session to estimate your first story.
+			 */
+			description: () => LocalizedString
+		}
+		userStory: {
+			/**
+			 * Voting now
+			 */
+			votingNow: () => LocalizedString
+			/**
+			 * Vote again
+			 */
+			voteAgain: () => LocalizedString
+			/**
+			 * Vote this story
+			 */
+			voteThisStory: () => LocalizedString
+		}
+		userStoryResults: {
+			/**
+			 * Votes
+			 */
+			votesCast: () => LocalizedString
+			/**
+			 * Average estimate
+			 */
+			averageEstimate: () => LocalizedString
+		}
+		reveal: {
+			/**
+			 * Reveal Votes
+			 */
+			title: () => LocalizedString
+			/**
+			 * Pick your cards
+			 */
+			text: () => LocalizedString
+			/**
+			 * Choose the next user story to estimate
+			 */
+			chooseNextUserStory: () => LocalizedString
+		}
+		startNewVoting: {
+			/**
+			 * Start New Voting
+			 */
+			startNewVoting: () => LocalizedString
 		}
 	}
 	fields: {
@@ -558,6 +1028,72 @@ export type TranslationFunctions = {
 			 * e.g., 1,2,3,5,8,13,21
 			 */
 			placeholder: () => LocalizedString
+		}
+	}
+	modals: {
+		createGuest: {
+			/**
+			 * Join as a Guest
+			 */
+			title: () => LocalizedString
+			/**
+			 * Login
+			 */
+			login: () => LocalizedString
+			/**
+			 * Sign up
+			 */
+			signUp: () => LocalizedString
+			/**
+			 * Join
+			 */
+			submit: () => LocalizedString
+		}
+	}
+	tables: {
+		'default': {
+			/**
+			 * Actions
+			 */
+			actions: () => LocalizedString
+			/**
+			 * No data available
+			 */
+			noData: () => LocalizedString
+		}
+		sprints: {
+			/**
+			 * No Sprints found
+			 */
+			empty: () => LocalizedString
+			columns: {
+				/**
+				 * Sprint
+				 */
+				name: () => LocalizedString
+				/**
+				 * Creator
+				 */
+				creator: () => LocalizedString
+				/**
+				 * Sequence
+				 */
+				sequence: () => LocalizedString
+			}
+			actions: {
+				/**
+				 * Actions
+				 */
+				title: () => LocalizedString
+				/**
+				 * Join
+				 */
+				join: () => LocalizedString
+				/**
+				 * View
+				 */
+				view: () => LocalizedString
+			}
 		}
 	}
 }

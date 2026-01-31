@@ -8,37 +8,32 @@
   import type { TSprint } from "$lib/shared/types/sprint";
   import type { TTableConfig } from "$lib/shared/types/table";
   import { sprintUtils } from "$lib/shared/utils/sprint";
+  import { get } from "svelte/store";
 
   export let sprints: TSprint[];
 
-  const config: TTableConfig<TSprint> = {
-    columns: sprintUtils().getSprintTableColumns($LL),
-    actions: [
-      {
-        label: "Join",
-        onClick: async (row) => {
-          responseForJoin = await sprintsApi().join(row.id);
-          if (responseForJoin.success) {
-            await goto(`/sprints/${sprintUtils().encodeSprintId(row.id)}`);
-          }
-        },
-      },
-    ],
-  };
+  export function getTableConfig(ll: typeof $LL): TTableConfig<TSprint> {
+    return {
+      columns: sprintUtils().getSprintTableColumns(ll),
+      actions: sprintUtils().getJoinableSprintTableActions(ll),
+    };
+  }
 
   let responseForJoin = undefined as TApiResponse | undefined;
 </script>
 
 <section class="space-y-4">
   <div class="flex items-center justify-between">
-    <h2 class="text-lg font-semibold text-white">Sprints you can join</h2>
+    <h2 class="text-lg font-semibold text-white">
+      {$LL.blocks.sprints.joinable()}
+    </h2>
   </div>
 
   <div class="rounded-xl border border-white/10 bg-white/5 p-4">
     <Table
       rows={sprints}
-      {config}
-      emptyText="No Sprints found"
+      config={getTableConfig($LL)}
+      emptyText={$LL.tables.sprints.empty()}
     />
   </div>
   <Error

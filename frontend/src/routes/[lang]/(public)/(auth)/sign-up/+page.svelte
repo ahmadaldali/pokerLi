@@ -4,6 +4,7 @@
   import LL from "$i18n/i18n-svelte";
   import FormContainer from "$components/form/FormContainer.svelte";
   import Input from "$components/design/Input.svelte";
+  import Button from "$components/design/Button.svelte";
 
   export let data: PageData;
 
@@ -52,7 +53,7 @@
 
     <Input
       name="confirmPassword"
-      type="confirmPassword"
+      type="password"
       bind:value={$form.confirmPassword}
       label={$LL.fields.confirmPassword.label()}
       placeholder={$LL.fields.confirmPassword.placeholder()}
@@ -61,24 +62,8 @@
     />
 
     <!-- Submit -->
-    <button
-      type="submit"
-      disabled={$submitting}
-      class="relative w-full rounded-lg bg-emerald-500 hover:bg-emerald-400
-               disabled:bg-emerald-700 disabled:cursor-not-allowed
-               text-slate-950 font-semibold py-2.5
-               transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900"
-    >
-      {#if $submitting}
-        <span class="flex items-center justify-center gap-2">
-          <span
-            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"
-          ></span>
-          Creating account…
-        </span>
-      {:else}
-        Sign up
-      {/if}
-    </button>
+    <Button type="submit" disabled={$submitting} loading={$submitting}>
+      {$LL.pages.auth.signUp.submit()}
+    </Button>
   </form>
 </FormContainer>

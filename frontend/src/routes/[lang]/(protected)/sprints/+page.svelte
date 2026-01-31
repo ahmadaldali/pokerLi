@@ -7,7 +7,6 @@
   import JoinedSprintsTable from "$components/sprint/JoinedSprintsTable.svelte";
   import Button from "$components/design/Button.svelte";
   import { EUserRole } from "$lib/shared/enums/user";
-  import { goto } from "$app/navigation";
   import { redirectTo } from "$lib/shared/utils/redirect";
 
   export let data: PageData;
@@ -21,7 +20,7 @@
           fullWidth={false}
           on:click={() => {
             redirectTo($LL.routes.admin.sprints.new());
-          }}>create a new sprint</Button
+          }}>{$LL.pages.sprints.createNewSprint()}</Button
         >
       </div>
     {/if}

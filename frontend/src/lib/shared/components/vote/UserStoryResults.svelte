@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Confetti } from "svelte-confetti";
+  import LL from "$i18n/i18n-svelte";
 
   // undefined means not revealed yet
   export let estimate: number | undefined;
@@ -21,7 +22,7 @@
 
   <!-- Content -->
   <div class="relative space-y-4">
-    <p class="text-sm text-slate-400">Average estimate</p>
+    <p class="text-sm text-slate-400">{$LL.blocks.userStoryResults.averageEstimate()}</p>
     <p class="text-4xl font-bold text-emerald-400">
       {estimate ?? "—"}
     </p>
@@ -29,7 +30,7 @@
     <div class="h-px bg-slate-800"></div>
 
     <p class="text-sm text-slate-400">
-      {count ?? 0} voters
+      {count ?? 0} {$LL.blocks.userStoryResults.votesCast()}
     </p>
   </div>
 </div>

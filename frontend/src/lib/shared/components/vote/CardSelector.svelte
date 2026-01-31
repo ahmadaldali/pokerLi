@@ -11,32 +11,30 @@
     const response = await toggleEstimationVote(
       userStoryId,
       value,
-      estimationValue
+      estimationValue,
     );
 
     if (response.apiResponse.success) {
       estimationValue = response.newValue;
-
     }
   }
-  
+
   $: if (estimations) {
     estimationValue =
-      estimations?.find((est) => est.user.id === userId && est.estimationResultId === null)?.estimation || null;
+      estimations?.find(
+        (est) => est.user.id === userId && est.estimationResultId === null,
+      )?.estimation || null;
   }
 
   let estimationValue: number | null = null;
 </script>
 
-
 <div class="flex justify-center flex-col items-center space-y-4">
   <p class="text-sm text-slate-400">Choose your card 👇</p>
 
   <div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
-
-        
-      {#each sequeceElements as element}
-        {#key element}
+    {#each sequeceElements as element}
+      {#key element}
         <button
           class="group relative"
           on:click={() => handleEstimateClick(element)}
@@ -56,7 +54,7 @@
             {element}
           </div>
         </button>
-        {/key}
-      {/each}
+      {/key}
+    {/each}
   </div>
 </div>

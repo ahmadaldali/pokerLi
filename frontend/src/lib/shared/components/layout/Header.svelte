@@ -9,7 +9,7 @@
 </script>
 
 <header class="fixed inset-x-0 top-0 z-50">
-  <nav class="border-b border-white/10 bg-slate-900/80 backdrop-blur ">
+  <nav class="border-b border-white/10 bg-slate-900/80 backdrop-blur">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
@@ -19,10 +19,9 @@
 
         <!-- Desktop nav -->
         <div class="flex items-center gap-6 text-sm">
-          <a href={$LL.routes.sprints.index()} class="nav-link">{$LL.blocks.header.sprints()}</a>
-          <a href={"PRICING"} class="nav-link">Pricing</a>
-          <a href={"COMPANY"} class="nav-link">Company</a>
-          <a href={"CONTACT"} class="nav-link">Contact</a>
+          <a href={$LL.routes.sprints.index()} class="nav-link"
+            >{$LL.blocks.header.sprints()}</a
+          >
 
           {#if user}
             <!-- User dropdown -->
@@ -49,21 +48,28 @@
                 <div
                   class="absolute right-0 mt-2 w-44 rounded-xl border border-white/10 bg-slate-800 shadow-xl"
                 >
-                  <a href={"PROFILE"} class="dropdown-item">Profile</a>
-                  <a href={$LL.routes.auth.logout()} class="dropdown-item text-red-400">
-                    Logout
+                  <a href={"PROFILE"} class="dropdown-item"
+                    >{$LL.blocks.header.profile()}</a
+                  >
+                  <a
+                    href={$LL.routes.auth.logout()}
+                    class="dropdown-item text-red-400"
+                  >
+                    {$LL.blocks.header.logout()}
                   </a>
                 </div>
               {/if}
             </div>
           {:else}
             <!-- Public actions -->
-            <a href={$LL.routes.auth.login()} class="nav-link">Login</a>
+            <a href={$LL.routes.auth.login()} class="nav-link"
+              >{$LL.blocks.header.login()}</a
+            >
             <a
               href={$LL.routes.auth.signUp()}
               class="rounded-lg bg-emerald-500 px-4 py-1.5 font-semibold text-slate-950 hover:bg-emerald-400 transition"
             >
-              Get started
+              {$LL.blocks.header.getStarted()}
             </a>
           {/if}
         </div>

@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { TTableConfig } from "$lib/shared/types/table";
   import Button from "./Button.svelte";
+  import LL from "$i18n/i18n-svelte";
 
   export let config: TTableConfig<any>;
   export let rows: any[] = [];
   export let rowClass = "";
-  export let emptyText = "No data available";
+  export let emptyText: string = $LL.tables.default.noData();
+  export let actionsTitle: string = $LL.tables.default.actions();
 
   const hasActions = !!config.actions?.length;
 </script>
@@ -41,7 +43,7 @@
             <th
               class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
             >
-              Actions
+              {actionsTitle}
             </th>
           {/if}
         </tr>
@@ -77,7 +79,7 @@
                     {#each config.actions as action}
                       <Button
                         variant={action.variant ?? "ghost"}
-                        on:click={() => action.onClick(row)}
+                        on:click={() => action.onClick(row.id)}
                         disabled={action.disabled?.(row)}
                       >
                         {action.label}
