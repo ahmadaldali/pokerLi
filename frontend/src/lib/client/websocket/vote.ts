@@ -1,6 +1,7 @@
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import type { TSprint, TUserStory } from "$lib/shared/types/sprint";
+import { PUBLIC_API_URL } from "$env/static/public";
 
 let client: Client | null = null;
 
@@ -9,7 +10,7 @@ export function connect(
   onSprint: (data: TSprint) => void
 ): void {
   client = new Client({
-    webSocketFactory: () => new SockJS("http://localhost:8000/api/ws"),
+    webSocketFactory: () => new SockJS(`${PUBLIC_API_URL}/ws`),
 
     reconnectDelay: 5000,
 
